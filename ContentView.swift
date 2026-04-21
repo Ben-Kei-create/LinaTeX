@@ -50,6 +50,35 @@ struct ContentView: View {
                 Divider()
                     .background(Color.green.opacity(0.3))
 
+                // Level Selector
+                HStack(spacing: 8) {
+                    ForEach(CommandLevel.allCases, id: \.self) { level in
+                        Button(action: {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                viewModel.currentLevel = level
+                            }
+                        }) {
+                            Text(level.rawValue)
+                                .font(.system(.caption, design: .monospaced))
+                                .fontWeight(.semibold)
+                                .frame(maxWidth: .infinity)
+                                .padding(10)
+                                .background(
+                                    viewModel.currentLevel == level
+                                        ? Color.green
+                                        : Color.green.opacity(0.2)
+                                )
+                                .foregroundColor(
+                                    viewModel.currentLevel == level
+                                        ? .black
+                                        : .green
+                                )
+                                .cornerRadius(6)
+                        }
+                    }
+                }
+                .padding(16)
+
                 // Button Panel
                 CommandButtonPanel(viewModel: viewModel)
                     .padding(16)
