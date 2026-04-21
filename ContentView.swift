@@ -33,9 +33,12 @@ struct ContentView: View {
                                 .foregroundColor(.gray)
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
+                    Text("⚡ \(viewModel.getTotalExecutions()) commands executed")
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.green.opacity(0.7))
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(16)
                 .background(Color(red: 0.08, green: 0.08, blue: 0.12))
 
                 Divider()

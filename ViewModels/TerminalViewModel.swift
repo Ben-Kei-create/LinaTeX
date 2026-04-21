@@ -5,6 +5,9 @@ class TerminalViewModel: ObservableObject {
     @Published var currentInput: String = ""
     @Published var output: String = ""
 
+    private let storageKey = "LinaTeX_CommandHistory"
+    private let executionCountKey = "LinaTeX_ExecutionCount"
+
     let availableCommands: [Command] = [
         Command(name: "ls", icon: "list.bullet", command: "ls"),
         Command(name: "pwd", icon: "folder.fill", command: "pwd"),
@@ -17,8 +20,11 @@ class TerminalViewModel: ObservableObject {
         Command(name: "mv", icon: "arrow.right.doc", command: "mv"),
     ]
 
+    init() {
+        loadHistory()
+    }
+
     func executeCommand(_ command: Command) {
-        // Add command to current input with typewriter animation
         withAnimation(.easeInOut(duration: 0.3)) {
             currentInput = command.command
         }
@@ -26,14 +32,14 @@ class TerminalViewModel: ObservableObject {
 
     func runCommand() {
         if !currentInput.isEmpty {
-            // Move current input to history
             commandHistory.append(currentInput)
+            saveHistory()
 
-            // Get simulated output
+            incrementExecutionCount()
+
             let result = getCommandOutput(currentInput)
             output = result
 
-            // Clear current input
             currentInput = ""
         }
     }
@@ -49,7 +55,32 @@ class TerminalViewModel: ObservableObject {
             commandHistory.removeAll()
             output = ""
             currentInput = ""
+            deleteHistory()
         }
+    }
+
+    // MARK: - Storage Methods
+    private func saveHistory() {
+        UserDefaults.standard.setValue(commandHistory, forKey: storageKey)
+    }
+
+    private func loadHistory() {
+        if let saved = UserDefaults.standard.array(forKey: storageKey) as? [String] {
+            self.commandHistory = saved
+        }
+    }
+
+    private func deleteHistory() {
+        UserDefaults.standard.removeObject(forKey: storageKey)
+    }
+
+    private func incrementExecutionCount() {
+        let current = UserDefaults.standard.integer(forKey: executionCountKey)
+        UserDefaults.standard.setValue(current + 1, forKey: executionCountKey)
+    }
+
+    func getTotalExecutions() -> Int {
+        UserDefaults.standard.integer(forKey: executionCountKey)
     }
 
     private func getCommandOutput(_ command: String) -> String {
