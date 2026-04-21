@@ -18,26 +18,20 @@ struct ContentView: View {
 
             VStack(spacing: 0) {
                 // Header
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Image(systemName: "terminal.fill")
-                            .font(.title2)
-                            .foregroundColor(.green)
-                        Text("LinaTeX")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                        Spacer()
-                        Button(action: { viewModel.clearTerminal() }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.title3)
-                                .foregroundColor(.gray)
-                        }
+                HStack {
+                    Image(systemName: "terminal.fill")
+                        .font(.title2)
+                        .foregroundColor(.green)
+                    Text("LinaTeX")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Spacer()
+                    Button(action: { viewModel.clearTerminal() }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title3)
+                            .foregroundColor(.gray)
                     }
-                    Text("⚡ \(viewModel.getTotalExecutions()) commands executed")
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.green.opacity(0.7))
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(16)
                 .background(Color(red: 0.08, green: 0.08, blue: 0.12))
 
