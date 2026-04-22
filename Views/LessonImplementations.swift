@@ -8,6 +8,7 @@ struct ScenarioLessonViewImpl: View {
     let lesson: Lesson
 
     @State private var currentStepIndex = 0
+    @State private var showCompletion = false
 
     var currentStep: ScenarioStep { scenario.steps[currentStepIndex] }
     var isLastStep: Bool { currentStepIndex == scenario.steps.count - 1 }
@@ -154,8 +155,11 @@ struct ScenarioLessonViewImpl: View {
                             impact.notificationOccurred(.success)
 
                             if isLastStep {
-                                vm.completeLesson(lesson)
-                                vm.goBack()
+                                showCompletion = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                                    vm.completeLesson(lesson)
+                                    vm.goBack()
+                                }
                             } else {
                                 currentStepIndex += 1
                                 vm.nextStep()
@@ -187,6 +191,11 @@ struct ScenarioLessonViewImpl: View {
             vm.resetLesson()
             currentStepIndex = 0
         }
+        .overlay(
+            showCompletion ? SuccessOverlayView {
+                showCompletion = false
+            } : nil
+        )
     }
 }
 
@@ -201,6 +210,7 @@ struct QuizLessonViewImpl: View {
     @State private var selectedAnswerIndex: Int?
     @State private var answeredQuestions: [Int: Int] = [:]
     @State private var correctCount = 0
+    @State private var showCompletion = false
 
     var currentQuestion: QuizQuestion { quiz.questions[currentQuestionIndex] }
     var isLastQuestion: Bool { currentQuestionIndex == quiz.questions.count - 1 }
@@ -306,9 +316,12 @@ struct QuizLessonViewImpl: View {
             if isAnswered {
                 Button(action: {
                     if isLastQuestion {
+                        showCompletion = true
                         vm.addXP(correctCount * 50)
-                        vm.completeLesson(lesson)
-                        vm.goBack()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                            vm.completeLesson(lesson)
+                            vm.goBack()
+                        }
                     } else {
                         currentQuestionIndex += 1
                         selectedAnswerIndex = nil
@@ -341,6 +354,11 @@ struct QuizLessonViewImpl: View {
             vm.resetLesson()
             currentQuestionIndex = 0
         }
+        .overlay(
+            showCompletion ? SuccessOverlayView {
+                showCompletion = false
+            } : nil
+        )
     }
 }
 

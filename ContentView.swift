@@ -437,6 +437,7 @@ struct QuestLessonView: View {
     let course: Course
     @ObservedObject var vm: AppViewModel
     let lesson: Lesson
+    @State private var showCompletion = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -572,8 +573,11 @@ struct QuestLessonView: View {
                         Button(action: {
                             let impact = UINotificationFeedbackGenerator()
                             impact.notificationOccurred(.success)
-                            vm.completeLesson(lesson)
-                            vm.goBack()
+                            showCompletion = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                                vm.completeLesson(lesson)
+                                vm.goBack()
+                            }
                         }) {
                             Label("完了", systemImage: "checkmark.circle.fill")
                                 .frame(maxWidth: .infinity)
@@ -597,6 +601,11 @@ struct QuestLessonView: View {
         }
         .padding(16)
         .animation(.spring(response: 0.4, dampingFraction: 0.7), value: vm.currentLessonState)
+        .overlay(
+            showCompletion ? SuccessOverlayView {
+                showCompletion = false
+            } : nil
+        )
     }
 }
 
