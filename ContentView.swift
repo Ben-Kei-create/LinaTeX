@@ -753,37 +753,10 @@ struct CommandButton: View {
     }
 }
 
-// MARK: - Stub Views (Scenario & Quiz to be implemented)
+// MARK: - Use implemented views from LessonImplementations.swift
 
-struct ScenarioLessonView: View {
-    let scenario: ScenarioLesson
-    let course: Course
-    @ObservedObject var vm: AppViewModel
-    let lesson: Lesson
-
-    var body: some View {
-        VStack {
-            Text("🏗️ シナリオレッスン準備中...")
-                .foregroundColor(.white.opacity(0.6))
-                .padding(20)
-        }
-    }
-}
-
-struct QuizLessonView: View {
-    let quiz: QuizLesson
-    let course: Course
-    @ObservedObject var vm: AppViewModel
-    let lesson: Lesson
-
-    var body: some View {
-        VStack {
-            Text("❓ クイズレッスン準備中...")
-                .foregroundColor(.white.opacity(0.6))
-                .padding(20)
-        }
-    }
-}
+typealias ScenarioLessonView = ScenarioLessonViewImpl
+typealias QuizLessonView = QuizLessonViewImpl
 
 #Preview {
     ContentView()
