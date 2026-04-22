@@ -1,200 +1,719 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var vm = TerminalViewModel()
+    @StateObject private var vm = AppViewModel()
 
     var body: some View {
-        ZStack {
-            Color(red: 0.07, green: 0.07, blue: 0.1).ignoresSafeArea()
-
-            if vm.questState == .completed {
-                CompletionView()
-            } else {
-                VStack(spacing: 0) {
-                    HeaderView(vm: vm)
-                    QuestCardView(vm: vm)
-                    TerminalOutputView(vm: vm)
-                    CommandPanelView(vm: vm)
+        NavigationStack(path: $vm.navigationPath) {
+            HomeView(vm: vm)
+                .navigationDestination(for: AppScreen.self) { screen in
+                    switch screen {
+                    case .courseDetail(let course):
+                        CourseDetailView(course: course, vm: vm)
+                    case .lesson(let lesson, let course):
+                        LessonView(lesson: lesson, course: course, vm: vm)
+                    case .home:
+                        HomeView(vm: vm)
+                    }
                 }
-            }
         }
         .preferredColorScheme(.dark)
     }
 }
 
-// MARK: - Header
-struct HeaderView: View {
-    @ObservedObject var vm: TerminalViewModel
+// MARK: - Home View
+
+struct HomeView: View {
+    @ObservedObject var vm: AppViewModel
+    @State private var selectedCourse: Course?
 
     var body: some View {
-        VStack(spacing: 8) {
-            HStack {
-                Image(systemName: "terminal.fill")
-                    .foregroundColor(vm.currentQuest.accentColor)
-                Text("LinaTeX")
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                Spacer()
-                Text("\(vm.currentQuestIndex + 1) / \(vm.totalQuests)")
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundColor(.gray)
-            }
+        ZStack {
+            Color(red: 0.06, green: 0.06, blue: 0.1).ignoresSafeArea()
 
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(Color.white.opacity(0.1))
-                        .frame(height: 4)
-                    Capsule()
-                        .fill(vm.currentQuest.accentColor)
-                        .frame(width: geo.size.width * vm.progress, height: 4)
-                        .animation(.easeInOut(duration: 0.5), value: vm.progress)
+            VStack(spacing: 0) {
+                // Header
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("🐧 LinaTeX")
+                                .font(.system(.title2, design: .monospaced))
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                            Text("Learn Linux by Playing")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.6))
+                        }
+                        Spacer()
+                        VStack(alignment: .trailing, spacing: 4) {
+                            HStack(spacing: 8) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "star.fill")
+                                        .foregroundColor(.yellow)
+                                    Text("\(vm.totalXP) XP")
+                                        .font(.system(.subheadline, design: .monospaced))
+                                        .fontWeight(.semibold)
+                                }
+
+                                NavigationLink(destination: StatisticsView(vm: vm)) {
+                                    Image(systemName: "chart.bar.fill")
+                                        .foregroundColor(.cyan)
+                                        .font(.system(size: 14))
+                                }
+
+                                NavigationLink(destination: AchievementsView(vm: vm)) {
+                                    Image(systemName: "star.circle.fill")
+                                        .foregroundColor(.yellow)
+                                        .font(.system(size: 14))
+                                }
+                            }
+                            ProgressView(value: vm.totalProgress())
+                                .frame(width: 100)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                }
+                .background(Color(red: 0.1, green: 0.1, blue: 0.14))
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // AI Recommendation
+                        PersonalizedRecommendationView(vm: vm) { lesson in
+                            if let course = vm.courses.first(where: { course in
+                                course.chapters.contains { chapter in
+                                    chapter.lessons.contains { $0.id == lesson.id }
+                                }
+                            }) {
+                                vm.navigateToLesson(lesson, in: course)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+
+                        Text("コースを選択")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
+
+                        ForEach(vm.courses) { course in
+                            CourseCard(course: course, vm: vm)
+                                .onTapGesture {
+                                    vm.navigateToCourse(course)
+                                }
+                        }
+                    }
+                    .padding(.bottom, 20)
                 }
             }
-            .frame(height: 4)
         }
-        .padding(16)
-        .background(Color(red: 0.1, green: 0.1, blue: 0.14))
+        .navigationBarBackButtonHidden(true)
     }
 }
 
-// MARK: - Quest Card
-struct QuestCardView: View {
-    @ObservedObject var vm: TerminalViewModel
+// MARK: - Course Card
+
+struct CourseCard: View {
+    let course: Course
+    @ObservedObject var vm: AppViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 10) {
-                Text(vm.currentQuest.emoji)
-                    .font(.system(size: 32))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("QUEST \(vm.currentQuestIndex + 1)")
+            HStack(spacing: 12) {
+                Text(course.emoji)
+                    .font(.system(size: 40))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(course.level.japanese.uppercased())
                         .font(.system(.caption2, design: .monospaced))
-                        .foregroundColor(vm.currentQuest.accentColor)
+                        .foregroundColor(course.level.mainColor)
                         .fontWeight(.bold)
-                    Text(vm.currentQuest.title)
-                        .font(.headline)
+
+                    Text(course.title)
+                        .font(.system(.headline, design: .monospaced))
                         .foregroundColor(.white)
+
+                    Text(course.subtitle)
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.6))
                 }
+
                 Spacer()
-                Button(action: {
-                    withAnimation(.spring()) {
-                        vm.showHint.toggle()
+
+                VStack(alignment: .trailing, spacing: 6) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "book.fill")
+                            .font(.caption)
+                        Text("\(course.totalLessons)")
+                            .font(.system(.caption, design: .monospaced))
                     }
-                }) {
-                    Image(systemName: "lightbulb\(vm.showHint ? ".fill" : "")")
-                        .foregroundColor(.yellow.opacity(vm.showHint ? 1 : 0.5))
-                        .font(.title3)
+                    .foregroundColor(.white.opacity(0.7))
+
+                    ProgressView(value: vm.progressInCourse(course))
+                        .frame(width: 60)
+                        .tint(course.level.mainColor)
                 }
             }
 
-            Text(vm.currentQuest.description)
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.8))
-                .lineSpacing(4)
+            Text(course.description)
+                .font(.system(.caption, design: .monospaced))
+                .foregroundColor(.white.opacity(0.6))
+                .lineSpacing(2)
+
+            HStack(spacing: 4) {
+                Image(systemName: "clock.fill")
+                    .font(.caption2)
+                Text("\(course.estimatedMinutes)分で修了")
+                    .font(.system(.caption2, design: .monospaced))
+            }
+            .foregroundColor(.white.opacity(0.5))
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(red: 0.11, green: 0.11, blue: 0.16))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(course.level.mainColor.opacity(0.3), lineWidth: 1)
+        )
+        .padding(.horizontal, 16)
+    }
+}
+
+// MARK: - Course Detail View
+
+struct CourseDetailView: View {
+    let course: Course
+    @ObservedObject var vm: AppViewModel
+
+    var body: some View {
+        ZStack {
+            Color(red: 0.06, green: 0.06, blue: 0.1).ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                // Header
+                HStack {
+                    Button(action: { vm.goBack() }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(.body, design: .monospaced))
+                            Text("戻る")
+                                .font(.system(.subheadline, design: .monospaced))
+                        }
+                        .foregroundColor(course.level.mainColor)
+                    }
+                    Spacer()
+                    Text(course.title)
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    Spacer()
+                }
+                .padding(16)
+                .background(Color(red: 0.1, green: 0.1, blue: 0.14))
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        ForEach(course.chapters) { chapter in
+                            ChapterSection(chapter: chapter, course: course, vm: vm)
+                        }
+                    }
+                    .padding(16)
+                }
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+    }
+}
+
+// MARK: - Chapter Section
+
+struct ChapterSection: View {
+    let chapter: Chapter
+    let course: Course
+    @ObservedObject var vm: AppViewModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("第\(chapter.number)章")
+                        .font(.system(.caption2, design: .monospaced))
+                        .foregroundColor(course.level.mainColor)
+                        .fontWeight(.bold)
+                    Text(chapter.title)
+                        .font(.system(.headline, design: .monospaced))
+                        .foregroundColor(.white)
+                    Text(chapter.summary)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.6))
+                }
+                Spacer()
+            }
+
+            VStack(spacing: 8) {
+                ForEach(chapter.lessons) { lesson in
+                    LessonRow(lesson: lesson, course: course, vm: vm)
+                }
+            }
+        }
+        .padding(14)
+        .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+        .cornerRadius(10)
+    }
+}
+
+// MARK: - Lesson Row
+
+struct LessonRow: View {
+    let lesson: Lesson
+    let course: Course
+    @ObservedObject var vm: AppViewModel
+
+    var isCompleted: Bool { vm.isLessonCompleted(lesson) }
+
+    var body: some View {
+        Button(action: { vm.navigateToLesson(lesson, in: course) }) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        if isCompleted {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                        }
+                        Text(lesson.emoji)
+                        Text(lesson.title)
+                            .font(.system(.subheadline, design: .monospaced))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                    }
+
+                    HStack(spacing: 8) {
+                        Label(lesson.content.typeLabel, systemImage: lesson.content.typeIcon)
+                            .font(.system(.caption2, design: .monospaced))
+                            .foregroundColor(course.level.mainColor)
+
+                        Label("\(lesson.estimatedMinutes)分", systemImage: "clock.fill")
+                            .font(.system(.caption2, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.5))
+                    }
+                }
+
+                Spacer()
+
+                if isCompleted {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
+                }
+            }
+            .padding(10)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(8)
+        }
+    }
+}
+
+// MARK: - Lesson View (Complex - Handles all lesson types)
+
+struct LessonView: View {
+    let lesson: Lesson
+    let course: Course
+    @ObservedObject var vm: AppViewModel
+
+    var body: some View {
+        ZStack {
+            Color(red: 0.06, green: 0.06, blue: 0.1).ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                // Header with back button
+                HStack {
+                    Button(action: { vm.goBack() }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                            Text("戻る")
+                        }
+                        .font(.system(.subheadline, design: .monospaced))
+                        .foregroundColor(course.level.mainColor)
+                    }
+                    Spacer()
+                    HStack(spacing: 4) {
+                        Image(systemName: lesson.content.typeIcon)
+                        Text(lesson.content.typeLabel)
+                    }
+                    .font(.system(.caption2, design: .monospaced))
+                    .foregroundColor(course.level.mainColor)
+                    .fontWeight(.bold)
+                }
+                .padding(14)
+                .background(Color(red: 0.1, green: 0.1, blue: 0.14))
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Lesson Header
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack(spacing: 10) {
+                                Text(lesson.emoji)
+                                    .font(.system(size: 36))
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(lesson.title)
+                                        .font(.system(.headline, design: .monospaced))
+                                        .foregroundColor(.white)
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "clock.fill")
+                                            .font(.caption2)
+                                        Text("\(lesson.estimatedMinutes)分")
+                                            .font(.system(.caption, design: .monospaced))
+                                    }
+                                    .foregroundColor(.white.opacity(0.6))
+                                }
+                            }
+                        }
+                        .padding(16)
+                        .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+                        .cornerRadius(10)
+                        .padding(.horizontal, 16)
+
+                        // Content based on lesson type
+                        switch lesson.content {
+                        case .concept(let concept):
+                            ConceptLessonView(concept: concept)
+                        case .quest(let quest):
+                            QuestLessonView(quest: quest, course: course, vm: vm, lesson: lesson)
+                        case .scenario(let scenario):
+                            ScenarioLessonView(scenario: scenario, course: course, vm: vm, lesson: lesson)
+                        case .quiz(let quiz):
+                            QuizLessonView(quiz: quiz, course: course, vm: vm, lesson: lesson)
+                        }
+                    }
+                    .padding(.vertical, 16)
+                }
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+        .onAppear {
+            vm.resetLesson()
+        }
+    }
+}
+
+// MARK: - Concept Lesson View
+
+struct ConceptLessonView: View {
+    let concept: ConceptLesson
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(concept.headline)
+                .font(.system(.headline, design: .monospaced))
+                .foregroundColor(.cyan)
+                .padding(.horizontal, 16)
+
+            ForEach(concept.sections) { section in
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(section.heading)
+                        .font(.system(.subheadline, design: .monospaced))
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+
+                    Text(section.body)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.8))
+                        .lineSpacing(3)
+
+                    if let code = section.codeSample {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("$ \(code)")
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundColor(.green)
+                        }
+                        .padding(10)
+                        .background(Color.black.opacity(0.5))
+                        .cornerRadius(6)
+                    }
+
+                    if let tip = section.tip {
+                        HStack(spacing: 8) {
+                            Image(systemName: "lightbulb.fill")
+                                .font(.caption)
+                                .foregroundColor(.yellow)
+                            Text(tip)
+                                .font(.system(.caption2, design: .monospaced))
+                                .foregroundColor(.yellow.opacity(0.9))
+                        }
+                        .padding(8)
+                        .background(Color.yellow.opacity(0.1))
+                        .cornerRadius(6)
+                    }
+                }
+                .padding(12)
+                .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+                .cornerRadius(8)
+            }
+            .padding(.horizontal, 16)
+        }
+        .padding(.vertical, 16)
+    }
+}
+
+// MARK: - Quest Lesson View
+
+struct QuestLessonView: View {
+    let quest: QuestLesson
+    let course: Course
+    @ObservedObject var vm: AppViewModel
+    let lesson: Lesson
+    @State private var showCompletion = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            // Scenario
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    Image(systemName: "quote.opening")
+                        .foregroundColor(.cyan)
+                        .font(.caption)
+                    Text("シナリオ")
+                        .font(.system(.caption, design: .monospaced))
+                        .fontWeight(.bold)
+                        .foregroundColor(.cyan)
+                }
+                Text(quest.scenario)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.8))
+            }
+            .padding(12)
+            .background(Color.cyan.opacity(0.1))
+            .cornerRadius(8)
+
+            // Prompt
+            VStack(alignment: .leading, spacing: 8) {
+                Text("📝 問題")
+                    .font(.system(.caption, design: .monospaced))
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                Text(quest.prompt)
+                    .font(.system(.body, design: .monospaced))
+                    .foregroundColor(.white)
+            }
+            .padding(12)
+            .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+            .cornerRadius(8)
+
+            // Hint Button
+            Button(action: {
+                withAnimation(.spring()) {
+                    vm.showHint.toggle()
+                }
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: "lightbulb\(vm.showHint ? ".fill" : "")")
+                    Text(vm.showHint ? "ヒントを隠す" : "ヒント を見る")
+                }
+                .font(.system(.caption, design: .monospaced))
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity)
+                .padding(8)
+                .background(vm.showHint ? Color.yellow.opacity(0.2) : Color.white.opacity(0.05))
+                .foregroundColor(vm.showHint ? .yellow : .white.opacity(0.6))
+                .cornerRadius(6)
+            }
 
             if vm.showHint {
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
                     Image(systemName: "lightbulb.fill")
                         .foregroundColor(.yellow)
-                        .font(.caption)
-                    Text(vm.currentQuest.hint)
+                    Text(quest.hint)
                         .font(.system(.caption, design: .monospaced))
                         .foregroundColor(.yellow)
                 }
                 .padding(10)
                 .background(Color.yellow.opacity(0.1))
-                .cornerRadius(8)
+                .cornerRadius(6)
                 .transition(.move(edge: .top).combined(with: .opacity))
+            }
+
+            // Terminal Output (Fixed height)
+            TerminalPanel(
+                input: vm.userInput,
+                output: vm.terminalOutput,
+                state: vm.currentLessonState,
+                successMessage: quest.successMessage
+            )
+
+            // Command Buttons
+            VStack(spacing: 10) {
+                HStack(spacing: 10) {
+                    ForEach(quest.options) { option in
+                        CommandButton(
+                            option: option,
+                            accentColor: course.level.mainColor,
+                            isSelected: vm.userInput == option.command,
+                            isDisabled: vm.currentLessonState != .waiting
+                        ) {
+                            let impact = UIImpactFeedbackGenerator(style: .medium)
+                            impact.impactOccurred()
+                            vm.selectCommand(option)
+                        }
+                    }
+                }
+
+                // Execute / Retry / Next buttons
+                HStack(spacing: 10) {
+                    if vm.currentLessonState == .wrong {
+                        Button(action: {
+                            let impact = UIImpactFeedbackGenerator(style: .light)
+                            impact.impactOccurred()
+                            vm.retry()
+                        }) {
+                            Label("もう一度", systemImage: "arrow.counterclockwise")
+                                .frame(maxWidth: .infinity)
+                                .padding(12)
+                                .background(Color.orange.opacity(0.2))
+                                .foregroundColor(.orange)
+                                .cornerRadius(8)
+                                .font(.system(.subheadline, design: .monospaced))
+                                .fontWeight(.semibold)
+                        }
+                    }
+
+                    if vm.currentLessonState != .correct && vm.currentLessonState != .completed {
+                        Button(action: {
+                            let impact = UIImpactFeedbackGenerator(style: .heavy)
+                            impact.impactOccurred()
+                            vm.executeQuest(quest)
+                        }) {
+                            Label("実行", systemImage: "play.fill")
+                                .frame(maxWidth: .infinity)
+                                .padding(12)
+                                .background(vm.userInput.isEmpty ? Color.gray.opacity(0.2) : course.level.mainColor)
+                                .foregroundColor(vm.userInput.isEmpty ? .gray : .black)
+                                .cornerRadius(8)
+                                .font(.system(.subheadline, design: .monospaced))
+                                .fontWeight(.bold)
+                        }
+                        .disabled(vm.userInput.isEmpty)
+                    }
+
+                    if vm.currentLessonState == .correct {
+                        Button(action: {
+                            let impact = UINotificationFeedbackGenerator()
+                            impact.notificationOccurred(.success)
+                            showCompletion = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                                vm.completeLesson(lesson)
+                                vm.goBack()
+                            }
+                        }) {
+                            Label("完了", systemImage: "checkmark.circle.fill")
+                                .frame(maxWidth: .infinity)
+                                .padding(12)
+                                .background(
+                                    LinearGradient(
+                                        colors: [course.level.mainColor, course.level.mainColor.opacity(0.7)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .foregroundColor(.black)
+                                .cornerRadius(8)
+                                .font(.system(.subheadline, design: .monospaced))
+                                .fontWeight(.bold)
+                        }
+                        .transition(.scale.combined(with: .opacity))
+                    }
+                }
             }
         }
         .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 0)
-                .fill(Color(red: 0.11, green: 0.11, blue: 0.16))
-        )
+        .animation(.spring(response: 0.4, dampingFraction: 0.7), value: vm.currentLessonState)
         .overlay(
-            Rectangle()
-                .frame(width: 3)
-                .foregroundColor(vm.currentQuest.accentColor),
-            alignment: .leading
+            showCompletion ? SuccessOverlayView {
+                showCompletion = false
+            } : nil
         )
     }
 }
 
-// MARK: - Terminal Output
-struct TerminalOutputView: View {
-    @ObservedObject var vm: TerminalViewModel
+// MARK: - Terminal Panel (Fixed Layout)
+
+struct TerminalPanel: View {
+    let input: String
+    let output: String
+    let state: LessonState
+    let successMessage: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
+            // Terminal window chrome
             HStack(spacing: 6) {
                 Circle().fill(.red).frame(width: 8, height: 8)
                 Circle().fill(.yellow).frame(width: 8, height: 8)
                 Circle().fill(.green).frame(width: 8, height: 8)
                 Spacer()
-                Text("terminal")
-                    .font(.system(.caption2, design: .monospaced))
-                    .foregroundColor(.gray)
+                Text("terminal").font(.system(.caption2, design: .monospaced)).foregroundColor(.gray)
             }
+            .padding(8)
+            .background(Color(red: 0.09, green: 0.09, blue: 0.12))
 
-            HStack(alignment: .bottom, spacing: 6) {
-                Text("user@linux:~$")
-                    .foregroundColor(.green.opacity(0.7))
-                    .font(.system(.body, design: .monospaced))
-
-                Text(vm.currentInput)
-                    .foregroundColor(inputColor)
-                    .font(.system(.body, design: .monospaced))
-
-                if vm.questState == .waiting {
-                    CursorView()
+            // Terminal content
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    Text("user@linux:~$")
+                        .foregroundColor(.green.opacity(0.7))
+                        .font(.system(.body, design: .monospaced))
+                    Text(input)
+                        .foregroundColor(inputColor)
+                        .font(.system(.body, design: .monospaced))
+                    if state == .waiting {
+                        CursorView()
+                    }
+                    Spacer()
                 }
 
-                Spacer()
-            }
-
-            if !vm.terminalOutput.isEmpty {
-                Text(vm.terminalOutput)
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundColor(vm.questState == .wrong ? .red.opacity(0.8) : .cyan)
-                    .padding(.top, 2)
-            }
-
-            if vm.questState == .correct {
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.green)
-                    Text(vm.currentQuest.successMessage)
+                if !output.isEmpty {
+                    Text(output)
                         .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.green)
+                        .foregroundColor(state == .wrong ? .red.opacity(0.8) : .cyan)
+                        .lineSpacing(2)
                 }
-                .padding(.top, 4)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
 
-            if vm.questState == .wrong {
-                HStack(spacing: 8) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.red)
-                    Text("ちがうよ！もう一度やってみよう 💪")
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.red)
+                if state == .correct {
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                        Text(successMessage)
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.green)
+                    }
+                    .padding(.top, 4)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
-                .padding(.top, 4)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+
+                if state == .wrong {
+                    HStack(spacing: 8) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.red)
+                        Text("ちがいます。もう一度試してください")
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.red)
+                    }
+                    .padding(.top, 4)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
             }
+            .frame(minHeight: 120)
+            .padding(10)
+            .background(Color(red: 0.06, green: 0.06, blue: 0.08))
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(red: 0.06, green: 0.06, blue: 0.08))
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .animation(.easeInOut(duration: 0.3), value: vm.questState)
+        .background(Color(red: 0.08, green: 0.08, blue: 0.11))
+        .cornerRadius(8)
+        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.white.opacity(0.1), lineWidth: 1))
     }
 
     var inputColor: Color {
-        switch vm.questState {
+        switch state {
         case .correct: return .green
         case .wrong: return .red
         default: return .white
@@ -203,6 +722,7 @@ struct TerminalOutputView: View {
 }
 
 // MARK: - Cursor
+
 struct CursorView: View {
     @State private var visible = true
     var body: some View {
@@ -218,97 +738,10 @@ struct CursorView: View {
     }
 }
 
-// MARK: - Command Panel
-struct CommandPanelView: View {
-    @ObservedObject var vm: TerminalViewModel
+// MARK: - Command Button
 
-    var body: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 10) {
-                ForEach(vm.currentQuest.commandOptions) { option in
-                    CommandOptionButton(
-                        option: option,
-                        accentColor: vm.currentQuest.accentColor,
-                        isSelected: vm.currentInput == option.command,
-                        isDisabled: vm.questState != .waiting
-                    ) {
-                        let impact = UIImpactFeedbackGenerator(style: .medium)
-                        impact.impactOccurred()
-                        vm.selectCommand(option)
-                    }
-                }
-            }
-
-            if vm.questState == .waiting || vm.questState == .wrong {
-                HStack(spacing: 10) {
-                    if vm.questState == .wrong {
-                        Button(action: {
-                            let impact = UIImpactFeedbackGenerator(style: .light)
-                            impact.impactOccurred()
-                            vm.retry()
-                        }) {
-                            Label("もう一度", systemImage: "arrow.counterclockwise")
-                                .frame(maxWidth: .infinity)
-                                .padding(14)
-                                .background(Color.orange.opacity(0.2))
-                                .foregroundColor(.orange)
-                                .cornerRadius(12)
-                                .font(.system(.subheadline, design: .monospaced))
-                                .fontWeight(.semibold)
-                        }
-                    }
-
-                    Button(action: {
-                        let impact = UIImpactFeedbackGenerator(style: .heavy)
-                        impact.impactOccurred()
-                        vm.execute()
-                    }) {
-                        Label("実行する", systemImage: "play.fill")
-                            .frame(maxWidth: .infinity)
-                            .padding(14)
-                            .background(vm.currentInput.isEmpty ? Color.gray.opacity(0.2) : vm.currentQuest.accentColor)
-                            .foregroundColor(vm.currentInput.isEmpty ? .gray : .black)
-                            .cornerRadius(12)
-                            .font(.system(.subheadline, design: .monospaced))
-                            .fontWeight(.bold)
-                    }
-                    .disabled(vm.currentInput.isEmpty)
-                }
-            }
-
-            if vm.questState == .correct {
-                Button(action: {
-                    let impact = UINotificationFeedbackGenerator()
-                    impact.notificationOccurred(.success)
-                    vm.nextQuest()
-                }) {
-                    Label("次の問題へ", systemImage: "arrow.right.circle.fill")
-                        .frame(maxWidth: .infinity)
-                        .padding(14)
-                        .background(
-                            LinearGradient(
-                                colors: [vm.currentQuest.accentColor, vm.currentQuest.accentColor.opacity(0.7)],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .foregroundColor(.black)
-                        .cornerRadius(12)
-                        .font(.system(.subheadline, design: .monospaced))
-                        .fontWeight(.bold)
-                }
-                .transition(.scale.combined(with: .opacity))
-            }
-        }
-        .padding(16)
-        .background(Color(red: 0.1, green: 0.1, blue: 0.14))
-        .animation(.spring(response: 0.4, dampingFraction: 0.7), value: vm.questState)
-    }
-}
-
-// MARK: - Command Option Button
-struct CommandOptionButton: View {
-    let option: Quest.CommandOption
+struct CommandButton: View {
+    let option: CommandOption
     let accentColor: Color
     let isSelected: Bool
     let isDisabled: Bool
@@ -328,24 +761,24 @@ struct CommandOptionButton: View {
             }
             action()
         }) {
-            VStack(spacing: 6) {
+            VStack(spacing: 4) {
                 Image(systemName: option.icon)
-                    .font(.system(size: 20))
+                    .font(.system(size: 16))
                 Text(option.label)
                     .font(.system(.caption, design: .monospaced))
                     .fontWeight(.bold)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
+            .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 8)
                     .fill(isSelected
                         ? accentColor.opacity(0.3)
                         : Color.white.opacity(0.06)
                     )
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 8)
                     .stroke(isSelected ? accentColor : Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1)
             )
             .foregroundColor(isSelected ? accentColor : .white.opacity(0.7))
@@ -356,48 +789,10 @@ struct CommandOptionButton: View {
     }
 }
 
-// MARK: - Completion View
-struct CompletionView: View {
-    @State private var scale: CGFloat = 0.5
+// MARK: - Use implemented views from LessonImplementations.swift
 
-    var body: some View {
-        VStack(spacing: 24) {
-            Text("🎉")
-                .font(.system(size: 80))
-                .scaleEffect(scale)
-                .onAppear {
-                    withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
-                        scale = 1.0
-                    }
-                }
-
-            Text("クリア！")
-                .font(.system(.largeTitle, design: .monospaced))
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-
-            Text("全\(allQuests.count)問のLinuxコマンドを\nマスターしたよ！")
-                .multilineTextAlignment(.center)
-                .foregroundColor(.white.opacity(0.7))
-
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(allQuests) { quest in
-                    HStack(spacing: 8) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                        Text("\(quest.emoji) \(quest.title)")
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                }
-            }
-            .padding(16)
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(12)
-        }
-        .padding(24)
-    }
-}
+typealias ScenarioLessonView = ScenarioLessonViewImpl
+typealias QuizLessonView = QuizLessonViewImpl
 
 #Preview {
     ContentView()
