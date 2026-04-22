@@ -30,7 +30,7 @@ class AppViewModel: ObservableObject {
     @Published var showHint: Bool = false
     @Published var isTyping: Bool = false
 
-    var courses: [Course] { allCourses }
+    var courses: [Course] { comprehensiveAllCourses }
 
     // MARK: - Navigation
 
