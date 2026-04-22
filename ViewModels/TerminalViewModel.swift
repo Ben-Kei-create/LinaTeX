@@ -26,6 +26,8 @@ class AppViewModel: ObservableObject {
     @Published var totalLessonAttempts: Int = 0
     @Published var correctAnswers: Int = 0
     @Published var unlockedAchievements: Set<String> = []
+    @Published var learningProfile: LearningProfile?
+    @Published var personalizedRecommendation: PersonalizedRecommendation?
 
     // Lesson state
     @Published var currentLessonState: LessonState = .waiting
@@ -175,5 +177,50 @@ class AppViewModel: ObservableObject {
 
     func getUnlockedBadges() -> [Achievement] {
         allAchievements.filter { unlockedAchievements.contains($0.id) }
+    }
+
+    // MARK: - Learning Path Management
+
+    func updateLearningProfile() {
+        learningProfile = LearningPathAnalyzer.analyzeUserProfile(self)
+    }
+
+    func updatePersonalizedRecommendation() {
+        personalizedRecommendation = RecommendationEngine.getRecommendation(self)
+    }
+
+    func getNextRecommendedLessons(count: Int = 3) -> [Lesson] {
+        AdaptivePathGenerator.generateNextLessons(self, count: count)
+    }
+
+    func getLearningStyleDescription() -> String {
+        guard let profile = learningProfile else { return "分析中..." }
+
+        switch profile.learningStyle {
+        case .conceptPreferred:
+            return "📚 理論的学習型 - コンセプトから理解するのが得意"
+        case .questPreferred:
+            return "⚡ シンプルタスク型 - 単純なコマンド実行で理解"
+        case .scenarioPreferred:
+            return "🎯 実践シナリオ型 - 複雑なタスク解決が得意"
+        case .quizPreferred:
+            return "✅ 知識確認型 - クイズで知識を定着させるタイプ"
+        case .balanced:
+            return "⚖️ バランス型 - すべての学習形式をバランスよく活用"
+        }
+    }
+
+    func getWeakAreasString() -> String {
+        guard let profile = learningProfile, !profile.weakTopics.isEmpty else {
+            return "弱点なし！すべての領域で好調です"
+        }
+        return profile.weakTopics.joined(separator: ", ")
+    }
+
+    func getRecommendedNextSteps() -> String {
+        guard let recommendation = personalizedRecommendation else {
+            return "レッスンを進めてデータを集めましょう"
+        }
+        return recommendation.reason
     }
 }

@@ -78,12 +78,25 @@ struct HomeView: View {
 
                 ScrollView {
                     VStack(spacing: 16) {
+                        // AI Recommendation
+                        PersonalizedRecommendationView(vm: vm) { lesson in
+                            if let course = vm.courses.first(where: { course in
+                                course.chapters.contains { chapter in
+                                    chapter.lessons.contains { $0.id == lesson.id }
+                                }
+                            }) {
+                                vm.navigateToLesson(lesson, in: course)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+
                         Text("コースを選択")
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 16)
-                            .padding(.top, 16)
+                            .padding(.top, 8)
 
                         ForEach(vm.courses) { course in
                             CourseCard(course: course, vm: vm)

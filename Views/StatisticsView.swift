@@ -64,6 +64,62 @@ struct StatisticsView: View {
                 }
             }
 
+            // AI Learning Profile
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    Image(systemName: "brain.head.profile")
+                        .font(.system(size: 16))
+                        .foregroundColor(.purple)
+                    Text("🤖 あなたの学習プロフィール")
+                        .font(.system(.caption, design: .monospaced))
+                        .fontWeight(.bold)
+                        .foregroundColor(.purple)
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("学習スタイル")
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.7))
+                        Spacer()
+                        Text(vm.getLearningStyleDescription())
+                            .font(.system(.caption, design: .monospaced))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.cyan)
+                    }
+
+                    if !vm.getWeakAreasString().contains("弱点なし") {
+                        HStack {
+                            Text("強化が必要")
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundColor(.white.opacity(0.7))
+                            Spacer()
+                            Text(vm.getWeakAreasString())
+                                .font(.system(.caption, design: .monospaced))
+                                .fontWeight(.semibold)
+                                .foregroundColor(.orange)
+                        }
+                    }
+
+                    HStack {
+                        Text("推奨アクション")
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.7))
+                        Spacer()
+                        Text(vm.getRecommendedNextSteps())
+                            .font(.system(.caption, design: .monospaced))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.green)
+                    }
+                }
+                .padding(10)
+                .background(Color.purple.opacity(0.1))
+                .cornerRadius(6)
+            }
+            .padding(12)
+            .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+            .cornerRadius(8)
+
             // Progress Overview
             VStack(alignment: .leading, spacing: 10) {
                 Text("コース進捗")
@@ -100,7 +156,7 @@ struct StatisticsView: View {
                 ProgressView(value: vm.totalProgress())
                     .tint(.cyan)
 
-                Text("推定学習時間: 約\(vm.estimatedLearningTime)分")
+                Text("推定完了: 約\(vm.learningProfile?.estimatedCompletionDays ?? 0)日")
                     .font(.system(.caption, design: .monospaced))
                     .foregroundColor(.white.opacity(0.6))
             }
@@ -113,6 +169,10 @@ struct StatisticsView: View {
         .padding(16)
         .background(Color(red: 0.08, green: 0.08, blue: 0.13))
         .cornerRadius(12)
+        .onAppear {
+            vm.updateLearningProfile()
+            vm.updatePersonalizedRecommendation()
+        }
     }
 }
 
