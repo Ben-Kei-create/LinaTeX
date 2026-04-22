@@ -46,12 +46,20 @@ struct HomeView: View {
                         }
                         Spacer()
                         VStack(alignment: .trailing, spacing: 4) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "star.fill")
-                                    .foregroundColor(.yellow)
-                                Text("\(vm.totalXP) XP")
-                                    .font(.system(.subheadline, design: .monospaced))
-                                    .fontWeight(.semibold)
+                            HStack(spacing: 8) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "star.fill")
+                                        .foregroundColor(.yellow)
+                                    Text("\(vm.totalXP) XP")
+                                        .font(.system(.subheadline, design: .monospaced))
+                                        .fontWeight(.semibold)
+                                }
+
+                                NavigationLink(destination: StatisticsView(vm: vm)) {
+                                    Image(systemName: "chart.bar.fill")
+                                        .foregroundColor(.cyan)
+                                        .font(.system(size: 14))
+                                }
                             }
                             ProgressView(value: vm.totalProgress())
                                 .frame(width: 100)

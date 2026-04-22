@@ -22,6 +22,9 @@ class AppViewModel: ObservableObject {
     @Published var navigationPath: [AppScreen] = []
     @Published var completedLessons: Set<UUID> = []
     @Published var totalXP: Int = 0
+    @Published var streak: Int = 0
+    @Published var totalLessonAttempts: Int = 0
+    @Published var correctAnswers: Int = 0
 
     // Lesson state
     @Published var currentLessonState: LessonState = .waiting
@@ -31,6 +34,14 @@ class AppViewModel: ObservableObject {
     @Published var isTyping: Bool = false
 
     var courses: [Course] { comprehensiveAllCourses }
+
+    var successRate: Double {
+        totalLessonAttempts > 0 ? Double(correctAnswers) / Double(totalLessonAttempts) * 100 : 0
+    }
+
+    var estimatedLearningTime: Int {
+        completedLessons.count * 10
+    }
 
     // MARK: - Navigation
 
@@ -97,6 +108,9 @@ class AppViewModel: ObservableObject {
     func completeLesson(_ lesson: Lesson) {
         completedLessons.insert(lesson.id)
         addXP(100)
+        streak += 1
+        totalLessonAttempts += 1
+        correctAnswers += 1
         currentLessonState = .completed
     }
 
