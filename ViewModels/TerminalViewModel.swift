@@ -25,6 +25,7 @@ class AppViewModel: ObservableObject {
     @Published var streak: Int = 0
     @Published var totalLessonAttempts: Int = 0
     @Published var correctAnswers: Int = 0
+    @Published var unlockedAchievements: Set<String> = []
 
     // Lesson state
     @Published var currentLessonState: LessonState = .waiting
@@ -112,6 +113,7 @@ class AppViewModel: ObservableObject {
         totalLessonAttempts += 1
         correctAnswers += 1
         currentLessonState = .completed
+        checkAndUnlockAchievements()
     }
 
     func nextStep() {
@@ -161,5 +163,17 @@ class AppViewModel: ObservableObject {
         withAnimation(.easeInOut(duration: 0.5)) {
             totalXP += amount
         }
+    }
+
+    func checkAndUnlockAchievements() {
+        for achievement in allAchievements {
+            if !unlockedAchievements.contains(achievement.id) && achievement.condition(self) {
+                unlockedAchievements.insert(achievement.id)
+            }
+        }
+    }
+
+    func getUnlockedBadges() -> [Achievement] {
+        allAchievements.filter { unlockedAchievements.contains($0.id) }
     }
 }

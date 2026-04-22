@@ -60,6 +60,12 @@ struct HomeView: View {
                                         .foregroundColor(.cyan)
                                         .font(.system(size: 14))
                                 }
+
+                                NavigationLink(destination: AchievementsView(vm: vm)) {
+                                    Image(systemName: "star.circle.fill")
+                                        .foregroundColor(.yellow)
+                                        .font(.system(size: 14))
+                                }
                             }
                             ProgressView(value: vm.totalProgress())
                                 .frame(width: 100)
