@@ -118,19 +118,18 @@ class LearningPathAnalyzer {
     // MARK: - Weak Topics Identification
 
     private static func identifyWeakTopics(_ successRates: [String: Double]) -> [String] {
-        return successRates
-            .filter { $0.value < 0.65 }
+        let filtered = successRates.filter { $0.value < 0.65 }
+        return Array(filtered
             .sorted { $0.value < $1.value }
             .map { $0.key }
-            .prefix(5)
-            .map(String.init)
+            .prefix(5))
     }
 
     // MARK: - Strong Topics Identification
 
     private static func identifyStrongTopics(_ successRates: [String: Double]) -> [String] {
-        return successRates
-            .filter { $0.value >= 0.80 }
+        let filtered = successRates.filter { $0.value >= 0.80 }
+        return filtered
             .sorted { $0.value > $1.value }
             .map { $0.key }
     }
