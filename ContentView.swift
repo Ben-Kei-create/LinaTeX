@@ -645,79 +645,111 @@ struct TerminalPanel: View {
     let successMessage: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Terminal window chrome
+        VStack(alignment: .leading, spacing: 0) {
+            // Terminal header
             HStack(spacing: 6) {
-                Circle().fill(.red).frame(width: 8, height: 8)
-                Circle().fill(.yellow).frame(width: 8, height: 8)
-                Circle().fill(.green).frame(width: 8, height: 8)
+                Circle().fill(TerminalTheme.accentRed).frame(width: 6, height: 6)
+                Circle().fill(TerminalTheme.accentYellow).frame(width: 6, height: 6)
+                Circle().fill(TerminalTheme.greenSecondary).frame(width: 6, height: 6)
                 Spacer()
-                Text("terminal").font(.system(.caption2, design: .monospaced)).foregroundColor(.gray)
+                Text("— terminal").font(.system(.caption2, design: .monospaced)).foregroundColor(TerminalTheme.textTertiary)
             }
             .padding(8)
-            .background(Color(red: 0.09, green: 0.09, blue: 0.12))
+            .background(TerminalTheme.bgSecondary)
+            .border(TerminalTheme.borderColor, width: 0.5)
 
-            // Terminal content
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
-                    Text("user@linux:~$")
-                        .foregroundColor(.green.opacity(0.7))
-                        .font(.system(.body, design: .monospaced))
-                    Text(input)
-                        .foregroundColor(inputColor)
-                        .font(.system(.body, design: .monospaced))
-                    if state == .waiting {
-                        CursorView()
+            // Terminal output - scrollable
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 4) {
+                        // Prompt and input at the top
+                        HStack(spacing: 6) {
+                            Text("fumiaki@linatex:~$")
+                                .foregroundColor(TerminalTheme.greenPrimary)
+                                .font(.system(.caption, design: .monospaced))
+                            Text(input)
+                                .foregroundColor(inputColor)
+                                .font(.system(.caption, design: .monospaced))
+                            if state == .waiting {
+                                CursorView()
+                            }
+                            Spacer()
+                        }
+                        .id("input")
+
+                        // Output
+                        if !output.isEmpty {
+                            Text(output)
+                                .font(.system(.caption2, design: .monospaced))
+                                .foregroundColor(outputColor)
+                                .lineSpacing(1)
+                                .textSelection(.enabled)
+                                .id("output")
+                        }
+
+                        // Feedback
+                        if state == .correct {
+                            HStack(spacing: 6) {
+                                Text("✓")
+                                    .foregroundColor(TerminalTheme.greenPrimary)
+                                Text(successMessage)
+                                    .font(.system(.caption2, design: .monospaced))
+                                    .foregroundColor(TerminalTheme.greenSecondary)
+                            }
+                            .padding(.top, 4)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                            .id("success")
+                        }
+
+                        if state == .wrong {
+                            Text("✗ コマンドが違います")
+                                .font(.system(.caption2, design: .monospaced))
+                                .foregroundColor(TerminalTheme.accentRed)
+                                .padding(.top, 4)
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                                .id("error")
+                        }
+
+                        Spacer()
                     }
-                    Spacer()
-                }
-
-                if !output.isEmpty {
-                    Text(output)
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(state == .wrong ? .red.opacity(0.8) : .cyan)
-                        .lineSpacing(2)
-                }
-
-                if state == .correct {
-                    HStack(spacing: 8) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                        Text(successMessage)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.green)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(10)
+                    .onChange(of: output) { _ in
+                        withAnimation {
+                            proxy.scrollTo("output", anchor: .bottom)
+                        }
                     }
-                    .padding(.top, 4)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-
-                if state == .wrong {
-                    HStack(spacing: 8) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.red)
-                        Text("ちがいます。もう一度試してください")
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.red)
+                    .onChange(of: state) { _ in
+                        if state == .correct {
+                            withAnimation {
+                                proxy.scrollTo("success", anchor: .bottom)
+                            }
+                        } else if state == .wrong {
+                            withAnimation {
+                                proxy.scrollTo("error", anchor: .bottom)
+                            }
+                        }
                     }
-                    .padding(.top, 4)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
-            .frame(minHeight: 120)
-            .padding(10)
-            .background(Color(red: 0.06, green: 0.06, blue: 0.08))
+            .frame(minHeight: 140)
+            .background(TerminalTheme.bgTertiary)
         }
-        .background(Color(red: 0.08, green: 0.08, blue: 0.11))
-        .cornerRadius(8)
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.white.opacity(0.1), lineWidth: 1))
+        .background(TerminalTheme.bgPrimary)
+        .border(TerminalTheme.borderColor, width: 1)
+        .cornerRadius(4)
     }
 
     var inputColor: Color {
         switch state {
-        case .correct: return .green
-        case .wrong: return .red
-        default: return .white
+        case .correct: return TerminalTheme.greenPrimary
+        case .wrong: return TerminalTheme.accentRed
+        default: return TerminalTheme.textPrimary
         }
+    }
+
+    var outputColor: Color {
+        state == .wrong ? TerminalTheme.accentRed : TerminalTheme.textSecondary
     }
 }
 
@@ -727,9 +759,9 @@ struct CursorView: View {
     @State private var visible = true
     var body: some View {
         Rectangle()
-            .fill(Color.white)
-            .frame(width: 8, height: 16)
-            .opacity(visible ? 1 : 0)
+            .fill(TerminalTheme.greenPrimary)
+            .frame(width: 6, height: 12)
+            .opacity(visible ? 0.8 : 0.2)
             .onAppear {
                 withAnimation(.easeInOut(duration: 0.5).repeatForever()) {
                     visible.toggle()
@@ -751,41 +783,27 @@ struct CommandButton: View {
 
     var body: some View {
         Button(action: {
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                isPressed = true
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                    isPressed = false
-                }
-            }
             action()
         }) {
-            VStack(spacing: 4) {
-                Image(systemName: option.icon)
-                    .font(.system(size: 16))
-                Text(option.label)
-                    .font(.system(.caption, design: .monospaced))
-                    .fontWeight(.bold)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isSelected
-                        ? accentColor.opacity(0.3)
-                        : Color.white.opacity(0.06)
-                    )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? accentColor : Color.white.opacity(0.1), lineWidth: isSelected ? 2 : 1)
-            )
-            .foregroundColor(isSelected ? accentColor : .white.opacity(0.7))
-            .scaleEffect(isPressed ? 0.94 : 1.0)
+            Text(option.label)
+                .font(.system(.caption, design: .monospaced))
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(isSelected
+                            ? TerminalTheme.greenPrimary.opacity(0.15)
+                            : TerminalTheme.bgTertiary
+                        )
+                )
+                .border(isSelected ? TerminalTheme.greenPrimary : TerminalTheme.borderColor, width: 1)
+                .foregroundColor(isSelected ? TerminalTheme.greenPrimary : TerminalTheme.textSecondary)
+                .scaleEffect(isPressed ? 0.96 : 1.0)
         }
         .disabled(isDisabled)
-        .opacity(isDisabled && !isSelected ? 0.4 : 1.0)
+        .opacity(isDisabled ? 0.5 : 1.0)
     }
 }
 
