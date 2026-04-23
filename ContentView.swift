@@ -29,7 +29,7 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 0.06, green: 0.06, blue: 0.1).ignoresSafeArea()
+            TerminalTheme.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -49,7 +49,7 @@ struct HomeView: View {
                             HStack(spacing: 8) {
                                 HStack(spacing: 4) {
                                     Image(systemName: "star.fill")
-                                        .foregroundColor(.yellow)
+                                        .foregroundColor(TerminalTheme.textSecondary)
                                     Text("\(vm.totalXP) XP")
                                         .font(.system(.subheadline, design: .monospaced))
                                         .fontWeight(.semibold)
@@ -57,13 +57,13 @@ struct HomeView: View {
 
                                 NavigationLink(destination: StatisticsView(vm: vm)) {
                                     Image(systemName: "chart.bar.fill")
-                                        .foregroundColor(.cyan)
+                                        .foregroundColor(TerminalTheme.greenPrimary)
                                         .font(.system(size: 14))
                                 }
 
                                 NavigationLink(destination: AchievementsView(vm: vm)) {
                                     Image(systemName: "star.circle.fill")
-                                        .foregroundColor(.yellow)
+                                        .foregroundColor(TerminalTheme.textSecondary)
                                         .font(.system(size: 14))
                                 }
                             }
@@ -74,7 +74,7 @@ struct HomeView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                 }
-                .background(Color(red: 0.1, green: 0.1, blue: 0.14))
+                .background(TerminalTheme.bgSecondary)
 
                 ScrollView {
                     VStack(spacing: 16) {
@@ -173,7 +173,7 @@ struct CourseCard: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(red: 0.11, green: 0.11, blue: 0.16))
+                .fill(TerminalTheme.bgTertiary)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
@@ -191,7 +191,7 @@ struct CourseDetailView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 0.06, green: 0.06, blue: 0.1).ignoresSafeArea()
+            TerminalTheme.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
@@ -212,7 +212,7 @@ struct CourseDetailView: View {
                     Spacer()
                 }
                 .padding(16)
-                .background(Color(red: 0.1, green: 0.1, blue: 0.14))
+                .background(TerminalTheme.bgSecondary)
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
@@ -260,7 +260,7 @@ struct ChapterSection: View {
             }
         }
         .padding(14)
-        .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+        .background(TerminalTheme.bgTertiary)
         .cornerRadius(10)
     }
 }
@@ -324,7 +324,7 @@ struct LessonView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 0.06, green: 0.06, blue: 0.1).ignoresSafeArea()
+            TerminalTheme.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header with back button
@@ -347,7 +347,7 @@ struct LessonView: View {
                     .fontWeight(.bold)
                 }
                 .padding(14)
-                .background(Color(red: 0.1, green: 0.1, blue: 0.14))
+                .background(TerminalTheme.bgSecondary)
 
                 ScrollView {
                     VStack(spacing: 16) {
@@ -371,7 +371,7 @@ struct LessonView: View {
                             }
                         }
                         .padding(16)
-                        .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+                        .background(TerminalTheme.bgTertiary)
                         .cornerRadius(10)
                         .padding(.horizontal, 16)
 
@@ -407,7 +407,7 @@ struct ConceptLessonView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(concept.headline)
                 .font(.system(.headline, design: .monospaced))
-                .foregroundColor(.cyan)
+                .foregroundColor(TerminalTheme.greenPrimary)
                 .padding(.horizontal, 16)
 
             ForEach(concept.sections) { section in
@@ -437,7 +437,7 @@ struct ConceptLessonView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "lightbulb.fill")
                                 .font(.caption)
-                                .foregroundColor(.yellow)
+                                .foregroundColor(TerminalTheme.textSecondary)
                             Text(tip)
                                 .font(.system(.caption2, design: .monospaced))
                                 .foregroundColor(.yellow.opacity(0.9))
@@ -448,7 +448,7 @@ struct ConceptLessonView: View {
                     }
                 }
                 .padding(12)
-                .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+                .background(TerminalTheme.bgTertiary)
                 .cornerRadius(8)
             }
             .padding(.horizontal, 16)
@@ -472,12 +472,12 @@ struct QuestLessonView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     Image(systemName: "quote.opening")
-                        .foregroundColor(.cyan)
+                        .foregroundColor(TerminalTheme.greenPrimary)
                         .font(.caption)
                     Text("シナリオ")
                         .font(.system(.caption, design: .monospaced))
                         .fontWeight(.bold)
-                        .foregroundColor(.cyan)
+                        .foregroundColor(TerminalTheme.greenPrimary)
                 }
                 Text(quest.scenario)
                     .font(.system(.caption, design: .monospaced))
@@ -498,7 +498,7 @@ struct QuestLessonView: View {
                     .foregroundColor(.white)
             }
             .padding(12)
-            .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+            .background(TerminalTheme.bgTertiary)
             .cornerRadius(8)
 
             // Hint Button
@@ -523,10 +523,10 @@ struct QuestLessonView: View {
             if vm.showHint {
                 HStack(spacing: 8) {
                     Image(systemName: "lightbulb.fill")
-                        .foregroundColor(.yellow)
+                        .foregroundColor(TerminalTheme.textSecondary)
                     Text(quest.hint)
                         .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.yellow)
+                        .foregroundColor(TerminalTheme.textSecondary)
                 }
                 .padding(10)
                 .background(Color.yellow.opacity(0.1))

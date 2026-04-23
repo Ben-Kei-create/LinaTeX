@@ -19,17 +19,17 @@ enum CourseLevel: String, CaseIterable, Identifiable {
 
     var gradient: [Color] {
         switch self {
-        case .basics:   return [Color(hex: 0x22D3EE), Color(hex: 0x3B82F6)]
-        case .standard: return [Color(hex: 0xA855F7), Color(hex: 0xEC4899)]
-        case .advanced: return [Color(hex: 0xF97316), Color(hex: 0xEF4444)]
+        case .basics:   return [Color(hex: 0x00FF41), Color(hex: 0x00AA33)]
+        case .standard: return [Color(hex: 0x00DD33), Color(hex: 0x00AA22)]
+        case .advanced: return [Color(hex: 0x00FF99), Color(hex: 0x00CC55)]
         }
     }
 
     var mainColor: Color {
         switch self {
-        case .basics:   return Color(hex: 0x22D3EE)
-        case .standard: return Color(hex: 0xA855F7)
-        case .advanced: return Color(hex: 0xF97316)
+        case .basics:   return Color(hex: 0x00FF41)
+        case .standard: return Color(hex: 0x00DD33)
+        case .advanced: return Color(hex: 0x00FF99)
         }
     }
 }
@@ -155,6 +155,22 @@ struct QuizQuestion: Identifiable {
     let choices: [String]
     let correctIndex: Int
     let explanation: String
+}
+
+// MARK: - Terminal Theme Colors
+struct TerminalTheme {
+    static let bgPrimary = Color.black
+    static let bgSecondary = Color(red: 0.03, green: 0.03, blue: 0.03)
+    static let bgTertiary = Color(red: 0.08, green: 0.08, blue: 0.08)
+    static let greenPrimary = Color(hex: 0x00FF41)
+    static let greenSecondary = Color(hex: 0x00DD33)
+    static let greenTertiary = Color(hex: 0x00FF99)
+    static let textPrimary = Color.white
+    static let textSecondary = Color(hex: 0xB0B0B0)
+    static let textTertiary = Color(hex: 0x808080)
+    static let borderColor = Color(hex: 0x00FF41, alpha: 0.2)
+    static let accentRed = Color(hex: 0xFF4444)
+    static let accentYellow = Color(hex: 0xFFAA00)
 }
 
 // MARK: - Color helper
