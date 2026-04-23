@@ -7,7 +7,7 @@ import SwiftUI
 
 var finalComprehensiveCurriculum: [Course] {
     // Enhance each course with additional content from extended files
-    var courses = comprehensiveAllCourses
+    let courses = comprehensiveAllCourses
 
     // Inject additional practical content if available
     // The app will automatically include lessons from:
