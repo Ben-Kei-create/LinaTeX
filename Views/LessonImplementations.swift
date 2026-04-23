@@ -261,9 +261,19 @@ struct QuizLessonViewImpl: View {
                             impact.impactOccurred()
                         }
                     }) {
+                        let isThisCorrect = index == currentQuestion.correctIndex
+                        let isThisSelected = index == answeredQuestions[currentQuestionIndex]
+                        let choiceIcon = isAnswered ? (isThisCorrect ? "checkmark.circle.fill" : "xmark.circle.fill") : "circle"
+                        let choiceColor: Color = isAnswered ? (isThisCorrect ? .green : .red) : .white.opacity(0.5)
+                        let bgColor: Color = isAnswered
+                            ? (isThisCorrect ? Color.green.opacity(0.1) : (isThisSelected ? Color.red.opacity(0.1) : Color.white.opacity(0.05)))
+                            : (selectedAnswerIndex == index ? Color.white.opacity(0.1) : Color.white.opacity(0.05))
+                        let strokeColor: Color = isAnswered
+                            ? (isThisCorrect ? Color.green : (isThisSelected ? Color.red : Color.transparent))
+                            : (selectedAnswerIndex == index ? course.level.mainColor : Color.white.opacity(0.1))
                         HStack(spacing: 12) {
-                            Image(systemName: isAnswered ? (index == currentQuestion.correctIndex ? "checkmark.circle.fill" : "xmark.circle.fill") : "circle")
-                                .foregroundColor(isAnswered ? (index == currentQuestion.correctIndex ? .green : .red) : .white.opacity(0.5))
+                            Image(systemName: choiceIcon)
+                                .foregroundColor(choiceColor)
                                 .font(.system(size: 18))
 
                             Text(currentQuestion.choices[index])
@@ -273,12 +283,10 @@ struct QuizLessonViewImpl: View {
                             Spacer()
                         }
                         .padding(12)
-                        .background(
-                            isAnswered ? (index == currentQuestion.correctIndex ? Color.green.opacity(0.1) : (index == answeredQuestions[currentQuestionIndex] ? Color.red.opacity(0.1) : Color.white.opacity(0.05))) : (selectedAnswerIndex == index ? Color.white.opacity(0.1) : Color.white.opacity(0.05))
-                        )
+                        .background(bgColor)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(isAnswered ? (index == currentQuestion.correctIndex ? Color.green : (index == answeredQuestions[currentQuestionIndex] ? Color.red : Color.transparent)) : (selectedAnswerIndex == index ? course.level.mainColor : Color.white.opacity(0.1)), lineWidth: 1)
+                                .stroke(strokeColor, lineWidth: 1)
                         )
                         .cornerRadius(8)
                     }
