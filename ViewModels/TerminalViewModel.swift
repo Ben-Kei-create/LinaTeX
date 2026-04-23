@@ -3,7 +3,7 @@ import Combine
 
 // MARK: - Navigation States
 
-enum AppScreen {
+enum AppScreen: Hashable {
     case home
     case courseDetail(Course)
     case lesson(Lesson, Course)

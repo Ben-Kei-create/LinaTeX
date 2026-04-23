@@ -34,7 +34,7 @@ enum CourseLevel: String, CaseIterable, Identifiable {
     }
 }
 
-struct Course: Identifiable {
+struct Course: Identifiable, Hashable, Equatable {
     let id = UUID()
     let level: CourseLevel
     let title: String
@@ -45,22 +45,31 @@ struct Course: Identifiable {
     let chapters: [Chapter]
 
     var totalLessons: Int { chapters.reduce(0) { $0 + $1.lessons.count } }
+
+    static func == (lhs: Course, rhs: Course) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
-struct Chapter: Identifiable {
+struct Chapter: Identifiable, Hashable, Equatable {
     let id = UUID()
     let number: Int
     let title: String
     let summary: String
     let lessons: [Lesson]
+
+    static func == (lhs: Chapter, rhs: Chapter) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
-struct Lesson: Identifiable {
+struct Lesson: Identifiable, Hashable, Equatable {
     let id = UUID()
     let title: String
     let emoji: String
     let estimatedMinutes: Int
     let content: LessonContent
+
+    static func == (lhs: Lesson, rhs: Lesson) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
 // MARK: - Lesson Content Variants
