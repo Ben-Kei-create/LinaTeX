@@ -6,30 +6,22 @@ import SwiftUI
 // MARK: - Ultra-Comprehensive Course Array
 
 var finalComprehensiveCurriculum: [Course] {
-    // Enhance each course with additional content from extended files
-    let courses = comprehensiveAllCourses
-
-    // Inject additional practical content if available
-    // The app will automatically include lessons from:
-    // - ComprehensiveCurriculum.swift (50+ lessons)
-    // - ExtendedQuizContent.swift (8+ lessons)
-    // - PracticalLinuxContent.swift (5+ lessons)
-
+    let courses = comprehensiveAllCourses + practicalScenarios + advancedPracticalCourses
     return courses
 }
 
 // MARK: - Learning Path Statistics
 
 struct CurriculumStats {
-    static let totalLessons = 60
+    static let totalLessons = 85
     static let totalQuizzes = 35
-    static let totalScenarios = 12
-    static let totalEstimatedHours = 5.5
-    static let estimatedMinutesPerLesson = 8
+    static let totalScenarios = 28
+    static let totalEstimatedHours = 12.5
+    static let estimatedMinutesPerLesson = 9
 
-    static let basicsCourseMinutes = 100
-    static let standardCourseMinutes = 150
-    static let advancedCourseMinutes = 120
+    static let basicsCourseMinutes = 200
+    static let standardCourseMinutes = 300
+    static let advancedCourseMinutes = 250
 }
 
 // MARK: - Learning Objectives by Course
