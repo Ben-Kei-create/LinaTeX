@@ -19,7 +19,7 @@ struct AchievementsView: View {
             HStack(alignment: .center, spacing: 12) {
                 Image(systemName: "star.circle.fill")
                     .font(.system(size: 24))
-                    .foregroundColor(.yellow)
+                    .foregroundColor(TerminalTheme.accentYellow)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("アチーブメント")
@@ -37,14 +37,14 @@ struct AchievementsView: View {
                     Text("\(unlockedBadges.count)/\(allAchievements.count)")
                         .font(.system(.headline, design: .monospaced))
                         .fontWeight(.bold)
-                        .foregroundColor(.cyan)
+                        .foregroundColor(TerminalTheme.greenPrimary)
                     Text("獲得済み")
                         .font(.system(.caption, design: .monospaced))
                         .foregroundColor(.white.opacity(0.6))
                 }
             }
             .padding(12)
-            .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+            .background(TerminalTheme.bgTertiary)
             .cornerRadius(8)
 
             if !unlockedBadges.isEmpty {
@@ -53,7 +53,7 @@ struct AchievementsView: View {
                     Text("🏆 獲得済みのアチーブメント")
                         .font(.system(.caption, design: .monospaced))
                         .fontWeight(.bold)
-                        .foregroundColor(.yellow)
+                        .foregroundColor(TerminalTheme.accentYellow)
 
                     LazyVGrid(columns: [
                         GridItem(.flexible(), spacing: 10),
@@ -90,7 +90,7 @@ struct AchievementsView: View {
             Spacer()
         }
         .padding(16)
-        .background(Color(red: 0.08, green: 0.08, blue: 0.13))
+        .background(TerminalTheme.bgSecondary)
         .cornerRadius(12)
         .onAppear {
             vm.checkAndUnlockAchievements()
@@ -129,12 +129,12 @@ struct AchievementBadgeView: View {
         .background(
             unlocked ?
             LinearGradient(
-                colors: [Color.yellow.opacity(0.1), Color.yellow.opacity(0.05)],
+                colors: [TerminalTheme.accentYellow.opacity(0.1), TerminalTheme.accentYellow.opacity(0.05)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             ) :
             LinearGradient(
-                colors: [Color.white.opacity(0.05), Color.white.opacity(0.02)],
+                colors: [TerminalTheme.borderColor, TerminalTheme.borderColor.opacity(0.5)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -143,7 +143,7 @@ struct AchievementBadgeView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(
-                    unlocked ? Color.yellow.opacity(0.3) : Color.white.opacity(0.1),
+                    unlocked ? TerminalTheme.accentYellow.opacity(0.3) : TerminalTheme.borderColor,
                     lineWidth: 1
                 )
         )
@@ -152,7 +152,7 @@ struct AchievementBadgeView: View {
 
 #Preview {
     ZStack {
-        Color(red: 0.08, green: 0.08, blue: 0.13)
+        TerminalTheme.bgPrimary
             .ignoresSafeArea()
 
         AchievementsView(vm: AppViewModel())

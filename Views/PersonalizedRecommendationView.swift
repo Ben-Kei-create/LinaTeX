@@ -30,7 +30,7 @@ struct PersonalizedRecommendationView: View {
                 }
 
                 Divider()
-                    .background(Color.white.opacity(0.1))
+                    .background(TerminalTheme.borderColor)
 
                 // Recommended Lessons
                 VStack(alignment: .leading, spacing: 8) {
@@ -44,7 +44,7 @@ struct PersonalizedRecommendationView: View {
                 VStack(alignment: .center, spacing: 12) {
                     Image(systemName: "hourglass.circle")
                         .font(.system(size: 32))
-                        .foregroundColor(.cyan.opacity(0.5))
+                        .foregroundColor(TerminalTheme.greenSecondary.opacity(0.5))
 
                     Text("分析中...")
                         .font(.system(.caption, design: .monospaced))
@@ -63,8 +63,8 @@ struct PersonalizedRecommendationView: View {
         .background(
             LinearGradient(
                 colors: [
-                    Color.cyan.opacity(0.1),
-                    Color.cyan.opacity(0.05)
+                    TerminalTheme.greenPrimary.opacity(0.05),
+                    TerminalTheme.greenSecondary.opacity(0.03)
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
@@ -73,7 +73,7 @@ struct PersonalizedRecommendationView: View {
         .cornerRadius(8)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.cyan.opacity(0.2), lineWidth: 1)
+                .stroke(TerminalTheme.borderColor, lineWidth: 1)
         )
         .onAppear {
             vm.updateLearningProfile()
@@ -130,11 +130,11 @@ struct RecommendedLessonCard: View {
 
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.cyan)
+                        .foregroundColor(TerminalTheme.greenPrimary)
                 }
             }
             .padding(10)
-            .background(Color.white.opacity(0.05))
+            .background(TerminalTheme.bgTertiary)
             .cornerRadius(6)
         }
     }
@@ -151,7 +151,7 @@ struct LearningProfileWidget: View {
             HStack(spacing: 8) {
                 Image(systemName: "brain")
                     .font(.system(size: 16))
-                    .foregroundColor(.purple)
+                    .foregroundColor(TerminalTheme.greenTertiary)
 
                 Text("AI学習分析")
                     .font(.system(.caption, design: .monospaced))
@@ -163,22 +163,22 @@ struct LearningProfileWidget: View {
                 Text("Beta")
                     .font(.system(.caption2, design: .monospaced))
                     .fontWeight(.bold)
-                    .foregroundColor(.purple)
+                    .foregroundColor(TerminalTheme.greenTertiary)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(Color.purple.opacity(0.2))
+                    .background(TerminalTheme.greenTertiary.opacity(0.2))
                     .cornerRadius(4)
             }
 
             Divider()
-                .background(Color.white.opacity(0.1))
+                .background(TerminalTheme.borderColor)
 
             // Learning Style
             if let profile = vm.learningProfile {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 8) {
                         Circle()
-                            .fill(Color.cyan)
+                            .fill(TerminalTheme.greenPrimary)
                             .frame(width: 8, height: 8)
 
                         Text("学習スタイル")
@@ -190,12 +190,12 @@ struct LearningProfileWidget: View {
                         Text(styleLabel(profile.learningStyle))
                             .font(.system(.caption, design: .monospaced))
                             .fontWeight(.bold)
-                            .foregroundColor(.cyan)
+                            .foregroundColor(TerminalTheme.greenPrimary)
                     }
 
                     HStack(spacing: 8) {
                         Circle()
-                            .fill(Color.orange)
+                            .fill(TerminalTheme.accentYellow)
                             .frame(width: 8, height: 8)
 
                         Text("学習ペース")
@@ -207,13 +207,13 @@ struct LearningProfileWidget: View {
                         Text(paceLabel(profile.pace))
                             .font(.system(.caption, design: .monospaced))
                             .fontWeight(.bold)
-                            .foregroundColor(.orange)
+                            .foregroundColor(TerminalTheme.accentYellow)
                     }
 
                     if !profile.weakTopics.isEmpty {
                         HStack(spacing: 8) {
                             Circle()
-                                .fill(Color.red)
+                                .fill(TerminalTheme.accentRed)
                                 .frame(width: 8, height: 8)
 
                             Text("強化すべき分野")
@@ -225,14 +225,14 @@ struct LearningProfileWidget: View {
                             Text(profile.weakTopics.first ?? "")
                                 .font(.system(.caption, design: .monospaced))
                                 .fontWeight(.bold)
-                                .foregroundColor(.red)
+                                .foregroundColor(TerminalTheme.accentRed)
                         }
                     }
                 }
             }
         }
         .padding(10)
-        .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+        .background(TerminalTheme.bgTertiary)
         .cornerRadius(8)
         .onAppear {
             vm.updateLearningProfile()
@@ -260,7 +260,7 @@ struct LearningProfileWidget: View {
 
 #Preview {
     ZStack {
-        Color(red: 0.08, green: 0.08, blue: 0.13)
+        TerminalTheme.bgPrimary
             .ignoresSafeArea()
 
         VStack(spacing: 16) {

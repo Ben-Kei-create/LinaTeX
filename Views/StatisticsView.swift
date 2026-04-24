@@ -11,7 +11,7 @@ struct StatisticsView: View {
             HStack(alignment: .center, spacing: 12) {
                 Image(systemName: "chart.bar.fill")
                     .font(.system(size: 24))
-                    .foregroundColor(.cyan)
+                    .foregroundColor(TerminalTheme.greenPrimary)
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("学習統計")
@@ -26,7 +26,7 @@ struct StatisticsView: View {
                 Spacer()
             }
             .padding(12)
-            .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+            .background(TerminalTheme.bgTertiary)
             .cornerRadius(8)
 
             // Key Stats Grid
@@ -59,7 +59,7 @@ struct StatisticsView: View {
                         title: "成功率",
                         value: String(format: "%.0f%%", vm.successRate),
                         icon: "target",
-                        color: .cyan
+                        color: TerminalTheme.greenPrimary
                     )
                 }
             }
@@ -69,11 +69,11 @@ struct StatisticsView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "brain.head.profile")
                         .font(.system(size: 16))
-                        .foregroundColor(.purple)
+                        .foregroundColor(TerminalTheme.greenTertiary)
                     Text("🤖 あなたの学習プロフィール")
                         .font(.system(.caption, design: .monospaced))
                         .fontWeight(.bold)
-                        .foregroundColor(.purple)
+                        .foregroundColor(TerminalTheme.greenTertiary)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
@@ -85,7 +85,7 @@ struct StatisticsView: View {
                         Text(vm.getLearningStyleDescription())
                             .font(.system(.caption, design: .monospaced))
                             .fontWeight(.semibold)
-                            .foregroundColor(.cyan)
+                            .foregroundColor(TerminalTheme.greenPrimary)
                     }
 
                     if !vm.getWeakAreasString().contains("弱点なし") {
@@ -97,7 +97,7 @@ struct StatisticsView: View {
                             Text(vm.getWeakAreasString())
                                 .font(.system(.caption, design: .monospaced))
                                 .fontWeight(.semibold)
-                                .foregroundColor(.orange)
+                                .foregroundColor(TerminalTheme.accentYellow)
                         }
                     }
 
@@ -109,15 +109,15 @@ struct StatisticsView: View {
                         Text(vm.getRecommendedNextSteps())
                             .font(.system(.caption, design: .monospaced))
                             .fontWeight(.semibold)
-                            .foregroundColor(.green)
+                            .foregroundColor(TerminalTheme.greenSecondary)
                     }
                 }
                 .padding(10)
-                .background(Color.purple.opacity(0.1))
+                .background(TerminalTheme.greenTertiary.opacity(0.1))
                 .cornerRadius(6)
             }
             .padding(12)
-            .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+            .background(TerminalTheme.bgTertiary)
             .cornerRadius(8)
 
             // Progress Overview
@@ -136,7 +136,7 @@ struct StatisticsView: View {
                 }
             }
             .padding(12)
-            .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+            .background(TerminalTheme.bgTertiary)
             .cornerRadius(8)
 
             // Total Progress
@@ -150,24 +150,24 @@ struct StatisticsView: View {
                     Text(String(format: "%.1f%%", vm.totalProgress() * 100))
                         .font(.system(.caption, design: .monospaced))
                         .fontWeight(.bold)
-                        .foregroundColor(.cyan)
+                        .foregroundColor(TerminalTheme.greenPrimary)
                 }
 
                 ProgressView(value: vm.totalProgress())
-                    .tint(.cyan)
+                    .tint(TerminalTheme.greenPrimary)
 
                 Text("推定完了: 約\(vm.learningProfile?.estimatedCompletionDays ?? 0)日")
                     .font(.system(.caption, design: .monospaced))
                     .foregroundColor(.white.opacity(0.6))
             }
             .padding(12)
-            .background(Color(red: 0.11, green: 0.11, blue: 0.16))
+            .background(TerminalTheme.bgTertiary)
             .cornerRadius(8)
 
             Spacer()
         }
         .padding(16)
-        .background(Color(red: 0.08, green: 0.08, blue: 0.13))
+        .background(TerminalTheme.bgSecondary)
         .cornerRadius(12)
         .onAppear {
             vm.updateLearningProfile()
@@ -253,7 +253,7 @@ struct ProgressRow: View {
 
 #Preview {
     ZStack {
-        Color(red: 0.08, green: 0.08, blue: 0.13)
+        TerminalTheme.bgPrimary
             .ignoresSafeArea()
 
         StatisticsView(vm: AppViewModel())
