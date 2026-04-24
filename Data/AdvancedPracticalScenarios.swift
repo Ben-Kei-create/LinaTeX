@@ -35,7 +35,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "file deploy.sh", command: "file deploy.sh", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ ls -l deploy.sh\n-rw-r--r-- 1 user user 512 Apr 23 10:00 deploy.sh\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ2: deploy.sh に実行権限を追加してください",
@@ -47,7 +46,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "chmod x deploy.sh", command: "chmod x deploy.sh", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ chmod +x deploy.sh\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ3: 権限が正しく変更されたか確認してください",
@@ -59,7 +57,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "stat deploy.sh", command: "stat deploy.sh", icon: "checkmark")
                                     ],
                                     simulatedOutput: "$ ls -l deploy.sh\n-rwxr-xr-x 1 user user 512 Apr 23 10:00 deploy.sh\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ4: スクリプトを実行してテストしてください",
@@ -71,7 +68,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "run deploy.sh", command: "run deploy.sh", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ ./deploy.sh\nDeploying application...\n✓ Deployment successful\n$ ",
-                                    id: UUID()
                                 )
                             ],
                             finaleMessage: "✓ 権限管理をマスターしました！セキュアなシステム運用ができます"
@@ -102,7 +98,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "top", command: "top", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ ps aux\nUSER PID %CPU %MEM COMMAND\nuser 1234 25.5 15.2 backup.sh\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ2: backup.sh プロセスだけを抽出してください",
@@ -114,7 +109,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "find backup.sh", command: "find backup.sh", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ ps aux | grep backup.sh\nuser 1234 25.5 15.2 /bin/bash backup.sh\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ3: backup.sh のプロセスID（PID）を確認しました（1234）。詳細情報を表示してください",
@@ -126,7 +120,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "ps 1234", command: "ps 1234", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ ps -p 1234 -o pid,user,%cpu,%mem,cmd\nPID USER %CPU %MEM CMD\n1234 user 25.5 15.2 /bin/bash backup.sh\n$ ",
-                                    id: UUID()
                                 )
                             ],
                             finaleMessage: "✓ プロセス管理ができました！本番環境での問題診断が可能です"
@@ -169,7 +162,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "disk -h", command: "disk -h", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ df -h\nFilesystem Size Used Avail Use%\n/ 100G 85G 15G 85%\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ2: ホームディレクトリ（~）の使用量を確認してください",
@@ -181,7 +173,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "du ~ -h", command: "du ~ -h", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ du -sh ~\n45G /home/user\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ3: ホームディレクトリ配下で100MB以上のファイルを検出してください",
@@ -193,7 +184,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "ls -S ~ | head", command: "ls -S ~ | head", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ find ~ -size +100M -type f\n/home/user/videos/movie.mp4 (500M)\n/home/user/backup.tar.gz (200M)\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ4: /var/log ディレクトリの容量を確認してください",
@@ -205,7 +195,6 @@ let advancedPracticalCourses = [
                                         CommandOption(label: "ls -lh /var/log", command: "ls -lh /var/log", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ du -sh /var/log\n8.5G /var/log\n$ ",
-                                    id: UUID()
                                 )
                             ],
                             finaleMessage: "✓ ディスク管理の達人です！本番環境のトラブル解決ができます"

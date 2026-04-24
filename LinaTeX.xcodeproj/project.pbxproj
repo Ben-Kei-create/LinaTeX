@@ -7,20 +7,59 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A5056D092F97BB8F0019CF44 /* LinaTeXApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D032F97BB8F0019CF44 /* LinaTeXApp.swift */; };
 		A5056D0A2F97BB8F0019CF44 /* TerminalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D042F97BB8F0019CF44 /* TerminalViewModel.swift */; };
 		A5056D0E2F97BB940019CF44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D0D2F97BB940019CF44 /* ContentView.swift */; };
-		A5056D222F97C1400019CF44 /* Quest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D212F97C1400019CF44 /* Quest.swift */; };
 		A5056D252F97C1A60019CF44 /* TerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D242F97C1A60019CF44 /* TerminalView.swift */; };
+		A56E6D492F9B86BD00DB1F2E /* LearningPathAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */; };
+		A56E6D522F9B86CF00DB1F2E /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4A2F9B86CF00DB1F2E /* AchievementsView.swift */; };
+		A56E6D532F9B86CF00DB1F2E /* PersonalizedRecommendationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4E2F9B86CF00DB1F2E /* PersonalizedRecommendationView.swift */; };
+		A56E6D542F9B86CF00DB1F2E /* ParticleEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */; };
+		A56E6D552F9B86CF00DB1F2E /* LearningContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4B2F9B86CF00DB1F2E /* LearningContentView.swift */; };
+		A56E6D572F9B86CF00DB1F2E /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4F2F9B86CF00DB1F2E /* SplashScreenView.swift */; };
+		A56E6D582F9B86CF00DB1F2E /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D502F9B86CF00DB1F2E /* StatisticsView.swift */; };
+		A56E6D592F9B86CF00DB1F2E /* LessonImplementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */; };
+		A56E6D5C2F9B86DC00DB1F2E /* Quest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */; };
+		A56E6D662F9B86E800DB1F2E /* ComprehensiveCurriculum.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5F2F9B86E800DB1F2E /* ComprehensiveCurriculum.swift */; };
+		A56E6D672F9B86E800DB1F2E /* CurriculumData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */; };
+		A56E6D682F9B86E800DB1F2E /* FinalCurriculumIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D622F9B86E800DB1F2E /* FinalCurriculumIntegration.swift */; };
+		A56E6D692F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */; };
+		A56E6D6A2F9B86E800DB1F2E /* PracticalLinuxContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D632F9B86E800DB1F2E /* PracticalLinuxContent.swift */; };
+		A56E6D6B2F9B86E800DB1F2E /* AdvancedCurriculum.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5D2F9B86E800DB1F2E /* AdvancedCurriculum.swift */; };
+		A56E6D6C2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */; };
+		A56E6D6D2F9B86E800DB1F2E /* ExtendedQuizContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D612F9B86E800DB1F2E /* ExtendedQuizContent.swift */; };
+		A56E6D722F9B86F900DB1F2E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A56E6D712F9B86F900DB1F2E /* README.md */; };
+		A56E6D732F9B86F900DB1F2E /* color_updates.md in Resources */ = {isa = PBXBuildFile; fileRef = A56E6D702F9B86F900DB1F2E /* color_updates.md */; };
+		A56E6D772F9B870100DB1F2E /* LinaTeXApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D752F9B870100DB1F2E /* LinaTeXApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A5056D032F97BB8F0019CF44 /* LinaTeXApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinaTeXApp.swift; sourceTree = "<group>"; };
 		A5056D042F97BB8F0019CF44 /* TerminalViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalViewModel.swift; sourceTree = "<group>"; };
 		A5056D0D2F97BB940019CF44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		A5056D212F97C1400019CF44 /* Quest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quest.swift; sourceTree = "<group>"; };
 		A5056D242F97C1A60019CF44 /* TerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalView.swift; sourceTree = "<group>"; };
 		A51EA4EA2F97BA5500A3D7E2 /* LinaTeX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinaTeX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearningPathAnalyzer.swift; sourceTree = "<group>"; };
+		A56E6D4A2F9B86CF00DB1F2E /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
+		A56E6D4B2F9B86CF00DB1F2E /* LearningContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearningContentView.swift; sourceTree = "<group>"; };
+		A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonImplementations.swift; sourceTree = "<group>"; };
+		A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleEffects.swift; sourceTree = "<group>"; };
+		A56E6D4E2F9B86CF00DB1F2E /* PersonalizedRecommendationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizedRecommendationView.swift; sourceTree = "<group>"; };
+		A56E6D4F2F9B86CF00DB1F2E /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
+		A56E6D502F9B86CF00DB1F2E /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		A56E6D512F9B86CF00DB1F2E /* TerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalView.swift; sourceTree = "<group>"; };
+		A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quest.swift; sourceTree = "<group>"; };
+		A56E6D5D2F9B86E800DB1F2E /* AdvancedCurriculum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedCurriculum.swift; sourceTree = "<group>"; };
+		A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPracticalScenarios.swift; sourceTree = "<group>"; };
+		A56E6D5F2F9B86E800DB1F2E /* ComprehensiveCurriculum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComprehensiveCurriculum.swift; sourceTree = "<group>"; };
+		A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurriculumData.swift; sourceTree = "<group>"; };
+		A56E6D612F9B86E800DB1F2E /* ExtendedQuizContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedQuizContent.swift; sourceTree = "<group>"; };
+		A56E6D622F9B86E800DB1F2E /* FinalCurriculumIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalCurriculumIntegration.swift; sourceTree = "<group>"; };
+		A56E6D632F9B86E800DB1F2E /* PracticalLinuxContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticalLinuxContent.swift; sourceTree = "<group>"; };
+		A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticalScenariosAdvanced.swift; sourceTree = "<group>"; };
+		A56E6D702F9B86F900DB1F2E /* color_updates.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = color_updates.md; sourceTree = "<group>"; };
+		A56E6D712F9B86F900DB1F2E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		A56E6D742F9B870100DB1F2E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A56E6D752F9B870100DB1F2E /* LinaTeXApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinaTeXApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				A5056D042F97BB8F0019CF44 /* TerminalViewModel.swift */,
-				A5056D212F97C1400019CF44 /* Quest.swift */,
+				A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -47,6 +86,14 @@
 			isa = PBXGroup;
 			children = (
 				A5056D242F97C1A60019CF44 /* TerminalView.swift */,
+				A56E6D4A2F9B86CF00DB1F2E /* AchievementsView.swift */,
+				A56E6D4B2F9B86CF00DB1F2E /* LearningContentView.swift */,
+				A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */,
+				A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */,
+				A56E6D4E2F9B86CF00DB1F2E /* PersonalizedRecommendationView.swift */,
+				A56E6D4F2F9B86CF00DB1F2E /* SplashScreenView.swift */,
+				A56E6D502F9B86CF00DB1F2E /* StatisticsView.swift */,
+				A56E6D512F9B86CF00DB1F2E /* TerminalView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -59,6 +106,12 @@
 				A5056D052F97BB8F0019CF44 /* ViewModels */,
 				A5056D082F97BB8F0019CF44 /* Views */,
 				A5056D0D2F97BB940019CF44 /* ContentView.swift */,
+				A56E6D5B2F9B86DC00DB1F2E /* Models */,
+				A56E6D652F9B86E800DB1F2E /* Data */,
+				A56E6D702F9B86F900DB1F2E /* color_updates.md */,
+				A56E6D712F9B86F900DB1F2E /* README.md */,
+				A56E6D742F9B870100DB1F2E /* ContentView.swift */,
+				A56E6D752F9B870100DB1F2E /* LinaTeXApp.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -68,6 +121,29 @@
 				A51EA4EA2F97BA5500A3D7E2 /* LinaTeX.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A56E6D5B2F9B86DC00DB1F2E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A56E6D652F9B86E800DB1F2E /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				A56E6D5D2F9B86E800DB1F2E /* AdvancedCurriculum.swift */,
+				A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */,
+				A56E6D5F2F9B86E800DB1F2E /* ComprehensiveCurriculum.swift */,
+				A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */,
+				A56E6D612F9B86E800DB1F2E /* ExtendedQuizContent.swift */,
+				A56E6D622F9B86E800DB1F2E /* FinalCurriculumIntegration.swift */,
+				A56E6D632F9B86E800DB1F2E /* PracticalLinuxContent.swift */,
+				A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */,
+			);
+			path = Data;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -131,6 +207,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A56E6D722F9B86F900DB1F2E /* README.md in Resources */,
+				A56E6D732F9B86F900DB1F2E /* color_updates.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,9 +220,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5056D0E2F97BB940019CF44 /* ContentView.swift in Sources */,
-				A5056D092F97BB8F0019CF44 /* LinaTeXApp.swift in Sources */,
+				A56E6D522F9B86CF00DB1F2E /* AchievementsView.swift in Sources */,
+				A56E6D532F9B86CF00DB1F2E /* PersonalizedRecommendationView.swift in Sources */,
+				A56E6D542F9B86CF00DB1F2E /* ParticleEffects.swift in Sources */,
+				A56E6D662F9B86E800DB1F2E /* ComprehensiveCurriculum.swift in Sources */,
+				A56E6D672F9B86E800DB1F2E /* CurriculumData.swift in Sources */,
+				A56E6D682F9B86E800DB1F2E /* FinalCurriculumIntegration.swift in Sources */,
+				A56E6D692F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift in Sources */,
+				A56E6D6A2F9B86E800DB1F2E /* PracticalLinuxContent.swift in Sources */,
+				A56E6D6B2F9B86E800DB1F2E /* AdvancedCurriculum.swift in Sources */,
+				A56E6D6C2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift in Sources */,
+				A56E6D6D2F9B86E800DB1F2E /* ExtendedQuizContent.swift in Sources */,
+				A56E6D772F9B870100DB1F2E /* LinaTeXApp.swift in Sources */,
+				A56E6D552F9B86CF00DB1F2E /* LearningContentView.swift in Sources */,
+				A56E6D572F9B86CF00DB1F2E /* SplashScreenView.swift in Sources */,
+				A56E6D582F9B86CF00DB1F2E /* StatisticsView.swift in Sources */,
+				A56E6D592F9B86CF00DB1F2E /* LessonImplementations.swift in Sources */,
+				A56E6D5C2F9B86DC00DB1F2E /* Quest.swift in Sources */,
+				A56E6D492F9B86BD00DB1F2E /* LearningPathAnalyzer.swift in Sources */,
 				A5056D0A2F97BB8F0019CF44 /* TerminalViewModel.swift in Sources */,
-				A5056D222F97C1400019CF44 /* Quest.swift in Sources */,
 				A5056D252F97C1A60019CF44 /* TerminalView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -35,7 +35,6 @@ let practicalScenarios = [
                                         CommandOption(label: "touch mywebsite", command: "touch mywebsite", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ mkdir mywebsite\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ2: mywebsiteフォルダに移動してください",
@@ -47,7 +46,6 @@ let practicalScenarios = [
                                         CommandOption(label: "ls mywebsite", command: "ls mywebsite", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ cd mywebsite\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ3: src, public, config の3つのフォルダを作成してください",
@@ -59,7 +57,6 @@ let practicalScenarios = [
                                         CommandOption(label: "touch src public config", command: "touch src public config", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ mkdir src public config\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ4: 作成したフォルダ一覧を確認してください",
@@ -71,7 +68,6 @@ let practicalScenarios = [
                                         CommandOption(label: "pwd", command: "pwd", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ ls\nconfig  public  src\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ5: src フォルダ内に index.html ファイルを作成してください",
@@ -83,7 +79,6 @@ let practicalScenarios = [
                                         CommandOption(label: "cp index.html src/", command: "cp index.html src/", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ touch src/index.html\n$ ",
-                                    id: UUID()
                                 )
                             ],
                             finaleMessage: "✓ プロジェクト構造の準備ができました！これで開発準備完了です"
@@ -107,7 +102,6 @@ let practicalScenarios = [
                                         CommandOption(label: "new config/config.json", command: "new config/config.json", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ touch config/config.json\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ2: config.json を src フォルダにコピーしてください",
@@ -119,7 +113,6 @@ let practicalScenarios = [
                                         CommandOption(label: "move config/config.json src/", command: "move config/config.json src/", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ cp config/config.json src/\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ3: public フォルダに style.css を作成してください",
@@ -131,7 +124,6 @@ let practicalScenarios = [
                                         CommandOption(label: "mkdir public/style.css", command: "mkdir public/style.css", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ touch public/style.css\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ4: src フォルダの全ファイルを確認してください",
@@ -143,7 +135,6 @@ let practicalScenarios = [
                                         CommandOption(label: "cd src && ls", command: "cd src && ls", icon: "checkmark")
                                     ],
                                     simulatedOutput: "$ ls src\nconfig.json  index.html\n$ ",
-                                    id: UUID()
                                 )
                             ],
                             finaleMessage: "✓ ファイルの配置ができました！cp コマンドを習得しました"
@@ -174,7 +165,6 @@ let practicalScenarios = [
                                         CommandOption(label: "head app.log", command: "head app.log", icon: "checkmark")
                                     ],
                                     simulatedOutput: "$ cat app.log\n[INFO] Server started\n[ERROR] Connection failed\n[INFO] Request received\n[ERROR] Timeout\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ2: app.log から 'ERROR' を含む行を抽出してください",
@@ -186,7 +176,6 @@ let practicalScenarios = [
                                         CommandOption(label: "search ERROR app.log", command: "search ERROR app.log", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ grep ERROR app.log\n[ERROR] Connection failed\n[ERROR] Timeout\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ3: app.log の総行数をカウントしてください",
@@ -198,7 +187,6 @@ let practicalScenarios = [
                                         CommandOption(label: "lines app.log", command: "lines app.log", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ wc -l app.log\n     4 app.log\n$ ",
-                                    id: UUID()
                                 ),
                                 ScenarioStep(
                                     prompt: "ステップ4: ERROR の行数だけをカウントしてください（パイプを使用）",
@@ -210,7 +198,6 @@ let practicalScenarios = [
                                         CommandOption(label: "count grep ERROR app.log", command: "count grep ERROR app.log", icon: "xmark")
                                     ],
                                     simulatedOutput: "$ grep ERROR app.log | wc -l\n     2\n$ ",
-                                    id: UUID()
                                 )
                             ],
                             finaleMessage: "✓ grep と wc でログファイル解析ができました！実務的な技能です"

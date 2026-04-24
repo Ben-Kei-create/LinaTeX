@@ -1002,14 +1002,6 @@ struct CommandButton: View {
     }
 }
 
-// MARK: - Color Extensions
-
-extension Color {
-    static var transparent: Color {
-        Color.white.opacity(0)
-    }
-}
-
 // MARK: - Use implemented views from LessonImplementations.swift
 
 typealias ScenarioLessonView = ScenarioLessonViewImpl
