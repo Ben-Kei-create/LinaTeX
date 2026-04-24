@@ -321,6 +321,7 @@ struct LessonView: View {
     let lesson: Lesson
     let course: Course
     @ObservedObject var vm: AppViewModel
+    @State private var selectedTab: LessonTab = .problem
 
     var body: some View {
         ZStack {
@@ -375,19 +376,75 @@ struct LessonView: View {
                         .cornerRadius(10)
                         .padding(.horizontal, 16)
 
-                        // Content based on lesson type
-                        switch lesson.content {
-                        case .concept(let concept):
-                            ConceptLessonView(concept: concept)
-                        case .quest(let quest):
-                            QuestLessonView(quest: quest, course: course, vm: vm, lesson: lesson)
-                        case .scenario(let scenario):
-                            ScenarioLessonView(scenario: scenario, course: course, vm: vm, lesson: lesson)
-                        case .quiz(let quiz):
-                            QuizLessonView(quiz: quiz, course: course, vm: vm, lesson: lesson)
+                        // Content based on selected tab
+                        if selectedTab == .learning {
+                            LessonLearningTabView(lesson: lesson)
+                        } else {
+                            // Problem-solving content based on lesson type
+                            switch lesson.content {
+                            case .concept(let concept):
+                                ConceptLessonView(concept: concept)
+                            case .quest(let quest):
+                                QuestLessonView(quest: quest, course: course, vm: vm, lesson: lesson)
+                            case .scenario(let scenario):
+                                ScenarioLessonView(scenario: scenario, course: course, vm: vm, lesson: lesson)
+                            case .quiz(let quiz):
+                                QuizLessonView(quiz: quiz, course: course, vm: vm, lesson: lesson)
+                            }
                         }
                     }
                     .padding(.vertical, 16)
+                }
+
+                // Tab selector
+                VStack(spacing: 0) {
+                    HStack(spacing: 8) {
+                        TabSelectorButton(
+                            icon: "book.fill",
+                            label: "学習",
+                            isSelected: selectedTab == .learning,
+                            color: course.level.mainColor
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedTab = .learning
+                            }
+                        }
+
+                        TabSelectorButton(
+                            icon: "target",
+                            label: "問題",
+                            isSelected: selectedTab == .problem,
+                            color: course.level.mainColor
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedTab = .problem
+                            }
+                        }
+
+                        Spacer()
+                    }
+                    .padding(12)
+                    .background(TerminalTheme.bgSecondary)
+
+                    // Ad banner
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("広告")
+                                .font(.system(.caption2, design: .monospaced))
+                                .foregroundColor(TerminalTheme.textTertiary)
+                            Text("LinaTeX Pro - より多くのコースをアンロック")
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundColor(.white.opacity(0.7))
+                        }
+                        Spacer()
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.caption)
+                            .foregroundColor(TerminalTheme.textTertiary)
+                    }
+                    .padding(12)
+                    .background(Color(red: 0.08, green: 0.08, blue: 0.08))
+                    .cornerRadius(6)
+                    .padding(12)
                 }
             }
         }
@@ -395,6 +452,144 @@ struct LessonView: View {
         .onAppear {
             vm.resetLesson()
         }
+    }
+}
+
+enum LessonTab {
+    case learning
+    case problem
+}
+
+struct TabSelectorButton: View {
+    let icon: String
+    let label: String
+    let isSelected: Bool
+    let color: Color
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                Text(label)
+            }
+            .font(.system(.caption, design: .monospaced))
+            .fontWeight(.semibold)
+            .padding(10)
+            .background(isSelected ? color.opacity(0.2) : Color.transparent)
+            .foregroundColor(isSelected ? color : .white.opacity(0.5))
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(isSelected ? color : Color.transparent, lineWidth: 1)
+            )
+            .cornerRadius(6)
+        }
+    }
+}
+
+struct LessonLearningTabView: View {
+    let lesson: Lesson
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Generate learning material based on lesson content
+            VStack(alignment: .leading, spacing: 12) {
+                Text("📚 学習資料")
+                    .font(.system(.headline, design: .monospaced))
+                    .foregroundColor(TerminalTheme.greenPrimary)
+
+                Divider()
+                    .background(TerminalTheme.borderColor)
+
+                switch lesson.content {
+                case .concept(let concept):
+                    ConceptLessonView(concept: concept)
+
+                case .scenario(let scenario):
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("シナリオの概要")
+                            .font(.system(.subheadline, design: .monospaced))
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+
+                        Text(scenario.setup)
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.8))
+                            .lineSpacing(2)
+
+                        Text("目標")
+                            .font(.system(.subheadline, design: .monospaced))
+                            .fontWeight(.bold)
+                            .foregroundColor(TerminalTheme.greenSecondary)
+                            .padding(.top, 8)
+
+                        Text(scenario.goal)
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    .padding(12)
+                    .background(TerminalTheme.bgTertiary)
+                    .cornerRadius(8)
+
+                case .quest(let quest):
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("クエストの内容")
+                            .font(.system(.subheadline, design: .monospaced))
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+
+                        Text(quest.scenario)
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.8))
+                            .lineSpacing(2)
+
+                        Text("プロンプト")
+                            .font(.system(.subheadline, design: .monospaced))
+                            .fontWeight(.bold)
+                            .foregroundColor(TerminalTheme.greenSecondary)
+                            .padding(.top, 8)
+
+                        Text(quest.prompt)
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    .padding(12)
+                    .background(TerminalTheme.bgTertiary)
+                    .cornerRadius(8)
+
+                case .quiz(let quiz):
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("クイズについて")
+                            .font(.system(.subheadline, design: .monospaced))
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+
+                        Text("全\(quiz.questions.count)問のクイズが出題されます。各問題を丁寧に読んで、正しい選択肢を選んでください。")
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.8))
+                            .lineSpacing(2)
+
+                        HStack(spacing: 8) {
+                            Image(systemName: "lightbulb.fill")
+                                .foregroundColor(TerminalTheme.accentYellow)
+                                .font(.caption)
+
+                            Text("間違えてもその場で解説を確認できます")
+                                .font(.system(.caption, design: .monospaced))
+                                .foregroundColor(TerminalTheme.accentYellow)
+                        }
+                        .padding(10)
+                        .background(TerminalTheme.accentYellow.opacity(0.1))
+                        .cornerRadius(6)
+                    }
+                    .padding(12)
+                    .background(TerminalTheme.bgTertiary)
+                    .cornerRadius(8)
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+        .padding(.vertical, 16)
     }
 }
 
@@ -804,6 +999,14 @@ struct CommandButton: View {
         }
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.5 : 1.0)
+    }
+}
+
+// MARK: - Color Extensions
+
+extension Color {
+    static var transparent: Color {
+        Color.white.opacity(0)
     }
 }
 

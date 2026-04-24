@@ -99,6 +99,28 @@ enum LessonContent {
     }
 }
 
+// MARK: - Learning Content
+
+struct LearningMaterial {
+    let title: String
+    let description: String
+    let content: String
+    let sections: [LearningSection]
+}
+
+struct LearningSection {
+    let heading: String
+    let body: String
+    let example: String?
+    let tip: String?
+}
+
+struct DiagramContent {
+    let title: String
+    let ascii: String
+    let explanation: String
+}
+
 struct ConceptLesson {
     let headline: String
     let sections: [ConceptSection]
