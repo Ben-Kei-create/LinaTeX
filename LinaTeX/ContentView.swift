@@ -25,8 +25,8 @@ struct ContentView: View {
                     }
                 }
         }
-        .preferredColorScheme(.dark)
-        .tint(TerminalTheme.greenPrimary)
+        .preferredColorScheme(.light)
+        .tint(ModernTheme.emeraldPrimary)
     }
 }
 
@@ -37,7 +37,17 @@ struct ShellScreen<Content: View>: View {
 
     var body: some View {
         ZStack {
-            TerminalTheme.bgPrimary.ignoresSafeArea()
+            ModernTheme.background.ignoresSafeArea()
+            LinearGradient(
+                colors: [
+                    ModernTheme.bluePrimary.opacity(0.13),
+                    ModernTheme.emeraldSecondary.opacity(0.09),
+                    ModernTheme.background.opacity(0.98)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
             content
         }
     }
@@ -51,7 +61,7 @@ struct ScanlineOverlay: View {
             VStack(spacing: 5) {
                 ForEach(0..<max(rows, 1), id: \.self) { _ in
                     Rectangle()
-                        .fill(TerminalTheme.greenPrimary.opacity(0.025))
+                        .fill(ModernTheme.bluePrimary.opacity(0.025))
                         .frame(height: 1)
                 }
             }
@@ -61,21 +71,22 @@ struct ScanlineOverlay: View {
 
 struct ShellPanel<Content: View>: View {
     var borderOpacity: Double = 0.2
-    var cornerRadius: CGFloat = 0
+    var cornerRadius: CGFloat = ModernTheme.cardRadius
     @ViewBuilder var content: Content
 
     var body: some View {
         content
-            .padding(14)
+            .padding(18)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(TerminalTheme.bgSecondary)
+                    .fill(ModernTheme.bgSecondary)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(TerminalTheme.greenPrimary.opacity(borderOpacity), lineWidth: 1)
+                    .stroke(ModernTheme.borderColor.opacity(min(0.95, 0.62 + borderOpacity)), lineWidth: 1)
             )
+            .shadow(color: ModernTheme.cardShadow, radius: 16, x: 0, y: 8)
     }
 }
 
@@ -88,15 +99,15 @@ struct ShellHeader: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(title.uppercased())
-                    .shellFont(.headline, weight: .bold)
-                    .foregroundColor(TerminalTheme.textPrimary)
+                Text(title)
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(ModernTheme.textPrimary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.78)
 
-                Text(subtitle.uppercased())
-                    .shellFont(.caption2)
-                    .foregroundColor(TerminalTheme.textSecondary)
+                Text(subtitle)
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundColor(ModernTheme.textSecondary)
                     .lineLimit(2)
             }
 
@@ -104,19 +115,19 @@ struct ShellHeader: View {
 
             if let trailing {
                 if let action {
-                    Button(trailing.uppercased(), action: action)
+                    Button(trailing, action: action)
                         .buttonStyle(ShellButtonStyle(kind: .outline))
                 } else {
-                    ShellStatusText(trailing.uppercased())
+                    ShellStatusText(trailing)
                 }
             }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(TerminalTheme.bgPrimary)
+        .background(ModernTheme.bgPrimary.opacity(0.94))
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(TerminalTheme.borderColor)
+                .fill(ModernTheme.borderColor)
                 .frame(height: 1)
         }
     }
@@ -132,13 +143,16 @@ struct ShellStatusText: View {
     var body: some View {
         Text(text)
             .shellFont(.caption, weight: .semibold)
-            .foregroundColor(TerminalTheme.greenPrimary)
+            .foregroundColor(ModernTheme.emeraldPrimary)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
-            .background(TerminalTheme.greenPrimary.opacity(0.08))
+            .background(
+                RoundedRectangle(cornerRadius: ModernTheme.buttonRadius, style: .continuous)
+                    .fill(ModernTheme.emeraldSoft.opacity(0.72))
+            )
             .overlay(
-                Rectangle()
-                    .stroke(TerminalTheme.borderColor, lineWidth: 1)
+                RoundedRectangle(cornerRadius: ModernTheme.buttonRadius, style: .continuous)
+                    .stroke(ModernTheme.emeraldPrimary.opacity(0.18), lineWidth: 1)
             )
     }
 }
@@ -156,24 +170,39 @@ struct ShellButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .shellFont(.caption, weight: .bold)
-            .textCase(.uppercase)
             .lineLimit(2)
             .multilineTextAlignment(.center)
             .minimumScaleFactor(0.76)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 12)
-            .frame(minHeight: 46)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 13)
+            .frame(minHeight: 50)
             .frame(maxWidth: .infinity)
             .background(
-                RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
-                    .fill(backgroundColor(isPressed: configuration.isPressed))
+                ZStack {
+                    RoundedRectangle(cornerRadius: ModernTheme.buttonRadius, style: .continuous)
+                        .fill(backgroundColor(isPressed: configuration.isPressed))
+
+                    if kind == .filled || isSelected {
+                        RoundedRectangle(cornerRadius: ModernTheme.buttonRadius, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        ModernTheme.bluePrimary.opacity(configuration.isPressed ? 0.88 : 1),
+                                        ModernTheme.emeraldPrimary.opacity(configuration.isPressed ? 0.88 : 1)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                    }
+                }
             )
             .foregroundColor(foregroundColor)
             .overlay(
-                RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
+                RoundedRectangle(cornerRadius: ModernTheme.buttonRadius, style: .continuous)
                     .stroke(borderColor(isPressed: configuration.isPressed), lineWidth: isSelected || kind == .filled ? 2 : 1)
             )
-            .contentShape(RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: ModernTheme.buttonRadius, style: .continuous))
             .scaleEffect(configuration.isPressed ? 0.985 : 1)
             .animation(.easeOut(duration: 0.08), value: configuration.isPressed)
     }
@@ -181,34 +210,34 @@ struct ShellButtonStyle: ButtonStyle {
     private var foregroundColor: Color {
         switch kind {
         case .filled:
-            return TerminalTheme.bgPrimary
+            return ModernTheme.textOnAccent
         case .outline, .dim:
-            return isSelected ? TerminalTheme.bgPrimary : TerminalTheme.textPrimary
+            return isSelected ? ModernTheme.textOnAccent : ModernTheme.textPrimary
         }
     }
 
     private func backgroundColor(isPressed: Bool) -> Color {
         if kind == .filled {
-            return TerminalTheme.greenPrimary.opacity(isPressed ? 0.82 : 1)
+            return ModernTheme.emeraldPrimary.opacity(isPressed ? 0.82 : 1)
         }
 
         if isSelected {
-            return TerminalTheme.greenPrimary.opacity(isPressed ? 0.82 : 1)
+            return ModernTheme.emeraldPrimary.opacity(isPressed ? 0.82 : 1)
         }
 
         switch kind {
         case .dim:
-            return TerminalTheme.bgPrimary.opacity(isPressed ? 0.8 : 0.58)
+            return ModernTheme.bgTertiary.opacity(isPressed ? 0.98 : 0.76)
         default:
-            return TerminalTheme.bgTertiary.opacity(isPressed ? 1 : 0.86)
+            return ModernTheme.bgSecondary.opacity(isPressed ? 1 : 0.92)
         }
     }
 
     private func borderColor(isPressed: Bool) -> Color {
         if kind == .filled {
-            return TerminalTheme.greenPrimary
+            return ModernTheme.emeraldPrimary
         }
-        return isSelected || isPressed ? TerminalTheme.greenPrimary : TerminalTheme.borderColor
+        return isSelected || isPressed ? ModernTheme.emeraldPrimary : ModernTheme.borderColor
     }
 }
 
@@ -232,16 +261,22 @@ struct ShellProgressBar: View {
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
-                Rectangle()
-                    .fill(TerminalTheme.bgPrimary)
-                Rectangle()
-                    .fill(TerminalTheme.greenPrimary)
+                RoundedRectangle(cornerRadius: height / 2, style: .continuous)
+                    .fill(ModernTheme.bgTertiary)
+                RoundedRectangle(cornerRadius: height / 2, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [ModernTheme.bluePrimary, ModernTheme.emeraldPrimary],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                     .frame(width: proxy.size.width * clampedValue)
                     .animation(.spring(response: 0.45, dampingFraction: 0.82), value: clampedValue)
             }
             .overlay(
-                Rectangle()
-                    .stroke(TerminalTheme.borderColor, lineWidth: 1)
+                RoundedRectangle(cornerRadius: height / 2, style: .continuous)
+                    .stroke(ModernTheme.borderColor, lineWidth: 1)
             )
         }
         .frame(height: height)
@@ -256,21 +291,24 @@ struct ShellMetric: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(value.uppercased())
                 .shellFont(.headline, weight: .bold)
-                .foregroundColor(TerminalTheme.greenPrimary)
+                .foregroundColor(ModernTheme.emeraldPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.72)
 
             Text(label.uppercased())
                 .shellFont(.caption2)
-                .foregroundColor(TerminalTheme.textSecondary)
+                .foregroundColor(ModernTheme.textSecondary)
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(10)
-        .background(TerminalTheme.bgTertiary)
+        .background(
+            RoundedRectangle(cornerRadius: ModernTheme.buttonRadius, style: .continuous)
+                .fill(ModernTheme.bgTertiary)
+        )
         .overlay(
-            Rectangle()
-                .stroke(TerminalTheme.borderColor, lineWidth: 1)
+            RoundedRectangle(cornerRadius: ModernTheme.buttonRadius, style: .continuous)
+                .stroke(ModernTheme.borderColor, lineWidth: 1)
         )
     }
 }
@@ -283,12 +321,12 @@ struct ShellSectionTitle: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title.uppercased())
                 .shellFont(.caption, weight: .bold)
-                .foregroundColor(TerminalTheme.greenPrimary)
+                .foregroundColor(ModernTheme.bluePrimary)
 
             if let subtitle {
-                Text(subtitle.uppercased())
+                Text(subtitle)
                     .shellFont(.caption2)
-                    .foregroundColor(TerminalTheme.textTertiary)
+                    .foregroundColor(ModernTheme.textTertiary)
                     .lineLimit(2)
             }
         }
@@ -298,7 +336,7 @@ struct ShellSectionTitle: View {
 
 extension View {
     func shellFont(_ style: Font.TextStyle, weight: Font.Weight = .regular) -> some View {
-        font(.system(style, design: .monospaced).weight(weight))
+        font(.system(style, design: .rounded).weight(weight))
     }
 }
 
@@ -315,8 +353,8 @@ struct HomeView: View {
         ShellScreen {
             VStack(spacing: 0) {
                 ShellHeader(
-                    title: "> LinaTeX",
-                    subtitle: "Linux practice",
+                    title: "LinaTeX",
+                    subtitle: "Linuxを6時間で実践",
                     trailing: "TOTAL \(totalPercent)"
                 )
 
@@ -338,7 +376,7 @@ struct HomeView: View {
                             }
                         }
 
-                        ShellSectionTitle(title: "SELECT COURSE")
+                        ShellSectionTitle(title: "コースを選ぶ")
 
                         VStack(spacing: 10) {
                             ForEach(Array(vm.courses.enumerated()), id: \.element.id) { index, course in
@@ -393,14 +431,20 @@ struct CourseCard: View {
 
                         Spacer(minLength: 8)
 
-                        Text("OPEN")
+                        Text("開始")
                             .shellFont(.caption, weight: .bold)
-                            .foregroundColor(TerminalTheme.bgPrimary)
+                            .foregroundColor(TerminalTheme.textOnAccent)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
-                                    .fill(TerminalTheme.greenPrimary)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [course.level.gradient.first ?? TerminalTheme.bluePrimary, course.level.gradient.last ?? TerminalTheme.emeraldPrimary],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
                             )
                             .lineLimit(1)
                     }
@@ -437,7 +481,7 @@ struct CourseDetailView: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
-                        ShellSectionTitle(title: "CHAPTERS")
+                        ShellSectionTitle(title: "チャプター")
 
                         ForEach(course.chapters) { chapter in
                             ChapterSection(chapter: chapter, course: course, vm: vm)
@@ -484,14 +528,20 @@ struct ChapterSection: View {
 
                         Spacer(minLength: 8)
 
-                        Text("OPEN")
+                        Text("開く")
                             .shellFont(.caption, weight: .bold)
-                            .foregroundColor(TerminalTheme.bgPrimary)
+                            .foregroundColor(TerminalTheme.textOnAccent)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
-                                    .fill(TerminalTheme.greenPrimary)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [TerminalTheme.bluePrimary, TerminalTheme.emeraldPrimary],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
                             )
                             .lineLimit(1)
                     }
@@ -543,9 +593,9 @@ struct LessonRow: View {
 
                 Spacer(minLength: 8)
 
-                Text(isCompleted ? "DONE" : "OPEN")
+                Text(isCompleted ? "完了" : "開く")
                     .shellFont(.caption2, weight: .bold)
-                    .foregroundColor(isCompleted ? TerminalTheme.greenTertiary : TerminalTheme.bgPrimary)
+                    .foregroundColor(isCompleted ? TerminalTheme.greenTertiary : TerminalTheme.textOnAccent)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 6)
                     .background(
@@ -556,7 +606,7 @@ struct LessonRow: View {
             .padding(11)
             .background(
                 RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
-                    .fill(isCompleted ? TerminalTheme.greenPrimary.opacity(0.12) : TerminalTheme.bgPrimary.opacity(0.64))
+                    .fill(isCompleted ? TerminalTheme.emeraldSoft.opacity(0.55) : TerminalTheme.bgSecondary.opacity(0.92))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
@@ -586,7 +636,7 @@ struct LessonView: View {
     }
 }
 
-enum ThemePhase {
+enum ThemePhase: Equatable {
     case study
     case practice
     case complete
@@ -756,11 +806,17 @@ struct ThemeStageHeader: View {
     let progress: Double
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                FlowStepPill(icon: "graduationcap.fill", title: "学習", isActive: phase == .study, isDone: phaseIndex > 0)
+                FlowStepPill(icon: "target", title: "問題", isActive: phase == .practice, isDone: phaseIndex > 1)
+                FlowStepPill(icon: "checkmark.seal.fill", title: "確認", isActive: phase == .complete, isDone: phase == .complete)
+            }
+
             HStack {
                 Text(label)
                     .shellFont(.caption, weight: .bold)
-                    .foregroundColor(TerminalTheme.greenPrimary)
+                    .foregroundColor(TerminalTheme.bluePrimary)
 
                 Spacer()
 
@@ -773,15 +829,67 @@ struct ThemeStageHeader: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(TerminalTheme.bgPrimary)
+        .background(TerminalTheme.bgPrimary.opacity(0.94))
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(TerminalTheme.borderColor)
+                .frame(height: 1)
+        }
     }
 
     private var label: String {
         switch phase {
-        case .study: return "STUDY"
-        case .practice: return "PRACTICE"
-        case .complete: return "CLEAR"
+        case .study: return "学習"
+        case .practice: return "問題"
+        case .complete: return "確認"
         }
+    }
+
+    private var phaseIndex: Int {
+        switch phase {
+        case .study: return 0
+        case .practice: return 1
+        case .complete: return 2
+        }
+    }
+}
+
+struct FlowStepPill: View {
+    let icon: String
+    let title: String
+    let isActive: Bool
+    let isDone: Bool
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .semibold))
+            Text(title)
+                .shellFont(.caption2, weight: .bold)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .foregroundColor(isActive || isDone ? TerminalTheme.textOnAccent : TerminalTheme.textSecondary)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
+                .fill(background)
+        )
+    }
+
+    private var background: some ShapeStyle {
+        if isActive || isDone {
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [TerminalTheme.bluePrimary, TerminalTheme.emeraldPrimary],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+        }
+        return AnyShapeStyle(TerminalTheme.bgTertiary)
     }
 }
 
@@ -833,15 +941,15 @@ struct StudyPageView: View {
                                 .foregroundColor(TerminalTheme.greenPrimary)
 
                             Text(page.title)
-                                .shellFont(.title3, weight: .bold)
+                                .font(.system(size: 20, weight: .bold, design: .rounded))
                                 .foregroundColor(TerminalTheme.textPrimary)
                                 .lineLimit(3)
                                 .minimumScaleFactor(0.82)
 
                             Text(page.body)
-                                .shellFont(.caption)
+                                .font(.system(size: 16, weight: .regular, design: .rounded))
                                 .foregroundColor(TerminalTheme.textSecondary)
-                                .lineSpacing(4)
+                                .lineSpacing(8)
 
                             if let code = page.code, !code.isEmpty {
                                 CodeBlock(code: code)
@@ -854,9 +962,12 @@ struct StudyPageView: View {
                                     .lineSpacing(3)
                                     .padding(10)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(TerminalTheme.greenPrimary.opacity(0.08))
+                                    .background(
+                                        RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
+                                            .fill(TerminalTheme.emeraldSoft.opacity(0.7))
+                                    )
                                     .overlay(
-                                        Rectangle()
+                                        RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
                                             .stroke(TerminalTheme.borderColor, lineWidth: 1)
                                     )
                             }
@@ -891,7 +1002,7 @@ struct StudyPageView: View {
                     .buttonStyle(ShellButtonStyle(kind: .filled))
             }
             .padding(16)
-            .background(TerminalTheme.bgPrimary)
+            .background(TerminalTheme.bgPrimary.opacity(0.94))
         }
     }
 }
@@ -1371,9 +1482,12 @@ struct ConceptLessonView: View {
                                 .lineSpacing(2)
                                 .padding(9)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(TerminalTheme.greenPrimary.opacity(0.08))
+                                .background(
+                                    RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
+                                        .fill(TerminalTheme.greenPrimary.opacity(0.08))
+                                )
                                 .overlay(
-                                    Rectangle()
+                                    RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
                                         .stroke(TerminalTheme.borderColor, lineWidth: 1)
                                 )
                         }
@@ -1389,16 +1503,17 @@ struct CodeBlock: View {
 
     var body: some View {
         Text(code)
-            .shellFont(.caption)
+            .font(.system(.caption, design: .monospaced).weight(.regular))
             .foregroundColor(TerminalTheme.greenPrimary)
             .textSelection(.enabled)
-            .padding(10)
+            .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(TerminalTheme.bgPrimary)
+            .background(TerminalTheme.terminalBackground)
             .overlay(
-                Rectangle()
-                    .stroke(TerminalTheme.borderColor, lineWidth: 1)
+                RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
+                    .stroke(TerminalTheme.bluePrimary.opacity(0.22), lineWidth: 1)
             )
+            .clipShape(RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous))
     }
 }
 
@@ -1707,13 +1822,13 @@ struct TerminalPanel: View {
                 Spacer()
                 Text(statusText)
                     .shellFont(.caption2, weight: .bold)
-                    .foregroundColor(TerminalTheme.textTertiary)
+                    .foregroundColor(TerminalTheme.terminalMuted)
             }
             .padding(9)
-            .background(TerminalTheme.bgPrimary)
+            .background(TerminalTheme.terminalBackground)
             .overlay(
-                Rectangle()
-                    .stroke(TerminalTheme.borderColor, lineWidth: 1)
+                RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
+                    .stroke(TerminalTheme.bluePrimary.opacity(0.2), lineWidth: 1)
             )
 
             ScrollViewReader { proxy in
@@ -1722,10 +1837,10 @@ struct TerminalPanel: View {
                         HStack(alignment: .firstTextBaseline, spacing: 6) {
                             Text("user@linatex:~$")
                                 .foregroundColor(TerminalTheme.greenPrimary)
-                                .shellFont(.caption)
+                                .font(.system(.caption, design: .monospaced).weight(.semibold))
                             Text(input.isEmpty ? "select command" : input)
-                                .foregroundColor(input.isEmpty ? TerminalTheme.textTertiary : inputColor)
-                                .shellFont(.caption)
+                                .foregroundColor(input.isEmpty ? TerminalTheme.terminalMuted : inputColor)
+                                .font(.system(.caption, design: .monospaced))
                             if state == .waiting {
                                 CursorView()
                             }
@@ -1735,7 +1850,7 @@ struct TerminalPanel: View {
 
                         if !output.isEmpty {
                             Text(output)
-                                .shellFont(.caption2)
+                                .font(.system(.caption2, design: .monospaced))
                                 .foregroundColor(outputColor)
                                 .lineSpacing(2)
                                 .textSelection(.enabled)
@@ -1754,7 +1869,7 @@ struct TerminalPanel: View {
                         if state == .wrong {
                             Text("REVIEW: SELECT A DIFFERENT COMMAND")
                                 .shellFont(.caption2, weight: .bold)
-                                .foregroundColor(TerminalTheme.textTertiary)
+                                .foregroundColor(TerminalTheme.terminalMuted)
                                 .padding(.top, 4)
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                                 .id("error")
@@ -1779,13 +1894,14 @@ struct TerminalPanel: View {
                 }
             }
             .frame(minHeight: minHeight)
-            .background(TerminalTheme.bgTertiary)
+            .background(TerminalTheme.terminalSurface)
         }
-        .background(TerminalTheme.bgPrimary)
+        .background(TerminalTheme.terminalBackground)
         .overlay(
-            Rectangle()
-                .stroke(TerminalTheme.greenPrimary.opacity(0.35), lineWidth: 1)
+            RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
+                .stroke(TerminalTheme.bluePrimary.opacity(0.32), lineWidth: 1)
         )
+        .clipShape(RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous))
     }
 
     private var statusText: String {
@@ -1800,13 +1916,13 @@ struct TerminalPanel: View {
     private var inputColor: Color {
         switch state {
         case .correct: return TerminalTheme.greenPrimary
-        case .wrong: return TerminalTheme.textTertiary
-        default: return TerminalTheme.textPrimary
+        case .wrong: return TerminalTheme.terminalMuted
+        default: return TerminalTheme.terminalText
         }
     }
 
     private var outputColor: Color {
-        state == .wrong ? TerminalTheme.textTertiary : TerminalTheme.textSecondary
+        state == .wrong ? TerminalTheme.terminalMuted : TerminalTheme.terminalText
     }
 }
 

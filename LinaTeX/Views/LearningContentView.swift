@@ -54,9 +54,12 @@ struct SectionView: View {
                         .lineSpacing(3)
                         .padding(10)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(TerminalTheme.greenPrimary.opacity(0.08))
+                        .background(
+                            RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
+                                .fill(TerminalTheme.greenPrimary.opacity(0.08))
+                        )
                         .overlay(
-                            Rectangle()
+                            RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
                                 .stroke(TerminalTheme.borderColor, lineWidth: 1)
                         )
                 }

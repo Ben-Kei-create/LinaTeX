@@ -31,7 +31,7 @@ struct ParticleEffectView: View {
 
                 context.fill(
                     Rectangle().path(in: frame),
-                    with: .color(TerminalTheme.greenPrimary.opacity(0.82))
+                    with: .color(TerminalTheme.emeraldPrimary.opacity(0.82))
                 )
             }
         }
@@ -91,7 +91,7 @@ struct SuccessOverlayView: View {
 
     var body: some View {
         ZStack {
-            TerminalTheme.bgPrimary.opacity(0.72)
+            TerminalTheme.background.opacity(0.72)
                 .ignoresSafeArea()
 
             ParticleEffectView()
@@ -101,9 +101,9 @@ struct SuccessOverlayView: View {
             VStack(alignment: .leading, spacing: 14) {
                 Text("OK")
                     .shellFont(.largeTitle, weight: .bold)
-                    .foregroundColor(TerminalTheme.greenPrimary)
+                    .foregroundColor(TerminalTheme.emeraldPrimary)
 
-                Text("LESSON STATE COMMITTED")
+                Text("学習を記録しました")
                     .shellFont(.caption, weight: .bold)
                     .foregroundColor(TerminalTheme.textPrimary)
 
@@ -113,9 +113,11 @@ struct SuccessOverlayView: View {
             .frame(width: 260, alignment: .leading)
             .background(TerminalTheme.bgSecondary)
             .overlay(
-                Rectangle()
-                    .stroke(TerminalTheme.greenPrimary.opacity(0.55), lineWidth: 1)
+                RoundedRectangle(cornerRadius: TerminalTheme.cardRadius, style: .continuous)
+                    .stroke(TerminalTheme.emeraldPrimary.opacity(0.24), lineWidth: 1)
             )
+            .clipShape(RoundedRectangle(cornerRadius: TerminalTheme.cardRadius, style: .continuous))
+            .shadow(color: TerminalTheme.cardShadow, radius: 18, x: 0, y: 10)
             .scaleEffect(scale)
         }
         .opacity(opacity)

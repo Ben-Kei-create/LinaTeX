@@ -19,17 +19,17 @@ enum CourseLevel: String, CaseIterable, Identifiable {
 
     var gradient: [Color] {
         switch self {
-        case .basics:   return [Color(hex: 0x00FF41), Color(hex: 0x00AA33)]
-        case .standard: return [Color(hex: 0x00DD33), Color(hex: 0x00AA22)]
-        case .advanced: return [Color(hex: 0x00FF99), Color(hex: 0x00CC55)]
+        case .basics:   return [Color(hex: 0x2563EB), Color(hex: 0x10B981)]
+        case .standard: return [Color(hex: 0x0EA5E9), Color(hex: 0x14B8A6)]
+        case .advanced: return [Color(hex: 0x3B82F6), Color(hex: 0x059669)]
         }
     }
 
     var mainColor: Color {
         switch self {
-        case .basics:   return Color(hex: 0x00FF41)
-        case .standard: return Color(hex: 0x00DD33)
-        case .advanced: return Color(hex: 0x00FF99)
+        case .basics:   return Color(hex: 0x2563EB)
+        case .standard: return Color(hex: 0x0EA5E9)
+        case .advanced: return Color(hex: 0x059669)
         }
     }
 }
@@ -179,22 +179,43 @@ struct QuizQuestion: Identifiable {
     let explanation: String
 }
 
-// MARK: - Terminal Theme Colors
-struct TerminalTheme {
-    static let bgPrimary = Color.black
-    static let bgSecondary = Color(red: 0.03, green: 0.03, blue: 0.03)
-    static let bgTertiary = Color(red: 0.08, green: 0.08, blue: 0.08)
-    static let greenPrimary = Color(hex: 0x00FF41)
-    static let greenSecondary = Color(hex: 0x00DD33)
-    static let greenTertiary = Color(hex: 0x00FF99)
-    static let textPrimary = Color.white
-    static let textSecondary = Color(hex: 0xB0B0B0)
-    static let textTertiary = Color(hex: 0x808080)
-    static let borderColor = Color(hex: 0x00FF41, alpha: 0.2)
-    static let accentRed = Color(hex: 0x00AA33)
-    static let accentYellow = Color(hex: 0x00DD33)
-    static let buttonRadius: CGFloat = 12
+// MARK: - Modern Theme Colors
+struct ModernTheme {
+    static let background = Color.white
+    static let bgPrimary = Color.white
+    static let bgSecondary = Color.white
+    static let bgTertiary = Color(hex: 0xF1F5F9)
+
+    static let bluePrimary = Color(hex: 0x2563EB)
+    static let blueSecondary = Color(hex: 0x0EA5E9)
+    static let emeraldPrimary = Color(hex: 0x059669)
+    static let emeraldSecondary = Color(hex: 0x10B981)
+    static let emeraldSoft = Color(hex: 0xD1FAE5)
+    static let blueSoft = Color(hex: 0xDBEAFE)
+
+    static let greenPrimary = emeraldPrimary
+    static let greenSecondary = emeraldSecondary
+    static let greenTertiary = Color(hex: 0x047857)
+
+    static let textPrimary = Color(hex: 0x111827)
+    static let textSecondary = Color(hex: 0x374151)
+    static let textTertiary = Color(hex: 0x6B7280)
+    static let textOnAccent = Color.white
+    static let borderColor = Color(hex: 0xE5E7EB)
+
+    static let terminalBackground = Color(hex: 0x0F172A)
+    static let terminalSurface = Color(hex: 0x111827)
+    static let terminalText = Color(hex: 0xE5E7EB)
+    static let terminalMuted = Color(hex: 0x94A3B8)
+
+    static let accentRed = Color(hex: 0xEF4444)
+    static let accentYellow = Color(hex: 0xF59E0B)
+    static let cardShadow = Color.black.opacity(0.07)
+    static let buttonRadius: CGFloat = 8
+    static let cardRadius: CGFloat = 8
 }
+
+typealias TerminalTheme = ModernTheme
 
 // MARK: - Color helper
 
