@@ -6,30 +6,22 @@ import SwiftUI
 // MARK: - Ultra-Comprehensive Course Array
 
 var finalComprehensiveCurriculum: [Course] {
-    // Enhance each course with additional content from extended files
-    var courses = comprehensiveAllCourses
-
-    // Inject additional practical content if available
-    // The app will automatically include lessons from:
-    // - ComprehensiveCurriculum.swift (50+ lessons)
-    // - ExtendedQuizContent.swift (8+ lessons)
-    // - PracticalLinuxContent.swift (5+ lessons)
-
+    let courses = comprehensiveAllCourses + practicalScenarios + advancedPracticalCourses
     return courses
 }
 
 // MARK: - Learning Path Statistics
 
 struct CurriculumStats {
-    static let totalLessons = 60
+    static let totalLessons = 85
     static let totalQuizzes = 35
-    static let totalScenarios = 12
-    static let totalEstimatedHours = 5.5
-    static let estimatedMinutesPerLesson = 8
+    static let totalScenarios = 28
+    static let totalEstimatedHours = 12.5
+    static let estimatedMinutesPerLesson = 9
 
-    static let basicsCourseMinutes = 100
-    static let standardCourseMinutes = 150
-    static let advancedCourseMinutes = 120
+    static let basicsCourseMinutes = 200
+    static let standardCourseMinutes = 300
+    static let advancedCourseMinutes = 250
 }
 
 // MARK: - Learning Objectives by Course
@@ -103,14 +95,14 @@ let allAchievements: [Achievement] = [
         id: "first_steps",
         name: "初めの一歩",
         description: "最初のレッスンを完了",
-        icon: "🌱",
+        icon: "",
         condition: { $0.completedLessons.count >= 1 }
     ),
     Achievement(
         id: "basics_master",
         name: "基本をマスター",
         description: "基礎コースを完了",
-        icon: "📚",
+        icon: "",
         condition: { vm in
             guard let basicsCourse = vm.courses.first(where: { $0.level == .basics }) else { return false }
             let completed = basicsCourse.chapters.reduce(0) { total, chapter in
@@ -123,35 +115,35 @@ let allAchievements: [Achievement] = [
         id: "ten_lessons",
         name: "十の道",
         description: "10個のレッスンを完了",
-        icon: "🔟",
+        icon: "",
         condition: { $0.completedLessons.count >= 10 }
     ),
     Achievement(
         id: "xp_500",
         name: "経験値ハンター",
         description: "500 XP を獲得",
-        icon: "⭐",
+        icon: "",
         condition: { $0.totalXP >= 500 }
     ),
     Achievement(
         id: "streak_7",
         name: "継続は力",
         description: "7連続でレッスン完了",
-        icon: "🔥",
+        icon: "",
         condition: { $0.streak >= 7 }
     ),
     Achievement(
         id: "perfect_quiz",
         name: "完璧な正解",
         description: "1つのクイズで全問正解",
-        icon: "✅",
+        icon: "",
         condition: { $0.successRate >= 95 }
     ),
     Achievement(
         id: "standard_master",
         name: "標準レベルマスター",
         description: "標準コースを完了",
-        icon: "⚙️",
+        icon: "",
         condition: { vm in
             guard let standardCourse = vm.courses.first(where: { $0.level == .standard }) else { return false }
             let completed = standardCourse.chapters.reduce(0) { total, chapter in
@@ -164,7 +156,7 @@ let allAchievements: [Achievement] = [
         id: "advanced_master",
         name: "上級者への道",
         description: "上級コースを完了",
-        icon: "🚀",
+        icon: "",
         condition: { vm in
             guard let advancedCourse = vm.courses.first(where: { $0.level == .advanced }) else { return false }
             let completed = advancedCourse.chapters.reduce(0) { total, chapter in
@@ -177,7 +169,7 @@ let allAchievements: [Achievement] = [
         id: "linux_expert",
         name: "Linux エキスパート",
         description: "全コースを100%完了",
-        icon: "🏆",
+        icon: "",
         condition: { $0.totalProgress() >= 0.99 }
     ),
 ]
@@ -246,11 +238,7 @@ struct CurriculumInfoView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("📚 カリキュラム情報")
-                .font(.headline)
-                .foregroundColor(.white)
-
-            Divider()
+            ShellSectionTitle(title: "CURRICULUM INFO", subtitle: "Course inventory")
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("コース数: \(vm.courses.count)")
@@ -259,11 +247,14 @@ struct CurriculumInfoView: View {
                 Text("推定時間: 約\(CurriculumStats.totalEstimatedHours)時間")
                 Text("予想完了期間: \(EstimatedSchedule.estimatedCompletionWeeks)週間")
             }
-            .font(.caption)
-            .foregroundColor(.white.opacity(0.8))
+            .shellFont(.caption)
+            .foregroundColor(TerminalTheme.textSecondary)
         }
         .padding(12)
-        .background(Color(red: 0.11, green: 0.11, blue: 0.16))
-        .cornerRadius(8)
+        .background(TerminalTheme.bgSecondary)
+        .overlay(
+            Rectangle()
+                .stroke(TerminalTheme.borderColor, lineWidth: 1)
+        )
     }
 }

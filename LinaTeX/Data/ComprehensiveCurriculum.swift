@@ -461,7 +461,75 @@ let enhancedAdvancedCourse = Course(
     ]
 )
 
-// MARK: - Final comprehensive curriculum combining all courses
+// MARK: - Five hour curriculum
+
+private func baseCourse(_ level: CourseLevel) -> Course {
+    allCourses.first { $0.level == level }!
+}
+
+private func renumbered(_ chapters: [Chapter], startingAt start: Int) -> [Chapter] {
+    chapters.enumerated().map { index, chapter in
+        Chapter(
+            number: start + index,
+            title: chapter.title,
+            summary: chapter.summary,
+            lessons: chapter.lessons
+        )
+    }
+}
+
 var comprehensiveAllCourses: [Course] {
-    [enhancedBasicsCourse, enhancedStandardCourse, enhancedAdvancedCourse]
+    let basics = baseCourse(.basics)
+    let standard = baseCourse(.standard)
+    let advanced = baseCourse(.advanced)
+
+    return [
+        Course(
+            level: .basics,
+            title: "Linux基礎",
+            subtitle: "場所、ファイル、移動を体で覚える",
+            description: "pwd, ls, cd, mkdir, touch, cat, cp, mv, rm を、対象選択とセットで反復します。",
+            emoji: "",
+            estimatedMinutes: 75,
+            chapters: renumbered(basics.chapters + enhancedBasicsCourse.chapters, startingAt: 1)
+        ),
+        Course(
+            level: .standard,
+            title: "実務ファイル操作",
+            subtitle: "ログ、検索、権限、チーム作業",
+            description: "grep, sed, wc, chmod, chown を、個別の現場シチュエーションで使います。",
+            emoji: "",
+            estimatedMinutes: 105,
+            chapters: renumbered(
+                standard.chapters + enhancedStandardCourse.chapters + [
+                    Chapter(
+                        number: 0,
+                        title: "現場シチュエーション",
+                        summary: "同じコマンドを別の状況で使い直す",
+                        lessons: Array(practicalRealWorldLessons.prefix(2))
+                    )
+                ],
+                startingAt: 1
+            )
+        ),
+        Course(
+            level: .advanced,
+            title: "中堅実務",
+            subtitle: "自動化、監視、デプロイ、通信",
+            description: "bash, ssh, curl, jq, ps, top, kill, apt を、運用の流れとして身につけます。",
+            emoji: "",
+            estimatedMinutes: 120,
+            chapters: renumbered(
+                advanced.chapters + enhancedAdvancedCourse.chapters + [
+                    Chapter(
+                        number: 0,
+                        title: "運用トラブル対応",
+                        summary: "プロセス、パッケージ、総合知識を実務問題で確認",
+                        lessons: Array(practicalRealWorldLessons.dropFirst(2)) + [systemAdminQuiz]
+                    )
+                ],
+                startingAt: 1
+            )
+        ),
+    ]
 }

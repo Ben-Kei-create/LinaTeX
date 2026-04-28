@@ -19,22 +19,22 @@ enum CourseLevel: String, CaseIterable, Identifiable {
 
     var gradient: [Color] {
         switch self {
-        case .basics:   return [Color(hex: 0x22D3EE), Color(hex: 0x3B82F6)]
-        case .standard: return [Color(hex: 0xA855F7), Color(hex: 0xEC4899)]
-        case .advanced: return [Color(hex: 0xF97316), Color(hex: 0xEF4444)]
+        case .basics:   return [Color(hex: 0x00FF41), Color(hex: 0x00AA33)]
+        case .standard: return [Color(hex: 0x00DD33), Color(hex: 0x00AA22)]
+        case .advanced: return [Color(hex: 0x00FF99), Color(hex: 0x00CC55)]
         }
     }
 
     var mainColor: Color {
         switch self {
-        case .basics:   return Color(hex: 0x22D3EE)
-        case .standard: return Color(hex: 0xA855F7)
-        case .advanced: return Color(hex: 0xF97316)
+        case .basics:   return Color(hex: 0x00FF41)
+        case .standard: return Color(hex: 0x00DD33)
+        case .advanced: return Color(hex: 0x00FF99)
         }
     }
 }
 
-struct Course: Identifiable {
+struct Course: Identifiable, Hashable, Equatable {
     let id = UUID()
     let level: CourseLevel
     let title: String
@@ -45,22 +45,31 @@ struct Course: Identifiable {
     let chapters: [Chapter]
 
     var totalLessons: Int { chapters.reduce(0) { $0 + $1.lessons.count } }
+
+    static func == (lhs: Course, rhs: Course) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
-struct Chapter: Identifiable {
+struct Chapter: Identifiable, Hashable, Equatable {
     let id = UUID()
     let number: Int
     let title: String
     let summary: String
     let lessons: [Lesson]
+
+    static func == (lhs: Chapter, rhs: Chapter) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
-struct Lesson: Identifiable {
+struct Lesson: Identifiable, Hashable, Equatable {
     let id = UUID()
     let title: String
     let emoji: String
     let estimatedMinutes: Int
     let content: LessonContent
+
+    static func == (lhs: Lesson, rhs: Lesson) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
 // MARK: - Lesson Content Variants
@@ -88,6 +97,28 @@ enum LessonContent {
         case .quiz:     return "questionmark.circle.fill"
         }
     }
+}
+
+// MARK: - Learning Content
+
+struct LearningMaterial {
+    let title: String
+    let description: String
+    let content: String
+    let sections: [LearningSection]
+}
+
+struct LearningSection {
+    let heading: String
+    let body: String
+    let example: String?
+    let tip: String?
+}
+
+struct DiagramContent {
+    let title: String
+    let ascii: String
+    let explanation: String
 }
 
 struct ConceptLesson {
@@ -146,6 +177,23 @@ struct QuizQuestion: Identifiable {
     let choices: [String]
     let correctIndex: Int
     let explanation: String
+}
+
+// MARK: - Terminal Theme Colors
+struct TerminalTheme {
+    static let bgPrimary = Color.black
+    static let bgSecondary = Color(red: 0.03, green: 0.03, blue: 0.03)
+    static let bgTertiary = Color(red: 0.08, green: 0.08, blue: 0.08)
+    static let greenPrimary = Color(hex: 0x00FF41)
+    static let greenSecondary = Color(hex: 0x00DD33)
+    static let greenTertiary = Color(hex: 0x00FF99)
+    static let textPrimary = Color.white
+    static let textSecondary = Color(hex: 0xB0B0B0)
+    static let textTertiary = Color(hex: 0x808080)
+    static let borderColor = Color(hex: 0x00FF41, alpha: 0.2)
+    static let accentRed = Color(hex: 0x00AA33)
+    static let accentYellow = Color(hex: 0x00DD33)
+    static let buttonRadius: CGFloat = 12
 }
 
 // MARK: - Color helper

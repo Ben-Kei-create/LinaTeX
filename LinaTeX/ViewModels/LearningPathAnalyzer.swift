@@ -118,19 +118,18 @@ class LearningPathAnalyzer {
     // MARK: - Weak Topics Identification
 
     private static func identifyWeakTopics(_ successRates: [String: Double]) -> [String] {
-        return successRates
-            .filter { $0.value < 0.65 }
+        let filtered = successRates.filter { $0.value < 0.65 }
+        return Array(filtered
             .sorted { $0.value < $1.value }
             .map { $0.key }
-            .prefix(5)
-            .map(String.init)
+            .prefix(5))
     }
 
     // MARK: - Strong Topics Identification
 
     private static func identifyStrongTopics(_ successRates: [String: Double]) -> [String] {
-        return successRates
-            .filter { $0.value >= 0.80 }
+        let filtered = successRates.filter { $0.value >= 0.80 }
+        return filtered
             .sorted { $0.value > $1.value }
             .map { $0.key }
     }
@@ -280,7 +279,7 @@ class RecommendationEngine {
             let lessons = AdaptivePathGenerator.generateNextLessons(vm, count: 1)
 
             return PersonalizedRecommendation(
-                title: "⚠️ \(weakTopic)を復習しよう",
+                title: "REVIEW \(weakTopic)",
                 reason: "成功率が低い分野です。今が習得のチャンス！",
                 lessons: lessons,
                 priority: 1
@@ -291,7 +290,7 @@ class RecommendationEngine {
         if profile.pace == .slow {
             let lessons = AdaptivePathGenerator.generateNextLessons(vm, count: 2)
             return PersonalizedRecommendation(
-                title: "🚀 ペースアップチャレンジ",
+                title: "PACE UP CHALLENGE",
                 reason: "短いレッスンから始めて、ペースを上げませんか？",
                 lessons: lessons,
                 priority: 2
@@ -301,7 +300,7 @@ class RecommendationEngine {
         // 通常の推奨
         let lessons = AdaptivePathGenerator.generateNextLessons(vm, count: 3)
         return PersonalizedRecommendation(
-            title: "📚 次のレッスン",
+            title: "NEXT LESSONS",
             reason: "あなたの学習スタイルに合わせて選びました",
             lessons: lessons,
             priority: 3

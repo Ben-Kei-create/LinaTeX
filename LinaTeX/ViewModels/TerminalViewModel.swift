@@ -3,9 +3,10 @@ import Combine
 
 // MARK: - Navigation States
 
-enum AppScreen {
+enum AppScreen: Hashable {
     case home
     case courseDetail(Course)
+    case chapter(Chapter, Course)
     case lesson(Lesson, Course)
 }
 
@@ -36,7 +37,7 @@ class AppViewModel: ObservableObject {
     @Published var showHint: Bool = false
     @Published var isTyping: Bool = false
 
-    var courses: [Course] { comprehensiveAllCourses }
+    let courses: [Course] = comprehensiveAllCourses
 
     var successRate: Double {
         totalLessonAttempts > 0 ? Double(correctAnswers) / Double(totalLessonAttempts) * 100 : 0
@@ -54,6 +55,10 @@ class AppViewModel: ObservableObject {
 
     func navigateToLesson(_ lesson: Lesson, in course: Course) {
         navigationPath.append(.lesson(lesson, course))
+    }
+
+    func navigateToChapter(_ chapter: Chapter, in course: Course) {
+        navigationPath.append(.chapter(chapter, course))
     }
 
     func goBack() {
@@ -109,6 +114,11 @@ class AppViewModel: ObservableObject {
     }
 
     func completeLesson(_ lesson: Lesson) {
+        guard !completedLessons.contains(lesson.id) else {
+            currentLessonState = .completed
+            return
+        }
+
         completedLessons.insert(lesson.id)
         addXP(100)
         streak += 1
@@ -131,6 +141,13 @@ class AppViewModel: ObservableObject {
             currentLessonState = .waiting
             userInput = ""
             terminalOutput = ""
+        }
+    }
+
+    func failSelection(_ message: String) {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            currentLessonState = .wrong
+            terminalOutput = message
         }
     }
 
@@ -198,15 +215,15 @@ class AppViewModel: ObservableObject {
 
         switch profile.learningStyle {
         case .conceptPreferred:
-            return "📚 理論的学習型 - コンセプトから理解するのが得意"
+            return "理論的学習型 - コンセプトから理解するのが得意"
         case .questPreferred:
-            return "⚡ シンプルタスク型 - 単純なコマンド実行で理解"
+            return "シンプルタスク型 - 単純なコマンド実行で理解"
         case .scenarioPreferred:
-            return "🎯 実践シナリオ型 - 複雑なタスク解決が得意"
+            return "実践シナリオ型 - 複雑なタスク解決が得意"
         case .quizPreferred:
-            return "✅ 知識確認型 - クイズで知識を定着させるタイプ"
+            return "知識確認型 - クイズで知識を定着させるタイプ"
         case .balanced:
-            return "⚖️ バランス型 - すべての学習形式をバランスよく活用"
+            return "バランス型 - すべての学習形式をバランスよく活用"
         }
     }
 
