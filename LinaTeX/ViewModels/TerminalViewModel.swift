@@ -5,6 +5,7 @@ import Combine
 
 enum AppScreen: Hashable {
     case home
+    case commandDictionary
     case courseDetail(Course)
     case chapter(Chapter, Course)
     case lesson(Lesson, Course)
@@ -36,6 +37,8 @@ class AppViewModel: ObservableObject {
     @Published var terminalOutput: String = ""
     @Published var showHint: Bool = false
     @Published var isTyping: Bool = false
+    private var typingSessionID = UUID()
+    private var isNavigationLocked = false
 
     let courses: [Course] = comprehensiveAllCourses
 
@@ -50,33 +53,54 @@ class AppViewModel: ObservableObject {
     // MARK: - Navigation
 
     func navigateToCourse(_ course: Course) {
+        guard lockNavigation() else { return }
         navigationPath.append(.courseDetail(course))
     }
 
+    func navigateToCommandDictionary() {
+        guard lockNavigation() else { return }
+        navigationPath.append(.commandDictionary)
+    }
+
     func navigateToLesson(_ lesson: Lesson, in course: Course) {
+        guard lockNavigation() else { return }
         navigationPath.append(.lesson(lesson, course))
     }
 
     func navigateToChapter(_ chapter: Chapter, in course: Course) {
+        guard lockNavigation() else { return }
         navigationPath.append(.chapter(chapter, course))
     }
 
     func goBack() {
+        guard lockNavigation() else { return }
         if !navigationPath.isEmpty {
             navigationPath.removeLast()
         }
     }
 
+    private func lockNavigation(duration: Double = 0.35) -> Bool {
+        guard !isNavigationLocked else { return false }
+        isNavigationLocked = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            self.isNavigationLocked = false
+        }
+        return true
+    }
+
     // MARK: - Lesson Logic
 
     func selectCommand(_ option: CommandOption) {
-        guard currentLessonState == .waiting else { return }
+        guard currentLessonState == .waiting, !isTyping else { return }
+        let sessionID = UUID()
+        typingSessionID = sessionID
         isTyping = true
         userInput = ""
 
         let command = option.command
         for (i, char) in command.enumerated() {
             DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.06) {
+                guard self.typingSessionID == sessionID else { return }
                 self.userInput.append(char)
                 if i == command.count - 1 {
                     self.isTyping = false
@@ -86,7 +110,7 @@ class AppViewModel: ObservableObject {
     }
 
     func executeQuest(_ quest: QuestLesson) {
-        guard !userInput.isEmpty, currentLessonState == .waiting else { return }
+        guard !userInput.isEmpty, !isTyping, currentLessonState == .waiting else { return }
 
         let trimmed = userInput.trimmingCharacters(in: .whitespaces)
         if trimmed == quest.answer {
@@ -100,7 +124,7 @@ class AppViewModel: ObservableObject {
     }
 
     func executeScenarioStep(_ step: ScenarioStep) {
-        guard !userInput.isEmpty, currentLessonState == .waiting else { return }
+        guard !userInput.isEmpty, !isTyping, currentLessonState == .waiting else { return }
 
         let trimmed = userInput.trimmingCharacters(in: .whitespaces)
         if trimmed == step.answer {
@@ -129,6 +153,7 @@ class AppViewModel: ObservableObject {
     }
 
     func nextStep() {
+        typingSessionID = UUID()
         withAnimation(.easeInOut(duration: 0.3)) {
             currentLessonState = .waiting
             userInput = ""
@@ -137,6 +162,7 @@ class AppViewModel: ObservableObject {
     }
 
     func retry() {
+        typingSessionID = UUID()
         withAnimation(.easeInOut(duration: 0.3)) {
             currentLessonState = .waiting
             userInput = ""
@@ -152,6 +178,7 @@ class AppViewModel: ObservableObject {
     }
 
     func resetLesson() {
+        typingSessionID = UUID()
         currentLessonState = .waiting
         userInput = ""
         terminalOutput = ""

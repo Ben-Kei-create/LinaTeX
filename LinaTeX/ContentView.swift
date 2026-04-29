@@ -8,6 +8,8 @@ struct ContentView: View {
             HomeView(vm: vm)
                 .navigationDestination(for: AppScreen.self) { screen in
                     switch screen {
+                    case .commandDictionary:
+                        CommandDictionaryView(vm: vm)
                     case .courseDetail(let course):
                         CourseDetailView(course: course, vm: vm)
                     case .chapter(let chapter, let course):
@@ -334,6 +336,71 @@ struct ShellSectionTitle: View {
     }
 }
 
+enum AdPlacement {
+    case home
+    case courseDetail
+    case themeComplete
+
+    var caption: String {
+        switch self {
+        case .home:
+            return "Linux学習に役立つ情報"
+        case .courseDetail:
+            return "コースに関連するおすすめ"
+        case .themeComplete:
+            return "テーマ完了後のおすすめ"
+        }
+    }
+}
+
+struct AdSlotView: View {
+    let placement: AdPlacement
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            Image(systemName: "megaphone.fill")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundColor(ModernTheme.bluePrimary)
+                .frame(width: 34, height: 34)
+                .background(
+                    RoundedRectangle(cornerRadius: ModernTheme.buttonRadius, style: .continuous)
+                        .fill(ModernTheme.blueSoft.opacity(0.72))
+                )
+
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text("広告")
+                        .shellFont(.caption2, weight: .bold)
+                        .foregroundColor(ModernTheme.textTertiary)
+
+                    Text(placement.caption)
+                        .shellFont(.caption2)
+                        .foregroundColor(ModernTheme.textTertiary)
+                        .lineLimit(1)
+                }
+
+                Text("スポンサーコンテンツ")
+                    .shellFont(.caption)
+                    .foregroundColor(ModernTheme.textSecondary)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.82)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, minHeight: 70, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: ModernTheme.cardRadius, style: .continuous)
+                .fill(ModernTheme.bgSecondary.opacity(0.82))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: ModernTheme.cardRadius, style: .continuous)
+                .stroke(ModernTheme.borderColor, lineWidth: 1)
+        )
+    }
+}
+
 extension View {
     func shellFont(_ style: Font.TextStyle, weight: Font.Weight = .regular) -> some View {
         font(.system(style, design: .rounded).weight(weight))
@@ -354,8 +421,8 @@ struct HomeView: View {
             VStack(spacing: 0) {
                 ShellHeader(
                     title: "LinaTeX",
-                    subtitle: "Linuxを6時間で実践",
-                    trailing: "TOTAL \(totalPercent)"
+                    subtitle: "Linuxを実務で実践",
+                    trailing: nil
                 )
 
                 ScrollView {
@@ -376,6 +443,48 @@ struct HomeView: View {
                             }
                         }
 
+                        Button {
+                            vm.navigateToCommandDictionary()
+                        } label: {
+                            ShellPanel(borderOpacity: 0.28, cornerRadius: TerminalTheme.buttonRadius) {
+                                HStack(alignment: .center, spacing: 12) {
+                                    Image(systemName: "book.closed.fill")
+                                        .font(.system(size: 22, weight: .semibold))
+                                        .foregroundColor(TerminalTheme.bluePrimary)
+                                        .frame(width: 34)
+
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Linuxコマンド辞典")
+                                            .shellFont(.headline, weight: .bold)
+                                            .foregroundColor(TerminalTheme.textPrimary)
+                                        Text("基本、ファイル操作、検索、権限、通信をすぐ確認")
+                                            .shellFont(.caption)
+                                            .foregroundColor(TerminalTheme.textSecondary)
+                                            .lineLimit(2)
+                                    }
+
+                                    Spacer(minLength: 8)
+
+                                    Text("開く")
+                                        .shellFont(.caption, weight: .bold)
+                                        .foregroundColor(TerminalTheme.textOnAccent)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
+                                                .fill(
+                                                    LinearGradient(
+                                                        colors: [TerminalTheme.bluePrimary, TerminalTheme.emeraldPrimary],
+                                                        startPoint: .topLeading,
+                                                        endPoint: .bottomTrailing
+                                                    )
+                                                )
+                                        )
+                                }
+                            }
+                        }
+                        .buttonStyle(ShellCardButtonStyle())
+
                         ShellSectionTitle(title: "コースを選ぶ")
 
                         VStack(spacing: 10) {
@@ -383,6 +492,8 @@ struct HomeView: View {
                                 CourseCard(index: index + 1, course: course, vm: vm)
                             }
                         }
+
+                        AdSlotView(placement: .home)
                     }
                     .padding(16)
                     .padding(.bottom, 24)
@@ -474,18 +585,23 @@ struct CourseDetailView: View {
                 ShellHeader(
                     title: course.title,
                     subtitle: course.level.japanese,
-                    trailing: "< BACK"
-                ) {
-                    vm.goBack()
-                }
+                    trailing: "< BACK",
+                    action: {
+                        vm.goBack()
+                    }
+                )
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
+                        CourseProgressPanel(course: course, vm: vm)
+
                         ShellSectionTitle(title: "チャプター")
 
                         ForEach(course.chapters) { chapter in
                             ChapterSection(chapter: chapter, course: course, vm: vm)
                         }
+
+                        AdSlotView(placement: .courseDetail)
                     }
                     .padding(16)
                     .padding(.bottom, 24)
@@ -496,12 +612,67 @@ struct CourseDetailView: View {
     }
 }
 
+struct CourseProgressPanel: View {
+    let course: Course
+    @ObservedObject var vm: AppViewModel
+
+    private var completedCount: Int {
+        course.chapters.reduce(0) { total, chapter in
+            total + chapter.lessons.filter { vm.isLessonCompleted($0) }.count
+        }
+    }
+
+    private var totalCount: Int {
+        course.totalLessons
+    }
+
+    private var progress: Double {
+        vm.progressInCourse(course)
+    }
+
+    private var percentText: String {
+        String(format: "%.0f%%", progress * 100)
+    }
+
+    var body: some View {
+        ShellPanel(borderOpacity: 0.26, cornerRadius: TerminalTheme.buttonRadius) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text("COURSE PROGRESS")
+                        .shellFont(.caption, weight: .bold)
+                        .foregroundColor(TerminalTheme.textSecondary)
+
+                    Spacer()
+
+                    Text(percentText)
+                        .shellFont(.title2, weight: .bold)
+                        .foregroundColor(TerminalTheme.greenPrimary)
+                }
+
+                ShellProgressBar(value: progress, height: 9)
+
+                Text("\(completedCount) / \(totalCount) テーマ完了")
+                    .shellFont(.caption)
+                    .foregroundColor(TerminalTheme.textSecondary)
+            }
+        }
+    }
+}
+
 // MARK: - Chapter Section
 
 struct ChapterSection: View {
     let chapter: Chapter
     let course: Course
     @ObservedObject var vm: AppViewModel
+
+    private var completedCount: Int {
+        chapter.lessons.filter { vm.isLessonCompleted($0) }.count
+    }
+
+    private var progress: Double {
+        chapter.lessons.isEmpty ? 0 : Double(completedCount) / Double(chapter.lessons.count)
+    }
 
     var body: some View {
         Button {
@@ -551,6 +722,24 @@ struct ChapterSection: View {
                         .foregroundColor(TerminalTheme.textSecondary)
                         .lineSpacing(3)
                         .lineLimit(3)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text("\(completedCount) / \(chapter.lessons.count) 完了")
+                                .shellFont(.caption2, weight: .semibold)
+                                .foregroundColor(TerminalTheme.textTertiary)
+
+                            Spacer()
+
+                            if completedCount == chapter.lessons.count && !chapter.lessons.isEmpty {
+                                Text("CLEAR")
+                                    .shellFont(.caption2, weight: .bold)
+                                    .foregroundColor(TerminalTheme.greenPrimary)
+                            }
+                        }
+
+                        ShellProgressBar(value: progress, height: 6)
+                    }
                 }
             }
         }
@@ -653,13 +842,16 @@ struct ThemeFlowView: View {
     @State private var studyPageIndex = 0
     @State private var practiceIndex = 0
     @State private var didInitialize = false
+    @State private var isFlowTransitionLocked = false
+    @State private var sessionStudyPages: [StudyPage] = []
+    @State private var sessionPracticeItems: [PracticeItem] = []
 
     private var studyPages: [StudyPage] {
-        makeStudyPages(from: lessons)
+        sessionStudyPages
     }
 
     private var practiceItems: [PracticeItem] {
-        makePracticeItems(from: lessons)
+        sessionPracticeItems
     }
 
     private var currentPractice: PracticeItem? {
@@ -685,15 +877,13 @@ struct ThemeFlowView: View {
                 ShellHeader(
                     title: title,
                     subtitle: subtitle,
-                    trailing: "< BACK"
-                ) {
-                    vm.goBack()
-                }
+                    trailing: "< BACK",
+                    action: {
+                        vm.goBack()
+                    }
+                )
 
                 ThemeStageHeader(
-                    phase: phase,
-                    current: phase == .study ? studyPageIndex + 1 : practiceIndex + 1,
-                    total: phase == .study ? studyPages.count : max(practiceItems.count, 1),
                     progress: progressValue
                 )
 
@@ -720,6 +910,7 @@ struct ThemeFlowView: View {
                             ) {
                                 completePractice(currentPractice)
                             }
+                            .id(currentPractice.lesson.id)
                             .padding(12)
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                         } else {
@@ -739,6 +930,8 @@ struct ThemeFlowView: View {
         .onAppear {
             guard !didInitialize else { return }
             didInitialize = true
+            sessionStudyPages = makeStudyPages(from: lessons)
+            sessionPracticeItems = makePracticeItems(from: lessons)
             vm.resetLesson()
             if studyPages.isEmpty {
                 beginPractice()
@@ -747,13 +940,16 @@ struct ThemeFlowView: View {
     }
 
     private func previousStudyPage() {
-        guard studyPageIndex > 0 else { return }
+        guard studyPageIndex > 0, !isFlowTransitionLocked else { return }
+        lockFlowTransition()
         withAnimation(.spring(response: 0.28, dampingFraction: 0.84)) {
             studyPageIndex -= 1
         }
     }
 
     private func nextStudyPage() {
+        guard !isFlowTransitionLocked else { return }
+        lockFlowTransition()
         if studyPageIndex < studyPages.count - 1 {
             withAnimation(.spring(response: 0.28, dampingFraction: 0.84)) {
                 studyPageIndex += 1
@@ -764,7 +960,7 @@ struct ThemeFlowView: View {
     }
 
     private func beginPractice() {
-        markConceptLessonsComplete()
+        markConceptLessonsWithoutPracticeComplete()
         withAnimation(.spring(response: 0.34, dampingFraction: 0.82)) {
             if practiceItems.isEmpty {
                 phase = .complete
@@ -777,8 +973,11 @@ struct ThemeFlowView: View {
     }
 
     private func completePractice(_ item: PracticeItem) {
-        if item.countsForProgress {
-            vm.completeLesson(item.lesson)
+        guard !isFlowTransitionLocked else { return }
+        lockFlowTransition(duration: 0.42)
+
+        if let completionLesson = item.completionLesson {
+            vm.completeLesson(completionLesson)
         }
 
         withAnimation(.spring(response: 0.34, dampingFraction: 0.82)) {
@@ -791,65 +990,36 @@ struct ThemeFlowView: View {
         }
     }
 
-    private func markConceptLessonsComplete() {
-        for lesson in lessons where lesson.content.isConceptOnly {
+    private func markConceptLessonsWithoutPracticeComplete() {
+        let practiceCompletionIDs = Set(practiceItems.compactMap { $0.completionLesson?.id })
+        for lesson in lessons where lesson.content.isConceptOnly && !practiceCompletionIDs.contains(lesson.id) {
             vm.completeLesson(lesson)
         }
         vm.resetLesson()
     }
+
+    private func lockFlowTransition(duration: Double = 0.28) {
+        isFlowTransitionLocked = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            isFlowTransitionLocked = false
+        }
+    }
 }
 
 struct ThemeStageHeader: View {
-    let phase: ThemePhase
-    let current: Int
-    let total: Int
     let progress: Double
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                FlowStepPill(icon: "graduationcap.fill", title: "学習", isActive: phase == .study, isDone: phaseIndex > 0)
-                FlowStepPill(icon: "target", title: "問題", isActive: phase == .practice, isDone: phaseIndex > 1)
-                FlowStepPill(icon: "checkmark.seal.fill", title: "確認", isActive: phase == .complete, isDone: phase == .complete)
-            }
-
-            HStack {
-                Text(label)
-                    .shellFont(.caption, weight: .bold)
-                    .foregroundColor(TerminalTheme.bluePrimary)
-
-                Spacer()
-
-                Text(String(format: "%02d/%02d", current, max(total, 1)))
-                    .shellFont(.caption2, weight: .bold)
-                    .foregroundColor(TerminalTheme.textTertiary)
-            }
-
+        VStack(spacing: 0) {
             ShellProgressBar(value: progress, height: 8)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.vertical, 10)
         .background(TerminalTheme.bgPrimary.opacity(0.94))
         .overlay(alignment: .bottom) {
             Rectangle()
                 .fill(TerminalTheme.borderColor)
                 .frame(height: 1)
-        }
-    }
-
-    private var label: String {
-        switch phase {
-        case .study: return "学習"
-        case .practice: return "問題"
-        case .complete: return "確認"
-        }
-    }
-
-    private var phaseIndex: Int {
-        switch phase {
-        case .study: return 0
-        case .practice: return 1
-        case .complete: return 2
         }
     }
 }
@@ -917,7 +1087,7 @@ struct StudyPage: Identifiable {
 struct PracticeItem: Identifiable {
     let id = UUID()
     let lesson: Lesson
-    let countsForProgress: Bool
+    let completionLesson: Lesson?
 }
 
 struct StudyPageView: View {
@@ -973,20 +1143,6 @@ struct StudyPageView: View {
                             }
                         }
                     }
-
-                    if !page.nearby.isEmpty {
-                        ShellPanel(borderOpacity: 0.16) {
-                            VStack(alignment: .leading, spacing: 8) {
-                                ShellSectionTitle(title: "AROUND")
-                                ForEach(page.nearby, id: \.self) { item in
-                                    Text(item)
-                                        .shellFont(.caption2)
-                                        .foregroundColor(TerminalTheme.textSecondary)
-                                        .lineSpacing(2)
-                                }
-                            }
-                        }
-                    }
                 }
                 .padding(16)
                 .padding(.bottom, 12)
@@ -1018,7 +1174,29 @@ struct PracticeHostView: View {
         isLastPractice ? "CLEAR" : "NEXT"
     }
 
+    private var usesPinnedHeader: Bool {
+        if case .scenario = lesson.content {
+            return true
+        }
+        return false
+    }
+
     var body: some View {
+        if usesPinnedHeader {
+            content
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .padding(.bottom, 12)
+        } else {
+            ScrollView {
+                content
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    .padding(.bottom, 12)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
         switch lesson.content {
         case .concept(let concept):
             ConceptLessonView(concept: concept)
@@ -1078,7 +1256,9 @@ struct ThemeCompleteView: View {
                 }
             }
 
-            Button("DONE", action: doneAction)
+            AdSlotView(placement: .themeComplete)
+
+            Button("一覧へ戻る", action: doneAction)
                 .buttonStyle(ShellButtonStyle(kind: .filled))
 
             Spacer(minLength: 0)
@@ -1113,7 +1293,7 @@ private func makePracticeItems(from lessons: [Lesson]) -> [PracticeItem] {
         case .concept(let concept):
             return generatedConceptPracticeItems(from: lesson, concept: concept)
         case .quest, .scenario, .quiz:
-            return [PracticeItem(lesson: lesson, countsForProgress: true)]
+            return [PracticeItem(lesson: lesson, completionLesson: lesson)]
         }
     }
 }
@@ -1137,7 +1317,7 @@ private func generatedConceptPracticeItems(from lesson: Lesson, concept: Concept
         content: .quiz(QuizLesson(questions: questions))
     )
 
-    return [PracticeItem(lesson: generatedLesson, countsForProgress: false)]
+    return [PracticeItem(lesson: generatedLesson, completionLesson: lesson)]
 }
 
 private func conceptChoices(for section: ConceptSection) -> [String] {
@@ -1528,9 +1708,10 @@ struct QuestLessonView: View {
     var onComplete: (() -> Void)? = nil
     @State private var selectedTarget: String?
     @State private var showCompletion = false
+    @State private var isCompleting = false
 
     private var requiredTarget: String? {
-        expectedTargetToken(from: targetSourceText, answer: quest.answer)
+        expectedTargetToken(from: targetSourceText, answer: quest.answer, allowContextFallback: false)
     }
 
     private var targetSourceText: String {
@@ -1538,7 +1719,12 @@ struct QuestLessonView: View {
     }
 
     private var targetChoices: [String] {
-        targetOptions(from: targetSourceText, expected: requiredTarget)
+        guard let requiredTarget else { return [] }
+        return targetOptions(from: targetSourceText, expected: requiredTarget)
+    }
+
+    private var terminalInput: String {
+        terminalCommandLine(command: vm.userInput, target: selectedTarget)
     }
 
     var body: some View {
@@ -1547,16 +1733,11 @@ struct QuestLessonView: View {
                 title: "問題",
                 subtitle: nil,
                 text: quest.prompt,
-                detail: quest.scenario,
-                hint: vm.showHint ? quest.hint : nil
-            ) {
-                withAnimation(.easeOut(duration: 0.16)) {
-                    vm.showHint.toggle()
-                }
-            }
+                detail: quest.scenario
+            )
 
             TerminalPanel(
-                input: vm.userInput,
+                input: terminalInput,
                 output: vm.terminalOutput,
                 state: vm.currentLessonState,
                 successMessage: quest.successMessage,
@@ -1570,7 +1751,8 @@ struct QuestLessonView: View {
                 selectedTarget: $selectedTarget,
                 options: quest.options,
                 selectedCommand: vm.userInput,
-                isDisabled: vm.currentLessonState != .waiting
+                areTargetsDisabled: vm.currentLessonState != .waiting || isCompleting,
+                areCommandsDisabled: vm.currentLessonState != .waiting || vm.isTyping || isCompleting
             ) { option in
                 let impact = UIImpactFeedbackGenerator(style: .medium)
                 impact.impactOccurred()
@@ -1578,7 +1760,7 @@ struct QuestLessonView: View {
             }
 
             ActionBar(
-                canRun: (targetChoices.isEmpty || selectedTarget != nil) && !vm.userInput.isEmpty && !vm.isTyping && vm.currentLessonState == .waiting,
+                canRun: (targetChoices.isEmpty || selectedTarget != nil) && !vm.userInput.isEmpty && !vm.isTyping && vm.currentLessonState == .waiting && !isCompleting,
                 state: vm.currentLessonState,
                 completeLabel: finalCompleteLabel,
                 runAction: {
@@ -1597,6 +1779,8 @@ struct QuestLessonView: View {
                     vm.retry()
                 },
                 completeAction: {
+                    guard !isCompleting else { return }
+                    isCompleting = true
                     let impact = UINotificationFeedbackGenerator()
                     impact.notificationOccurred(.success)
                     showCompletion = true
@@ -1612,7 +1796,6 @@ struct QuestLessonView: View {
             )
         }
         .frame(maxHeight: .infinity, alignment: .top)
-        .animation(.spring(response: 0.4, dampingFraction: 0.76), value: vm.currentLessonState)
         .overlay(
             showCompletion ? SuccessOverlayView {
                 showCompletion = false
@@ -1626,19 +1809,11 @@ struct ProblemBriefPanel: View {
     let subtitle: String?
     let text: String
     let detail: String
-    let hint: String?
-    let toggleHint: () -> Void
 
     var body: some View {
         ShellPanel(borderOpacity: 0.18) {
             VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    ShellSectionTitle(title: title, subtitle: subtitle)
-
-                    Button(hint == nil ? "HINT" : "HIDE", action: toggleHint)
-                        .buttonStyle(ShellButtonStyle(kind: .dim, isSelected: hint != nil))
-                        .frame(width: 84)
-                }
+                ShellSectionTitle(title: title, subtitle: subtitle)
 
                 Text(text)
                     .shellFont(.subheadline, weight: .semibold)
@@ -1649,15 +1824,7 @@ struct ProblemBriefPanel: View {
                 Text(detail)
                     .shellFont(.caption2)
                     .foregroundColor(TerminalTheme.textSecondary)
-                    .lineLimit(hint == nil ? 2 : 1)
-
-                if let hint {
-                    Text("HINT: \(hint)")
-                        .shellFont(.caption2, weight: .bold)
-                        .foregroundColor(TerminalTheme.greenPrimary)
-                        .lineLimit(2)
-                        .transition(.opacity)
-                }
+                    .lineLimit(2)
             }
         }
     }
@@ -1695,21 +1862,32 @@ struct WordBankPanel: View {
     @Binding var selectedTarget: String?
     let options: [CommandOption]
     let selectedCommand: String
-    let isDisabled: Bool
+    let areTargetsDisabled: Bool
+    let areCommandsDisabled: Bool
     let onSelect: (CommandOption) -> Void
+    @State private var shuffledTargets: [String] = []
+    @State private var shuffledOptions: [CommandOption] = []
+
+    private var displayedTargets: [String] {
+        shuffledTargets.isEmpty ? targets : shuffledTargets
+    }
+
+    private var displayedOptions: [CommandOption] {
+        shuffledOptions.isEmpty ? options : shuffledOptions
+    }
 
     var body: some View {
         ShellPanel(borderOpacity: 0.26) {
             VStack(alignment: .leading, spacing: 10) {
                 ShellSectionTitle(title: "語群")
 
-                if !targets.isEmpty {
+                if !displayedTargets.isEmpty {
                     Text("対象")
                         .shellFont(.caption2, weight: .bold)
                         .foregroundColor(TerminalTheme.textTertiary)
 
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                        ForEach(targets, id: \.self) { target in
+                        ForEach(displayedTargets, id: \.self) { target in
                             Button {
                                 withAnimation(.easeOut(duration: 0.12)) {
                                     selectedTarget = target
@@ -1718,8 +1896,8 @@ struct WordBankPanel: View {
                                 Text(target)
                             }
                             .buttonStyle(ShellButtonStyle(kind: .outline, isSelected: selectedTarget == target))
-                            .disabled(isDisabled)
-                            .opacity(isDisabled ? 0.48 : 1)
+                            .disabled(areTargetsDisabled)
+                            .opacity(areTargetsDisabled ? 0.48 : 1)
                         }
                     }
                 }
@@ -1729,11 +1907,11 @@ struct WordBankPanel: View {
                     .foregroundColor(TerminalTheme.textTertiary)
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                    ForEach(options) { option in
+                    ForEach(displayedOptions) { option in
                         CommandButton(
                             option: option,
                             isSelected: selectedCommand == option.command,
-                            isDisabled: isDisabled
+                            isDisabled: areCommandsDisabled
                         ) {
                             onSelect(option)
                         }
@@ -1741,6 +1919,20 @@ struct WordBankPanel: View {
                 }
             }
         }
+        .onAppear {
+            reshuffle()
+        }
+        .onChange(of: targets) {
+            shuffledTargets = targets.shuffled()
+        }
+        .onChange(of: options.map(\.id)) {
+            shuffledOptions = options.shuffled()
+        }
+    }
+
+    private func reshuffle() {
+        shuffledTargets = targets.shuffled()
+        shuffledOptions = options.shuffled()
     }
 }
 
@@ -1778,28 +1970,44 @@ struct ActionBar: View {
     let runAction: () -> Void
     let retryAction: () -> Void
     let completeAction: () -> Void
+    @State private var isActionLocked = false
 
     var body: some View {
         HStack(spacing: 10) {
             if state == .wrong {
-                Button("RESET", action: retryAction)
+                Button("RESET") {
+                    lockAndRun(retryAction)
+                }
                     .buttonStyle(ShellButtonStyle(kind: .outline))
+                    .disabled(isActionLocked)
             }
 
             if state != .correct && state != .completed {
                 Button("RUN") {
-                    runAction()
+                    lockAndRun(runAction)
                 }
                 .buttonStyle(ShellButtonStyle(kind: canRun ? .filled : .dim))
-                .disabled(!canRun)
-                .opacity(canRun ? 1 : 0.46)
+                .disabled(!canRun || isActionLocked)
+                .opacity(canRun && !isActionLocked ? 1 : 0.46)
             }
 
             if state == .correct {
-                Button(completeLabel, action: completeAction)
+                Button(completeLabel) {
+                    lockAndRun(completeAction, duration: 0.8)
+                }
                     .buttonStyle(ShellButtonStyle(kind: .filled))
+                    .disabled(isActionLocked)
                     .transition(.scale.combined(with: .opacity))
             }
+        }
+    }
+
+    private func lockAndRun(_ action: @escaping () -> Void, duration: Double = 0.28) {
+        guard !isActionLocked else { return }
+        isActionLocked = true
+        action()
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            isActionLocked = false
         }
     }
 }
@@ -1831,69 +2039,47 @@ struct TerminalPanel: View {
                     .stroke(TerminalTheme.bluePrimary.opacity(0.2), lineWidth: 1)
             )
 
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack(alignment: .firstTextBaseline, spacing: 6) {
-                            Text("user@linatex:~$")
-                                .foregroundColor(TerminalTheme.greenPrimary)
-                                .font(.system(.caption, design: .monospaced).weight(.semibold))
-                            Text(input.isEmpty ? "select command" : input)
-                                .foregroundColor(input.isEmpty ? TerminalTheme.terminalMuted : inputColor)
-                                .font(.system(.caption, design: .monospaced))
-                            if state == .waiting {
-                                CursorView()
-                            }
-                            Spacer(minLength: 0)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text("user@linatex:~$")
+                            .foregroundColor(TerminalTheme.greenPrimary)
+                            .font(.system(.caption, design: .monospaced).weight(.semibold))
+                        Text(input)
+                            .foregroundColor(input.isEmpty ? TerminalTheme.terminalMuted : inputColor)
+                            .font(.system(.caption, design: .monospaced))
+                        if state == .waiting {
+                            CursorView()
                         }
-                        .id("input")
-
-                        if !output.isEmpty {
-                            Text(output)
-                                .font(.system(.caption2, design: .monospaced))
-                                .foregroundColor(outputColor)
-                                .lineSpacing(2)
-                                .textSelection(.enabled)
-                                .id("output")
-                        }
-
-                        if state == .correct {
-                            Text("OK: \(successMessage)")
-                                .shellFont(.caption2, weight: .bold)
-                                .foregroundColor(TerminalTheme.greenPrimary)
-                                .padding(.top, 4)
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
-                                .id("success")
-                        }
-
-                        if state == .wrong {
-                            Text("REVIEW: SELECT A DIFFERENT COMMAND")
-                                .shellFont(.caption2, weight: .bold)
-                                .foregroundColor(TerminalTheme.terminalMuted)
-                                .padding(.top, 4)
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
-                                .id("error")
-                        }
+                        Spacer(minLength: 0)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(12)
-                    .onChange(of: output) {
-                        withAnimation {
-                            proxy.scrollTo("output", anchor: .bottom)
-                        }
+
+                    if !output.isEmpty {
+                        Text(output)
+                            .font(.system(.caption2, design: .monospaced))
+                            .foregroundColor(outputColor)
+                            .lineSpacing(2)
+                            .textSelection(.enabled)
                     }
-                    .onChange(of: state) {
-                        withAnimation {
-                            if state == .correct {
-                                proxy.scrollTo("success", anchor: .bottom)
-                            } else if state == .wrong {
-                                proxy.scrollTo("error", anchor: .bottom)
-                            }
-                        }
+
+                    if state == .correct {
+                        Text("OK: \(successMessage)")
+                            .shellFont(.caption2, weight: .bold)
+                            .foregroundColor(TerminalTheme.greenPrimary)
+                            .padding(.top, 4)
+                    }
+
+                    if state == .wrong {
+                        Text("REVIEW: SELECT A DIFFERENT COMMAND")
+                            .shellFont(.caption2, weight: .bold)
+                            .foregroundColor(TerminalTheme.terminalMuted)
+                            .padding(.top, 4)
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
             }
-            .frame(minHeight: minHeight)
+            .frame(height: minHeight)
             .background(TerminalTheme.terminalSurface)
         }
         .background(TerminalTheme.terminalBackground)
@@ -1975,19 +2161,46 @@ func targetOptions(from text: String, expected: String?) -> [String] {
 
     var seen: Set<String> = []
     return options
-        .filter { seen.insert($0).inserted }
+        .filter { seen.insert($0.uppercased()).inserted }
         .prefix(4)
         .map { $0 }
 }
 
-func expectedTargetToken(from hint: String, answer: String) -> String? {
+func terminalCommandLine(command: String, target: String?) -> String {
+    let trimmedCommand = command.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard let target, !target.isEmpty else { return trimmedCommand }
+
+    if trimmedCommand.isEmpty {
+        return target
+    }
+
+    if trimmedCommand.range(of: target, options: [.caseInsensitive, .diacriticInsensitive]) != nil {
+        return trimmedCommand
+    }
+
+    return "\(trimmedCommand) \(target)"
+}
+
+func expectedTargetToken(from hint: String, answer: String, allowContextFallback: Bool = true) -> String? {
+    if let explicitTarget = targetTokens(from: answer).first {
+        return explicitTarget
+    }
+
+    guard allowContextFallback else { return nil }
+
     let tokens = targetTokens(from: hint, preservingCommands: true)
-    guard let answerIndex = tokens.firstIndex(of: answer.uppercased()) else {
+    let answerCommand = answer
+        .components(separatedBy: .whitespacesAndNewlines)
+        .first?
+        .uppercased() ?? answer.uppercased()
+
+    guard let answerIndex = tokens.firstIndex(where: { $0.uppercased() == answerCommand }) else {
         return targetTokens(from: hint).first
     }
 
     for token in tokens.suffix(from: tokens.index(after: answerIndex)) {
-        if token.hasPrefix("-") || token == "|" || token == "SUDO" || token == answer.uppercased() {
+        let normalizedToken = token.uppercased()
+        if token.hasPrefix("-") || token == "|" || normalizedToken == "SUDO" || normalizedToken == answer.uppercased() {
             continue
         }
         return token
@@ -2016,24 +2229,24 @@ private func targetTokens(from text: String, preservingCommands: Bool = false) -
         .components(separatedBy: .whitespacesAndNewlines)
         .map { $0.trimmingCharacters(in: trimCharacters) }
         .filter { !$0.isEmpty }
-        .map { $0.uppercased() }
         .filter { token in
-            if stopWords.contains(token) {
+            let normalizedToken = token.uppercased()
+            if stopWords.contains(normalizedToken) {
                 return false
             }
-            if commandWords.contains(token) {
+            if commandWords.contains(normalizedToken) {
                 return preservingCommands
             }
 
             return token.contains(".") ||
                 token.contains("/") ||
                 token.contains("@") ||
-                token == "DESKTOP" ||
-                token == "DOCUMENTS" ||
-                token == "ARCHIVE" ||
-                token == "PROJECT"
+                normalizedToken == "DESKTOP" ||
+                normalizedToken == "DOCUMENTS" ||
+                normalizedToken == "ARCHIVE" ||
+                normalizedToken == "PROJECT"
         }
-        .filter { seen.insert($0).inserted }
+        .filter { seen.insert($0.uppercased()).inserted }
 }
 
 // MARK: - Use implemented views from LessonImplementations.swift
