@@ -1706,25 +1706,24 @@ struct QuestLessonView: View {
     let lesson: Lesson
     var finalCompleteLabel: String = "COMPLETE LESSON"
     var onComplete: (() -> Void)? = nil
-    @State private var selectedTarget: String?
+    @State private var selectedArgument: String?
     @State private var showCompletion = false
     @State private var isCompleting = false
 
-    private var requiredTarget: String? {
-        expectedTargetToken(from: targetSourceText, answer: quest.answer, allowContextFallback: false)
+    private var argumentChoices: [String] {
+        meaningfulArgumentChoices(options: quest.options, answer: quest.answer)
     }
 
-    private var targetSourceText: String {
-        "\(quest.hint) \(quest.prompt) \(quest.scenario)"
-    }
-
-    private var targetChoices: [String] {
-        guard let requiredTarget else { return [] }
-        return targetOptions(from: targetSourceText, expected: requiredTarget)
+    private var automaticArgument: String? {
+        defaultArgument(for: quest.answer, visibleChoices: argumentChoices)
     }
 
     private var terminalInput: String {
-        terminalCommandLine(command: vm.userInput, target: selectedTarget)
+        terminalCommandLine(
+            command: vm.userInput,
+            argument: selectedArgument,
+            fallbackArgument: automaticArgument
+        )
     }
 
     var body: some View {
@@ -1747,35 +1746,31 @@ struct QuestLessonView: View {
             Spacer(minLength: 0)
 
             WordBankPanel(
-                targets: targetChoices,
-                selectedTarget: $selectedTarget,
+                arguments: argumentChoices,
+                selectedArgument: $selectedArgument,
                 options: quest.options,
                 selectedCommand: vm.userInput,
-                areTargetsDisabled: vm.currentLessonState != .waiting || isCompleting,
+                areArgumentsDisabled: vm.currentLessonState != .waiting || isCompleting,
                 areCommandsDisabled: vm.currentLessonState != .waiting || vm.isTyping || isCompleting
-            ) { option in
+            ) { command in
                 let impact = UIImpactFeedbackGenerator(style: .medium)
                 impact.impactOccurred()
-                vm.selectCommand(option)
+                vm.selectCommandText(command)
             }
 
             ActionBar(
-                canRun: (targetChoices.isEmpty || selectedTarget != nil) && !vm.userInput.isEmpty && !vm.isTyping && vm.currentLessonState == .waiting && !isCompleting,
+                canRun: (argumentChoices.isEmpty || selectedArgument != nil) && !vm.userInput.isEmpty && !vm.isTyping && vm.currentLessonState == .waiting && !isCompleting,
                 state: vm.currentLessonState,
                 completeLabel: finalCompleteLabel,
                 runAction: {
                     let impact = UIImpactFeedbackGenerator(style: .heavy)
                     impact.impactOccurred()
-                    if requiredTarget == nil || selectedTarget == requiredTarget {
-                        vm.executeQuest(quest)
-                    } else {
-                        vm.failSelection("対象が違います: \(selectedTarget ?? "未選択")")
-                    }
+                    vm.executeQuest(quest, enteredCommand: terminalInput)
                 },
                 retryAction: {
                     let impact = UIImpactFeedbackGenerator(style: .light)
                     impact.impactOccurred()
-                    selectedTarget = nil
+                    selectedArgument = nil
                     vm.retry()
                 },
                 completeAction: {
@@ -1858,22 +1853,29 @@ struct TargetSelectionPanel: View {
 }
 
 struct WordBankPanel: View {
-    let targets: [String]
-    @Binding var selectedTarget: String?
+    let arguments: [String]
+    @Binding var selectedArgument: String?
     let options: [CommandOption]
     let selectedCommand: String
-    let areTargetsDisabled: Bool
+    let areArgumentsDisabled: Bool
     let areCommandsDisabled: Bool
-    let onSelect: (CommandOption) -> Void
-    @State private var shuffledTargets: [String] = []
+    let onSelect: (String) -> Void
+    @State private var shuffledArguments: [String] = []
     @State private var shuffledOptions: [CommandOption] = []
 
-    private var displayedTargets: [String] {
-        shuffledTargets.isEmpty ? targets : shuffledTargets
+    private var displayedArguments: [String] {
+        shuffledArguments.isEmpty ? arguments : shuffledArguments
     }
 
     private var displayedOptions: [CommandOption] {
         shuffledOptions.isEmpty ? options : shuffledOptions
+    }
+
+    private var displayedCommandOptions: [CommandOption] {
+        var seen: Set<String> = []
+        return displayedOptions.filter { option in
+            seen.insert(commandPrefix(from: option.command)).inserted
+        }
     }
 
     var body: some View {
@@ -1881,23 +1883,23 @@ struct WordBankPanel: View {
             VStack(alignment: .leading, spacing: 10) {
                 ShellSectionTitle(title: "語群")
 
-                if !displayedTargets.isEmpty {
-                    Text("対象")
+                if !displayedArguments.isEmpty {
+                    Text("引数・順番")
                         .shellFont(.caption2, weight: .bold)
                         .foregroundColor(TerminalTheme.textTertiary)
 
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                        ForEach(displayedTargets, id: \.self) { target in
+                        ForEach(displayedArguments, id: \.self) { argument in
                             Button {
                                 withAnimation(.easeOut(duration: 0.12)) {
-                                    selectedTarget = target
+                                    selectedArgument = argument
                                 }
                             } label: {
-                                Text(target)
+                                Text(argumentChoiceLabel(argument))
                             }
-                            .buttonStyle(ShellButtonStyle(kind: .outline, isSelected: selectedTarget == target))
-                            .disabled(areTargetsDisabled)
-                            .opacity(areTargetsDisabled ? 0.48 : 1)
+                            .buttonStyle(ShellButtonStyle(kind: .outline, isSelected: selectedArgument == argument))
+                            .disabled(areArgumentsDisabled)
+                            .opacity(areArgumentsDisabled ? 0.48 : 1)
                         }
                     }
                 }
@@ -1907,13 +1909,15 @@ struct WordBankPanel: View {
                     .foregroundColor(TerminalTheme.textTertiary)
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                    ForEach(displayedOptions) { option in
+                    ForEach(displayedCommandOptions) { option in
+                        let displayCommand = commandPrefix(from: option.command)
                         CommandButton(
                             option: option,
-                            isSelected: selectedCommand == option.command,
+                            displayCommand: displayCommand,
+                            isSelected: selectedCommand == displayCommand,
                             isDisabled: areCommandsDisabled
                         ) {
-                            onSelect(option)
+                            onSelect(displayCommand)
                         }
                     }
                 }
@@ -1922,8 +1926,8 @@ struct WordBankPanel: View {
         .onAppear {
             reshuffle()
         }
-        .onChange(of: targets) {
-            shuffledTargets = targets.shuffled()
+        .onChange(of: arguments) {
+            shuffledArguments = arguments.shuffled()
         }
         .onChange(of: options.map(\.id)) {
             shuffledOptions = options.shuffled()
@@ -1931,7 +1935,7 @@ struct WordBankPanel: View {
     }
 
     private func reshuffle() {
-        shuffledTargets = targets.shuffled()
+        shuffledArguments = arguments.shuffled()
         shuffledOptions = options.shuffled()
     }
 }
@@ -1949,9 +1953,11 @@ struct CommandSelectionPanel: View {
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                     ForEach(options) { option in
+                        let displayCommand = commandPrefix(from: option.command)
                         CommandButton(
                             option: option,
-                            isSelected: selectedCommand == option.command,
+                            displayCommand: displayCommand,
+                            isSelected: selectedCommand == displayCommand,
                             isDisabled: isDisabled
                         ) {
                             onSelect(option)
@@ -2127,6 +2133,7 @@ struct CursorView: View {
 
 struct CommandButton: View {
     let option: CommandOption
+    let displayCommand: String
     let isSelected: Bool
     let isDisabled: Bool
     let action: () -> Void
@@ -2136,11 +2143,11 @@ struct CommandButton: View {
             action()
         } label: {
             VStack(spacing: 4) {
-                Text(option.label.uppercased())
+                Text(displayCommand.uppercased())
                     .shellFont(.caption, weight: .bold)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
-                Text("$ \(option.command)")
+                Text("$ \(displayCommand)")
                     .shellFont(.caption2)
                     .lineLimit(1)
                     .minimumScaleFactor(0.64)
@@ -2166,19 +2173,102 @@ func targetOptions(from text: String, expected: String?) -> [String] {
         .map { $0 }
 }
 
-func terminalCommandLine(command: String, target: String?) -> String {
+func terminalCommandLine(command: String, argument: String?, fallbackArgument: String? = nil) -> String {
     let trimmedCommand = command.trimmingCharacters(in: .whitespacesAndNewlines)
-    guard let target, !target.isEmpty else { return trimmedCommand }
-
     if trimmedCommand.isEmpty {
-        return target
+        return ""
     }
 
-    if trimmedCommand.range(of: target, options: [.caseInsensitive, .diacriticInsensitive]) != nil {
+    let selectedArgument = argument ?? fallbackArgument
+    guard let selectedArgument, !selectedArgument.isEmpty else { return trimmedCommand }
+
+    if trimmedCommand.range(of: selectedArgument, options: [.caseInsensitive, .diacriticInsensitive]) != nil {
         return trimmedCommand
     }
 
-    return "\(trimmedCommand) \(target)"
+    return "\(trimmedCommand) \(selectedArgument)"
+}
+
+func commandPrefix(from command: String) -> String {
+    let trimmed = normalizedCommandLine(command)
+    let tokens = shellWords(from: trimmed)
+    guard let first = tokens.first else { return trimmed }
+
+    if first == "sudo", tokens.count >= 2 {
+        return "\(first) \(tokens[1])"
+    }
+
+    return first
+}
+
+func commandArgumentSuffix(from command: String) -> String {
+    let trimmed = normalizedCommandLine(command)
+    let prefix = commandPrefix(from: trimmed)
+    guard !trimmed.isEmpty, !prefix.isEmpty, trimmed.count > prefix.count else { return "" }
+    return String(trimmed.dropFirst(prefix.count)).trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+func meaningfulArgumentChoices(options: [CommandOption], answer: String) -> [String] {
+    let correctArgument = commandArgumentSuffix(from: answer)
+    guard shouldExposeArgumentChoices(correctArgument) else { return [] }
+
+    var candidates = [correctArgument]
+    candidates.append(contentsOf: options.map { commandArgumentSuffix(from: $0.command) })
+    candidates.append(contentsOf: generatedArgumentAlternatives(for: correctArgument))
+
+    var seen: Set<String> = []
+    return candidates
+        .map(normalizedCommandLine)
+        .filter { !$0.isEmpty }
+        .filter { seen.insert($0.uppercased()).inserted }
+        .prefix(4)
+        .map { $0 }
+}
+
+func defaultArgument(for answer: String, visibleChoices: [String]) -> String? {
+    guard visibleChoices.isEmpty else { return nil }
+    let argument = commandArgumentSuffix(from: answer)
+    return argument.isEmpty ? nil : argument
+}
+
+func argumentChoiceLabel(_ argument: String) -> String {
+    let words = shellWords(from: argument)
+    if words.count == 2, words.allSatisfy({ $0.contains("/") || $0.contains(".") || $0.hasPrefix("~") }) {
+        return "\(words[0]) -> \(words[1])"
+    }
+    return argument
+}
+
+func normalizedCommandLine(_ command: String) -> String {
+    command
+        .components(separatedBy: .whitespacesAndNewlines)
+        .filter { !$0.isEmpty }
+        .joined(separator: " ")
+}
+
+private func shouldExposeArgumentChoices(_ argument: String) -> Bool {
+    let words = shellWords(from: argument)
+    guard !words.isEmpty else { return false }
+    return argument.contains("|") ||
+        words.count >= 2 ||
+        words.contains(where: { $0.hasPrefix("-") })
+}
+
+private func generatedArgumentAlternatives(for argument: String) -> [String] {
+    let words = shellWords(from: argument)
+    guard words.count >= 2 else { return [] }
+
+    var alternatives = [words.reversed().joined(separator: " ")]
+    if words.count > 2 {
+        alternatives.append((Array(words.dropFirst()) + [words[0]]).joined(separator: " "))
+    }
+    return alternatives
+}
+
+private func shellWords(from command: String) -> [String] {
+    normalizedCommandLine(command)
+        .split(separator: " ")
+        .map(String.init)
 }
 
 func expectedTargetToken(from hint: String, answer: String, allowContextFallback: Bool = true) -> String? {

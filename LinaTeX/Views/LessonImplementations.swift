@@ -11,7 +11,7 @@ struct ScenarioLessonViewImpl: View {
     var onComplete: (() -> Void)? = nil
 
     @State private var currentStepIndex = 0
-    @State private var selectedTarget: String?
+    @State private var selectedArgument: String?
     @State private var showCompletion = false
     @State private var isCompletingStep = false
 
@@ -23,21 +23,20 @@ struct ScenarioLessonViewImpl: View {
         currentStepIndex == scenario.steps.count - 1
     }
 
-    private var requiredTarget: String? {
-        expectedTargetToken(from: targetSourceText, answer: currentStep.answer)
+    private var argumentChoices: [String] {
+        meaningfulArgumentChoices(options: currentStep.options, answer: currentStep.answer)
     }
 
-    private var targetSourceText: String {
-        "\(currentStep.hint) \(scenario.setup) \(scenario.goal) \(currentStep.prompt)"
-    }
-
-    private var targetChoices: [String] {
-        guard let requiredTarget else { return [] }
-        return targetOptions(from: targetSourceText, expected: requiredTarget)
+    private var automaticArgument: String? {
+        defaultArgument(for: currentStep.answer, visibleChoices: argumentChoices)
     }
 
     private var terminalInput: String {
-        terminalCommandLine(command: vm.userInput, target: selectedTarget)
+        terminalCommandLine(
+            command: vm.userInput,
+            argument: selectedArgument,
+            fallbackArgument: automaticArgument
+        )
     }
 
     var body: some View {
@@ -67,35 +66,31 @@ struct ScenarioLessonViewImpl: View {
                     )
 
                     WordBankPanel(
-                        targets: targetChoices,
-                        selectedTarget: $selectedTarget,
+                        arguments: argumentChoices,
+                        selectedArgument: $selectedArgument,
                         options: currentStep.options,
                         selectedCommand: vm.userInput,
-                        areTargetsDisabled: vm.currentLessonState != .waiting || isCompletingStep,
+                        areArgumentsDisabled: vm.currentLessonState != .waiting || isCompletingStep,
                         areCommandsDisabled: vm.currentLessonState != .waiting || vm.isTyping || isCompletingStep
-                    ) { option in
+                    ) { command in
                         let impact = UIImpactFeedbackGenerator(style: .medium)
                         impact.impactOccurred()
-                        vm.selectCommand(option)
+                        vm.selectCommandText(command)
                     }
 
                     ActionBar(
-                        canRun: (targetChoices.isEmpty || selectedTarget != nil) && !vm.userInput.isEmpty && !vm.isTyping && vm.currentLessonState == .waiting && !isCompletingStep,
+                        canRun: (argumentChoices.isEmpty || selectedArgument != nil) && !vm.userInput.isEmpty && !vm.isTyping && vm.currentLessonState == .waiting && !isCompletingStep,
                         state: vm.currentLessonState,
                         completeLabel: isLastStep ? finalCompleteLabel : "NEXT STEP",
                         runAction: {
                             let impact = UIImpactFeedbackGenerator(style: .heavy)
                             impact.impactOccurred()
-                            if requiredTarget == nil || selectedTarget == requiredTarget {
-                                vm.executeScenarioStep(currentStep)
-                            } else {
-                                vm.failSelection("対象が違います: \(selectedTarget ?? "未選択")")
-                            }
+                            vm.executeScenarioStep(currentStep, enteredCommand: terminalInput)
                         },
                         retryAction: {
                             let impact = UIImpactFeedbackGenerator(style: .light)
                             impact.impactOccurred()
-                            selectedTarget = nil
+                            selectedArgument = nil
                             vm.retry()
                         },
                         completeAction: {
@@ -117,7 +112,7 @@ struct ScenarioLessonViewImpl: View {
                             } else {
                                 withAnimation(.spring(response: 0.36, dampingFraction: 0.78)) {
                                     currentStepIndex += 1
-                                    selectedTarget = nil
+                                    selectedArgument = nil
                                     vm.nextStep()
                                 }
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.34) {
@@ -135,7 +130,7 @@ struct ScenarioLessonViewImpl: View {
         .onAppear {
             vm.resetLesson()
             currentStepIndex = 0
-            selectedTarget = nil
+            selectedArgument = nil
             isCompletingStep = false
         }
         .overlay(

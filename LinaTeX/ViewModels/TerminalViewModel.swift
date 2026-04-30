@@ -91,13 +91,16 @@ class AppViewModel: ObservableObject {
     // MARK: - Lesson Logic
 
     func selectCommand(_ option: CommandOption) {
+        selectCommandText(option.command)
+    }
+
+    func selectCommandText(_ command: String) {
         guard currentLessonState == .waiting, !isTyping else { return }
         let sessionID = UUID()
         typingSessionID = sessionID
         isTyping = true
         userInput = ""
 
-        let command = option.command
         for (i, char) in command.enumerated() {
             DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.06) {
                 guard self.typingSessionID == sessionID else { return }
@@ -110,10 +113,14 @@ class AppViewModel: ObservableObject {
     }
 
     func executeQuest(_ quest: QuestLesson) {
-        guard !userInput.isEmpty, !isTyping, currentLessonState == .waiting else { return }
+        executeQuest(quest, enteredCommand: userInput)
+    }
 
-        let trimmed = userInput.trimmingCharacters(in: .whitespaces)
-        if trimmed == quest.answer {
+    func executeQuest(_ quest: QuestLesson, enteredCommand: String) {
+        guard !enteredCommand.isEmpty, !isTyping, currentLessonState == .waiting else { return }
+
+        let trimmed = normalizedCommandLine(enteredCommand)
+        if trimmed == normalizedCommandLine(quest.answer) {
             currentLessonState = .correct
             terminalOutput = quest.simulatedOutput
             addXP(50)
@@ -124,10 +131,14 @@ class AppViewModel: ObservableObject {
     }
 
     func executeScenarioStep(_ step: ScenarioStep) {
-        guard !userInput.isEmpty, !isTyping, currentLessonState == .waiting else { return }
+        executeScenarioStep(step, enteredCommand: userInput)
+    }
 
-        let trimmed = userInput.trimmingCharacters(in: .whitespaces)
-        if trimmed == step.answer {
+    func executeScenarioStep(_ step: ScenarioStep, enteredCommand: String) {
+        guard !enteredCommand.isEmpty, !isTyping, currentLessonState == .waiting else { return }
+
+        let trimmed = normalizedCommandLine(enteredCommand)
+        if trimmed == normalizedCommandLine(step.answer) {
             currentLessonState = .correct
             terminalOutput = step.simulatedOutput
             addXP(30)
