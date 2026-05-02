@@ -31,7 +31,7 @@ struct ParticleEffectView: View {
                 )
 
                 let shape = Circle().path(in: frame)
-                ctx.fill(shape, with: .color(.cyan.opacity(0.8)))
+                ctx.fill(shape, with: .color(ModernTheme.success.opacity(0.85)))
             }
         }
         .onAppear {
@@ -104,7 +104,7 @@ struct ConfettiBurstView: View {
 
             // Burst circle animation
             Circle()
-                .fill(Color.cyan.opacity(0.3))
+                .fill(ModernTheme.success.opacity(0.3))
                 .frame(width: 50, height: 50)
                 .scaleEffect(scale)
                 .opacity(showConfetti ? 0 : 1)
@@ -128,31 +128,36 @@ struct SuccessOverlayView: View {
     var body: some View {
         ZStack {
             // Dimming background
-            Color.black.opacity(0.3)
+            Color.black.opacity(0.25)
                 .ignoresSafeArea()
 
-            VStack(spacing: 16) {
-                // Success icon with animation
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 60))
-                    .foregroundColor(.cyan)
-                    .scaleEffect(scale)
+            VStack(spacing: 18) {
+                ZStack {
+                    Circle()
+                        .fill(ModernTheme.successSoft)
+                        .frame(width: 100, height: 100)
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 44, weight: .bold))
+                        .foregroundColor(ModernTheme.success)
+                }
+                .scaleEffect(scale)
 
-                VStack(spacing: 8) {
-                    Text("成功！")
-                        .font(.system(.title2, design: .monospaced))
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
+                VStack(spacing: 6) {
+                    Text("素晴らしい！")
+                        .font(ModernFont.headlineLarge)
+                        .foregroundColor(ModernTheme.textPrimary)
 
-                    Text("完璧だ！次へ進もう。")
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.7))
+                    Text("正解です。次へ進みましょう")
+                        .font(ModernFont.bodyMedium)
+                        .foregroundColor(ModernTheme.textSecondary)
                 }
             }
-            .padding(32)
-            .background(Color(red: 0.11, green: 0.11, blue: 0.16))
-            .cornerRadius(16)
-            .shadow(radius: 20)
+            .padding(36)
+            .background(
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(ModernTheme.bgCard)
+            )
+            .shadow(color: ModernTheme.shadowColorMedium, radius: 30, x: 0, y: 10)
         }
         .opacity(opacity)
         .onAppear {
@@ -175,19 +180,9 @@ struct SuccessOverlayView: View {
 
 #Preview {
     ZStack {
-        Color(red: 0.08, green: 0.08, blue: 0.13)
+        ModernTheme.backgroundGradient
             .ignoresSafeArea()
 
-        VStack(spacing: 20) {
-            ConfettiBurstView()
-
-            Button("Show Success") {
-                // Placeholder
-            }
-            .padding()
-            .background(Color.cyan)
-            .foregroundColor(.black)
-            .cornerRadius(8)
-        }
+        SuccessOverlayView(onDismiss: {})
     }
 }

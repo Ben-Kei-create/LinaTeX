@@ -17,7 +17,8 @@ struct ContentView: View {
                     }
                 }
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
+        .tint(ModernTheme.primary)
     }
 }
 
@@ -27,89 +28,135 @@ struct HomeView: View {
     @ObservedObject var vm: AppViewModel
     @State private var selectedCourse: Course?
 
+    var totalCompleted: Int { vm.completedLessons.count }
+    var totalLessons: Int { vm.courses.reduce(0) { $0 + $1.totalLessons } }
+
     var body: some View {
         ZStack {
-            TerminalTheme.bgPrimary.ignoresSafeArea()
+            ModernTheme.backgroundGradient.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                // Header
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("🐧 LinaTeX")
-                                .font(.system(.title2, design: .monospaced))
-                                .fontWeight(.bold)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    // MARK: - Hero Header
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("LinaTeX")
+                                    .font(ModernFont.displayLarge)
+                                    .foregroundColor(ModernTheme.textPrimary)
+
+                                Text("Linuxを楽しく学ぼう")
+                                    .font(ModernFont.bodyMedium)
+                                    .foregroundColor(ModernTheme.textSecondary)
+                            }
+                            Spacer()
+                            NavigationLink(destination: StatisticsView(vm: vm)) {
+                                Image(systemName: "chart.bar.fill")
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundColor(ModernTheme.primary)
+                                    .frame(width: 44, height: 44)
+                                    .background(
+                                        Circle().fill(ModernTheme.bgCard)
+                                    )
+                                    .shadow(color: ModernTheme.shadowColor, radius: 6, x: 0, y: 2)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+
+                    // MARK: - Progress Card (Hero Style)
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("学習進捗")
+                                    .font(ModernFont.labelMedium)
+                                    .foregroundColor(.white.opacity(0.85))
+                                Text("\(totalCompleted) / \(totalLessons) レッスン")
+                                    .font(ModernFont.headlineMedium)
+                                    .foregroundColor(.white)
+                            }
+                            Spacer()
+                            Text("\(Int(vm.totalProgress() * 100))%")
+                                .font(ModernFont.displayMedium)
                                 .foregroundColor(.white)
-                            Text("Learn Linux by Playing")
-                                .font(.caption)
-                                .foregroundColor(.white.opacity(0.6))
                         }
-                        Spacer()
-                        VStack(alignment: .trailing, spacing: 4) {
-                            HStack(spacing: 8) {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "star.fill")
-                                        .foregroundColor(TerminalTheme.textSecondary)
-                                    Text("\(vm.totalXP) XP")
-                                        .font(.system(.subheadline, design: .monospaced))
-                                        .fontWeight(.semibold)
-                                }
 
-                                NavigationLink(destination: StatisticsView(vm: vm)) {
-                                    Image(systemName: "chart.bar.fill")
-                                        .foregroundColor(TerminalTheme.greenPrimary)
-                                        .font(.system(size: 14))
-                                }
+                        ProgressBarView(
+                            progress: vm.totalProgress(),
+                            tint: .white,
+                            track: Color.white.opacity(0.25)
+                        )
+                    }
+                    .padding(20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(ModernTheme.heroGradient)
+                    )
+                    .shadow(color: ModernTheme.secondary.opacity(0.25), radius: 20, x: 0, y: 8)
+                    .padding(.horizontal, 20)
 
-                                NavigationLink(destination: AchievementsView(vm: vm)) {
-                                    Image(systemName: "star.circle.fill")
-                                        .foregroundColor(TerminalTheme.textSecondary)
-                                        .font(.system(size: 14))
-                                }
+                    // MARK: - AI Recommendation
+                    PersonalizedRecommendationView(vm: vm) { lesson in
+                        if let course = vm.courses.first(where: { course in
+                            course.chapters.contains { chapter in
+                                chapter.lessons.contains { $0.id == lesson.id }
                             }
-                            ProgressView(value: vm.totalProgress())
-                                .frame(width: 100)
+                        }) {
+                            vm.navigateToLesson(lesson, in: course)
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                }
-                .background(TerminalTheme.bgSecondary)
+                    .padding(.horizontal, 20)
 
-                ScrollView {
-                    VStack(spacing: 16) {
-                        // AI Recommendation
-                        PersonalizedRecommendationView(vm: vm) { lesson in
-                            if let course = vm.courses.first(where: { course in
-                                course.chapters.contains { chapter in
-                                    chapter.lessons.contains { $0.id == lesson.id }
-                                }
-                            }) {
-                                vm.navigateToLesson(lesson, in: course)
+                    // MARK: - Courses Section
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Text("コース一覧")
+                                .font(ModernFont.headlineLarge)
+                                .foregroundColor(ModernTheme.textPrimary)
+                            Spacer()
+                            Text("\(vm.courses.count)コース")
+                                .font(ModernFont.labelMedium)
+                                .foregroundColor(ModernTheme.textTertiary)
+                        }
+                        .padding(.horizontal, 20)
+
+                        VStack(spacing: 14) {
+                            ForEach(vm.courses) { course in
+                                CourseCard(course: course, vm: vm)
+                                    .onTapGesture {
+                                        vm.navigateToCourse(course)
+                                    }
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-
-                        Text("コースを選択")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 16)
-                            .padding(.top, 8)
-
-                        ForEach(vm.courses) { course in
-                            CourseCard(course: course, vm: vm)
-                                .onTapGesture {
-                                    vm.navigateToCourse(course)
-                                }
-                        }
                     }
-                    .padding(.bottom, 20)
+
+                    Spacer(minLength: 40)
                 }
             }
         }
         .navigationBarBackButtonHidden(true)
+    }
+}
+
+// MARK: - Progress Bar (Reusable)
+
+struct ProgressBarView: View {
+    let progress: Double
+    var tint: Color = ModernTheme.primary
+    var track: Color = ModernTheme.bgSubtle
+    var height: CGFloat = 8
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Capsule().fill(track)
+                Capsule()
+                    .fill(tint)
+                    .frame(width: max(0, geo.size.width * progress))
+            }
+        }
+        .frame(height: height)
     }
 }
 
@@ -119,67 +166,105 @@ struct CourseCard: View {
     let course: Course
     @ObservedObject var vm: AppViewModel
 
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
-                Text(course.emoji)
-                    .font(.system(size: 40))
+    var progress: Double { vm.progressInCourse(course) }
+    var completedLessons: Int {
+        course.chapters.reduce(0) { total, chapter in
+            total + chapter.lessons.filter { vm.isLessonCompleted($0) }.count
+        }
+    }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(course.level.japanese.uppercased())
-                        .font(.system(.caption2, design: .monospaced))
-                        .foregroundColor(course.level.mainColor)
-                        .fontWeight(.bold)
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(alignment: .top, spacing: 14) {
+                // Level emoji badge
+                ZStack {
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(course.level.modernGradient)
+                        .frame(width: 56, height: 56)
+                    Text(course.emoji)
+                        .font(.system(size: 30))
+                }
+                .shadow(color: course.level.modernColor.opacity(0.3), radius: 8, x: 0, y: 4)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(course.level.japanese)
+                        .modernPill(color: course.level.modernColor)
 
                     Text(course.title)
-                        .font(.system(.headline, design: .monospaced))
-                        .foregroundColor(.white)
+                        .font(ModernFont.headlineMedium)
+                        .foregroundColor(ModernTheme.textPrimary)
+                        .lineLimit(2)
 
                     Text(course.subtitle)
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.6))
+                        .font(ModernFont.bodySmall)
+                        .foregroundColor(ModernTheme.textSecondary)
+                        .lineLimit(2)
                 }
 
-                Spacer()
-
-                VStack(alignment: .trailing, spacing: 6) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "book.fill")
-                            .font(.caption)
-                        Text("\(course.totalLessons)")
-                            .font(.system(.caption, design: .monospaced))
-                    }
-                    .foregroundColor(.white.opacity(0.7))
-
-                    ProgressView(value: vm.progressInCourse(course))
-                        .frame(width: 60)
-                        .tint(course.level.mainColor)
-                }
+                Spacer(minLength: 0)
             }
 
             Text(course.description)
-                .font(.system(.caption, design: .monospaced))
-                .foregroundColor(.white.opacity(0.6))
-                .lineSpacing(2)
+                .font(ModernFont.bodySmall)
+                .foregroundColor(ModernTheme.textSecondary)
+                .lineSpacing(3)
+                .lineLimit(3)
 
-            HStack(spacing: 4) {
-                Image(systemName: "clock.fill")
-                    .font(.caption2)
-                Text("\(course.estimatedMinutes)分で修了")
-                    .font(.system(.caption2, design: .monospaced))
+            // Stats row
+            HStack(spacing: 16) {
+                Label {
+                    Text("\(course.totalLessons)レッスン")
+                        .font(ModernFont.labelMedium)
+                } icon: {
+                    Image(systemName: "book.closed.fill")
+                        .font(.system(size: 12))
+                }
+                .foregroundColor(ModernTheme.textSecondary)
+
+                Label {
+                    Text("\(course.estimatedMinutes)分")
+                        .font(ModernFont.labelMedium)
+                } icon: {
+                    Image(systemName: "clock.fill")
+                        .font(.system(size: 12))
+                }
+                .foregroundColor(ModernTheme.textSecondary)
+
+                Spacer()
+
+                if progress > 0 {
+                    Text("\(Int(progress * 100))%")
+                        .font(ModernFont.labelLarge)
+                        .foregroundColor(course.level.modernColor)
+                }
             }
-            .foregroundColor(.white.opacity(0.5))
+
+            // Progress bar
+            VStack(alignment: .leading, spacing: 6) {
+                ProgressBarView(
+                    progress: progress,
+                    tint: course.level.modernColor,
+                    track: ModernTheme.bgSubtle
+                )
+
+                if progress > 0 {
+                    Text("\(completedLessons) / \(course.totalLessons) 完了")
+                        .font(ModernFont.captionSmall)
+                        .foregroundColor(ModernTheme.textTertiary)
+                }
+            }
         }
-        .padding(16)
+        .padding(18)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(TerminalTheme.bgTertiary)
+            RoundedRectangle(cornerRadius: 18)
+                .fill(ModernTheme.bgCard)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(course.level.mainColor.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(ModernTheme.border, lineWidth: 1)
         )
-        .padding(.horizontal, 16)
+        .shadow(color: ModernTheme.shadowColor, radius: 10, x: 0, y: 3)
+        .padding(.horizontal, 20)
     }
 }
 
@@ -189,42 +274,132 @@ struct CourseDetailView: View {
     let course: Course
     @ObservedObject var vm: AppViewModel
 
+    var progress: Double { vm.progressInCourse(course) }
+
     var body: some View {
         ZStack {
-            TerminalTheme.bgPrimary.ignoresSafeArea()
+            ModernTheme.backgroundGradient.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
                 HStack {
                     Button(action: { vm.goBack() }) {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
-                                .font(.system(.body, design: .monospaced))
+                                .font(.system(size: 16, weight: .semibold))
                             Text("戻る")
-                                .font(.system(.subheadline, design: .monospaced))
+                                .font(ModernFont.bodyEmphasizedSmall)
                         }
-                        .foregroundColor(course.level.mainColor)
+                        .foregroundColor(course.level.modernColor)
                     }
                     Spacer()
-                    Text(course.title)
-                        .font(.headline)
-                        .foregroundColor(.white)
+                    Text(course.level.japanese)
+                        .modernPill(color: course.level.modernColor)
                     Spacer()
+                    // Spacer placeholder for balance
+                    Color.clear.frame(width: 56, height: 1)
                 }
-                .padding(16)
-                .background(TerminalTheme.bgSecondary)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(ModernTheme.bgCard.opacity(0.7))
+                .overlay(
+                    Rectangle()
+                        .fill(ModernTheme.border)
+                        .frame(height: 1),
+                    alignment: .bottom
+                )
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
+                        // Course Hero
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack(spacing: 14) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(course.level.modernGradient)
+                                        .frame(width: 64, height: 64)
+                                    Text(course.emoji)
+                                        .font(.system(size: 34))
+                                }
+                                .shadow(color: course.level.modernColor.opacity(0.3), radius: 10, x: 0, y: 4)
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(course.title)
+                                        .font(ModernFont.headlineLarge)
+                                        .foregroundColor(ModernTheme.textPrimary)
+                                    Text(course.subtitle)
+                                        .font(ModernFont.bodySmall)
+                                        .foregroundColor(ModernTheme.textSecondary)
+                                }
+                            }
+
+                            Text(course.description)
+                                .font(ModernFont.bodyMedium)
+                                .foregroundColor(ModernTheme.textSecondary)
+                                .lineSpacing(4)
+
+                            // Stats
+                            HStack(spacing: 20) {
+                                StatBadge(icon: "book.closed.fill", text: "\(course.totalLessons) レッスン", color: course.level.modernColor)
+                                StatBadge(icon: "clock.fill", text: "\(course.estimatedMinutes)分", color: course.level.modernColor)
+                                Spacer()
+                            }
+
+                            // Progress
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Text("進捗")
+                                        .font(ModernFont.labelMedium)
+                                        .foregroundColor(ModernTheme.textSecondary)
+                                    Spacer()
+                                    Text("\(Int(progress * 100))%")
+                                        .font(ModernFont.labelLarge)
+                                        .foregroundColor(course.level.modernColor)
+                                }
+                                ProgressBarView(
+                                    progress: progress,
+                                    tint: course.level.modernColor,
+                                    track: ModernTheme.bgSubtle
+                                )
+                            }
+                        }
+                        .padding(20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 18)
+                                .fill(ModernTheme.bgCard)
+                        )
+                        .shadow(color: ModernTheme.shadowColor, radius: 10, x: 0, y: 3)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 16)
+
+                        // Chapters
                         ForEach(course.chapters) { chapter in
                             ChapterSection(chapter: chapter, course: course, vm: vm)
+                                .padding(.horizontal, 20)
                         }
+
+                        Spacer(minLength: 24)
                     }
-                    .padding(16)
                 }
             }
         }
         .navigationBarBackButtonHidden(true)
+    }
+}
+
+struct StatBadge: View {
+    let icon: String
+    let text: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .semibold))
+            Text(text)
+                .font(ModernFont.labelMedium)
+        }
+        .foregroundColor(color)
     }
 }
 
@@ -235,22 +410,42 @@ struct ChapterSection: View {
     let course: Course
     @ObservedObject var vm: AppViewModel
 
+    var completedCount: Int {
+        chapter.lessons.filter { vm.isLessonCompleted($0) }.count
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .center, spacing: 12) {
+                // Chapter number badge
+                ZStack {
+                    Circle()
+                        .fill(course.level.modernSoft)
+                        .frame(width: 38, height: 38)
+                    Text("\(chapter.number)")
+                        .font(ModernFont.headlineMedium)
+                        .foregroundColor(course.level.modernColor)
+                }
+
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("第\(chapter.number)章")
-                        .font(.system(.caption2, design: .monospaced))
-                        .foregroundColor(course.level.mainColor)
-                        .fontWeight(.bold)
                     Text(chapter.title)
-                        .font(.system(.headline, design: .monospaced))
-                        .foregroundColor(.white)
+                        .font(ModernFont.headlineSmall)
+                        .foregroundColor(ModernTheme.textPrimary)
                     Text(chapter.summary)
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.6))
+                        .font(ModernFont.bodySmall)
+                        .foregroundColor(ModernTheme.textSecondary)
+                        .lineLimit(2)
                 }
                 Spacer()
+                if completedCount == chapter.lessons.count && chapter.lessons.count > 0 {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(ModernTheme.success)
+                        .font(.system(size: 22))
+                } else {
+                    Text("\(completedCount)/\(chapter.lessons.count)")
+                        .font(ModernFont.labelMedium)
+                        .foregroundColor(ModernTheme.textTertiary)
+                }
             }
 
             VStack(spacing: 8) {
@@ -259,9 +454,16 @@ struct ChapterSection: View {
                 }
             }
         }
-        .padding(14)
-        .background(TerminalTheme.bgTertiary)
-        .cornerRadius(10)
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(ModernTheme.bgCard)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(ModernTheme.border, lineWidth: 1)
+        )
+        .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
     }
 }
 
@@ -277,41 +479,59 @@ struct LessonRow: View {
     var body: some View {
         Button(action: { vm.navigateToLesson(lesson, in: course) }) {
             HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack(spacing: 6) {
-                        if isCompleted {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
-                        }
+                // Lesson icon
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(isCompleted ? ModernTheme.successSoft : ModernTheme.bgSubtle)
+                        .frame(width: 42, height: 42)
+                    if isCompleted {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(ModernTheme.success)
+                    } else {
                         Text(lesson.emoji)
-                        Text(lesson.title)
-                            .font(.system(.subheadline, design: .monospaced))
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .font(.system(size: 20))
                     }
+                }
 
-                    HStack(spacing: 8) {
-                        Label(lesson.content.typeLabel, systemImage: lesson.content.typeIcon)
-                            .font(.system(.caption2, design: .monospaced))
-                            .foregroundColor(course.level.mainColor)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(lesson.title)
+                        .font(ModernFont.bodyEmphasizedSmall)
+                        .foregroundColor(ModernTheme.textPrimary)
+                        .multilineTextAlignment(.leading)
 
-                        Label("\(lesson.estimatedMinutes)分", systemImage: "clock.fill")
-                            .font(.system(.caption2, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.5))
+                    HStack(spacing: 10) {
+                        HStack(spacing: 4) {
+                            Image(systemName: lesson.content.typeIcon)
+                                .font(.system(size: 10, weight: .semibold))
+                            Text(lesson.content.typeLabel)
+                                .font(ModernFont.labelSmall)
+                        }
+                        .foregroundColor(course.level.modernColor)
+
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 10))
+                            Text("\(lesson.estimatedMinutes)分")
+                                .font(ModernFont.labelSmall)
+                        }
+                        .foregroundColor(ModernTheme.textTertiary)
                     }
                 }
 
                 Spacer()
 
-                if isCompleted {
-                    Image(systemName: "checkmark")
-                        .foregroundColor(.green)
-                }
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(ModernTheme.textTertiary)
             }
-            .padding(10)
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(8)
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isCompleted ? ModernTheme.successSoft.opacity(0.4) : ModernTheme.bgSubtle.opacity(0.5))
+            )
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -321,131 +541,180 @@ struct LessonView: View {
     let lesson: Lesson
     let course: Course
     @ObservedObject var vm: AppViewModel
-    @State private var selectedTab: LessonTab = .problem
+    @State private var selectedTab: LessonTab = .learning
 
     var body: some View {
         ZStack {
-            TerminalTheme.bgPrimary.ignoresSafeArea()
+            ModernTheme.backgroundGradient.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Header with back button
+                // Header
                 HStack {
                     Button(action: { vm.goBack() }) {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
                             Text("戻る")
+                                .font(ModernFont.bodyEmphasizedSmall)
                         }
-                        .font(.system(.subheadline, design: .monospaced))
-                        .foregroundColor(course.level.mainColor)
+                        .foregroundColor(course.level.modernColor)
                     }
                     Spacer()
-                    HStack(spacing: 4) {
-                        Image(systemName: lesson.content.typeIcon)
-                        Text(lesson.content.typeLabel)
-                    }
-                    .font(.system(.caption2, design: .monospaced))
-                    .foregroundColor(course.level.mainColor)
-                    .fontWeight(.bold)
+                    Text(course.title)
+                        .font(ModernFont.bodyEmphasizedSmall)
+                        .foregroundColor(ModernTheme.textPrimary)
+                        .lineLimit(1)
+                    Spacer()
+                    Color.clear.frame(width: 56, height: 1)
                 }
-                .padding(14)
-                .background(TerminalTheme.bgSecondary)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(ModernTheme.bgCard.opacity(0.7))
+                .overlay(
+                    Rectangle()
+                        .fill(ModernTheme.border)
+                        .frame(height: 1),
+                    alignment: .bottom
+                )
 
                 ScrollView {
-                    VStack(spacing: 16) {
-                        // Lesson Header
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack(spacing: 10) {
+                    VStack(spacing: 18) {
+                        // Lesson Header Card
+                        HStack(spacing: 14) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(course.level.modernSoft)
+                                    .frame(width: 56, height: 56)
                                 Text(lesson.emoji)
-                                    .font(.system(size: 36))
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(lesson.title)
-                                        .font(.system(.headline, design: .monospaced))
-                                        .foregroundColor(.white)
-                                    HStack(spacing: 8) {
+                                    .font(.system(size: 30))
+                            }
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(lesson.title)
+                                    .font(ModernFont.headlineMedium)
+                                    .foregroundColor(ModernTheme.textPrimary)
+                                HStack(spacing: 8) {
+                                    HStack(spacing: 4) {
                                         Image(systemName: "clock.fill")
-                                            .font(.caption2)
+                                            .font(.system(size: 11))
                                         Text("\(lesson.estimatedMinutes)分")
-                                            .font(.system(.caption, design: .monospaced))
+                                            .font(ModernFont.labelMedium)
                                     }
-                                    .foregroundColor(.white.opacity(0.6))
+                                    .foregroundColor(ModernTheme.textTertiary)
+
+                                    Text(lesson.content.typeLabel)
+                                        .modernPill(color: course.level.modernColor)
                                 }
                             }
+                            Spacer()
                         }
                         .padding(16)
-                        .background(TerminalTheme.bgTertiary)
-                        .cornerRadius(10)
-                        .padding(.horizontal, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(ModernTheme.bgCard)
+                        )
+                        .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
+                        .padding(.horizontal, 20)
+
+                        // Flow indicator: 学習 → 問題 → 確認
+                        LessonFlowIndicator(
+                            currentTab: selectedTab,
+                            isCompleted: vm.isLessonCompleted(lesson),
+                            color: course.level.modernColor
+                        )
+                        .padding(.horizontal, 20)
 
                         // Content based on selected tab
-                        if selectedTab == .learning {
-                            LessonLearningTabView(lesson: lesson)
-                        } else {
-                            // Problem-solving content based on lesson type
-                            switch lesson.content {
-                            case .concept(let concept):
-                                ConceptLessonView(concept: concept)
-                            case .quest(let quest):
-                                QuestLessonView(quest: quest, course: course, vm: vm, lesson: lesson)
-                            case .scenario(let scenario):
-                                ScenarioLessonView(scenario: scenario, course: course, vm: vm, lesson: lesson)
-                            case .quiz(let quiz):
-                                QuizLessonView(quiz: quiz, course: course, vm: vm, lesson: lesson)
+                        Group {
+                            if selectedTab == .learning {
+                                LessonLearningTabView(lesson: lesson, course: course)
+                            } else {
+                                switch lesson.content {
+                                case .concept(let concept):
+                                    ConceptLessonView(concept: concept, course: course)
+                                case .quest(let quest):
+                                    QuestLessonView(quest: quest, course: course, vm: vm, lesson: lesson)
+                                case .scenario(let scenario):
+                                    ScenarioLessonView(scenario: scenario, course: course, vm: vm, lesson: lesson)
+                                case .quiz(let quiz):
+                                    QuizLessonView(quiz: quiz, course: course, vm: vm, lesson: lesson)
+                                }
                             }
                         }
                     }
                     .padding(.vertical, 16)
                 }
 
-                // Tab selector
-                VStack(spacing: 0) {
-                    HStack(spacing: 8) {
+                // Footer: Tab selector + Ad
+                VStack(spacing: 10) {
+                    HStack(spacing: 10) {
                         TabSelectorButton(
                             icon: "book.fill",
                             label: "学習",
                             isSelected: selectedTab == .learning,
-                            color: course.level.mainColor
+                            color: course.level.modernColor
                         ) {
-                            withAnimation(.easeInOut(duration: 0.2)) {
+                            withAnimation(.easeInOut(duration: 0.25)) {
                                 selectedTab = .learning
                             }
                         }
 
                         TabSelectorButton(
                             icon: "target",
-                            label: "問題",
+                            label: "問題に挑戦",
                             isSelected: selectedTab == .problem,
-                            color: course.level.mainColor
+                            color: course.level.modernColor
                         ) {
-                            withAnimation(.easeInOut(duration: 0.2)) {
+                            withAnimation(.easeInOut(duration: 0.25)) {
                                 selectedTab = .problem
                             }
                         }
-
-                        Spacer()
                     }
-                    .padding(12)
-                    .background(TerminalTheme.bgSecondary)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
 
-                    // Ad banner
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
+                    // Ad banner (modern, light)
+                    HStack(spacing: 10) {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(ModernTheme.warning)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("LinaTeX Pro")
+                                .font(ModernFont.labelLarge)
+                                .foregroundColor(ModernTheme.textPrimary)
                             Text("広告")
-                                .font(.system(.caption2, design: .monospaced))
-                                .foregroundColor(TerminalTheme.textTertiary)
-                            Text("LinaTeX Pro - より多くのコースをアンロック")
-                                .font(.system(.caption, design: .monospaced))
-                                .foregroundColor(.white.opacity(0.7))
+                                .font(ModernFont.captionSmall)
+                                .foregroundColor(ModernTheme.textTertiary)
                         }
                         Spacer()
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.caption)
-                            .foregroundColor(TerminalTheme.textTertiary)
+                        Image(systemName: "xmark")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(ModernTheme.textTertiary)
                     }
-                    .padding(12)
-                    .background(Color(red: 0.08, green: 0.08, blue: 0.08))
-                    .cornerRadius(6)
-                    .padding(12)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(ModernTheme.warningSoft.opacity(0.5))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(ModernTheme.warning.opacity(0.2), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 12)
                 }
+                .background(
+                    ModernTheme.bgCard
+                        .opacity(0.85)
+                        .ignoresSafeArea(edges: .bottom)
+                )
+                .overlay(
+                    Rectangle()
+                        .fill(ModernTheme.border)
+                        .frame(height: 1),
+                    alignment: .top
+                )
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -460,6 +729,113 @@ enum LessonTab {
     case problem
 }
 
+// MARK: - Lesson Flow Indicator
+
+struct LessonFlowIndicator: View {
+    let currentTab: LessonTab
+    let isCompleted: Bool
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 0) {
+            FlowStep(
+                icon: "book.fill",
+                label: "学習",
+                isActive: currentTab == .learning,
+                isDone: currentTab == .problem || isCompleted,
+                color: color
+            )
+
+            FlowConnector(isActive: currentTab == .problem || isCompleted, color: color)
+
+            FlowStep(
+                icon: "target",
+                label: "問題",
+                isActive: currentTab == .problem,
+                isDone: isCompleted,
+                color: color
+            )
+
+            FlowConnector(isActive: isCompleted, color: color)
+
+            FlowStep(
+                icon: "checkmark",
+                label: "完了",
+                isActive: false,
+                isDone: isCompleted,
+                color: ModernTheme.success
+            )
+        }
+    }
+}
+
+struct FlowStep: View {
+    let icon: String
+    let label: String
+    let isActive: Bool
+    let isDone: Bool
+    let color: Color
+
+    var fillColor: Color {
+        if isDone { return color }
+        if isActive { return color }
+        return ModernTheme.bgSubtle
+    }
+
+    var iconColor: Color {
+        if isDone || isActive { return .white }
+        return ModernTheme.textTertiary
+    }
+
+    var labelColor: Color {
+        if isActive { return color }
+        if isDone { return ModernTheme.textPrimary }
+        return ModernTheme.textTertiary
+    }
+
+    var body: some View {
+        VStack(spacing: 6) {
+            ZStack {
+                Circle()
+                    .fill(fillColor)
+                    .frame(width: 36, height: 36)
+                if isDone {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(iconColor)
+                } else {
+                    Image(systemName: icon)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(iconColor)
+                }
+            }
+            .shadow(
+                color: (isActive || isDone) ? color.opacity(0.3) : Color.clear,
+                radius: 6, x: 0, y: 2
+            )
+
+            Text(label)
+                .font(ModernFont.labelSmall)
+                .foregroundColor(labelColor)
+                .fontWeight(isActive ? .semibold : .regular)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+struct FlowConnector: View {
+    let isActive: Bool
+    let color: Color
+
+    var body: some View {
+        Rectangle()
+            .fill(isActive ? color : ModernTheme.borderStrong)
+            .frame(height: 2)
+            .padding(.bottom, 22) // align with circle center
+            .padding(.horizontal, -4)
+    }
+}
+
 struct TabSelectorButton: View {
     let icon: String
     let label: String
@@ -469,127 +845,199 @@ struct TabSelectorButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 6) {
+            HStack(spacing: 8) {
                 Image(systemName: icon)
+                    .font(.system(size: 14, weight: .semibold))
                 Text(label)
+                    .font(ModernFont.bodyEmphasizedSmall)
             }
-            .font(.system(.caption, design: .monospaced))
-            .fontWeight(.semibold)
-            .padding(10)
-            .background(isSelected ? color.opacity(0.2) : Color.transparent)
-            .foregroundColor(isSelected ? color : .white.opacity(0.5))
-            .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                    .stroke(isSelected ? color : Color.transparent, lineWidth: 1)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isSelected ? color : ModernTheme.bgSubtle)
             )
-            .cornerRadius(6)
+            .foregroundColor(isSelected ? .white : ModernTheme.textSecondary)
+            .shadow(
+                color: isSelected ? color.opacity(0.3) : Color.clear,
+                radius: 8, x: 0, y: 3
+            )
         }
     }
 }
 
 struct LessonLearningTabView: View {
     let lesson: Lesson
+    let course: Course
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Generate learning material based on lesson content
-            VStack(alignment: .leading, spacing: 12) {
-                Text("📚 学習資料")
-                    .font(.system(.headline, design: .monospaced))
-                    .foregroundColor(TerminalTheme.greenPrimary)
-
-                Divider()
-                    .background(TerminalTheme.borderColor)
-
-                switch lesson.content {
-                case .concept(let concept):
-                    ConceptLessonView(concept: concept)
-
-                case .scenario(let scenario):
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("シナリオの概要")
-                            .font(.system(.subheadline, design: .monospaced))
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-
-                        Text(scenario.setup)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.8))
-                            .lineSpacing(2)
-
-                        Text("目標")
-                            .font(.system(.subheadline, design: .monospaced))
-                            .fontWeight(.bold)
-                            .foregroundColor(TerminalTheme.greenSecondary)
-                            .padding(.top, 8)
-
-                        Text(scenario.goal)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                    .padding(12)
-                    .background(TerminalTheme.bgTertiary)
-                    .cornerRadius(8)
-
-                case .quest(let quest):
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("クエストの内容")
-                            .font(.system(.subheadline, design: .monospaced))
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-
-                        Text(quest.scenario)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.8))
-                            .lineSpacing(2)
-
-                        Text("プロンプト")
-                            .font(.system(.subheadline, design: .monospaced))
-                            .fontWeight(.bold)
-                            .foregroundColor(TerminalTheme.greenSecondary)
-                            .padding(.top, 8)
-
-                        Text(quest.prompt)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                    .padding(12)
-                    .background(TerminalTheme.bgTertiary)
-                    .cornerRadius(8)
-
-                case .quiz(let quiz):
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("クイズについて")
-                            .font(.system(.subheadline, design: .monospaced))
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-
-                        Text("全\(quiz.questions.count)問のクイズが出題されます。各問題を丁寧に読んで、正しい選択肢を選んでください。")
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.8))
-                            .lineSpacing(2)
-
-                        HStack(spacing: 8) {
-                            Image(systemName: "lightbulb.fill")
-                                .foregroundColor(TerminalTheme.accentYellow)
-                                .font(.caption)
-
-                            Text("間違えてもその場で解説を確認できます")
-                                .font(.system(.caption, design: .monospaced))
-                                .foregroundColor(TerminalTheme.accentYellow)
-                        }
-                        .padding(10)
-                        .background(TerminalTheme.accentYellow.opacity(0.1))
-                        .cornerRadius(6)
-                    }
-                    .padding(12)
-                    .background(TerminalTheme.bgTertiary)
-                    .cornerRadius(8)
+            // Section title
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(course.level.modernSoft)
+                        .frame(width: 36, height: 36)
+                    Image(systemName: "book.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(course.level.modernColor)
                 }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("学習資料")
+                        .font(ModernFont.headlineMedium)
+                        .foregroundColor(ModernTheme.textPrimary)
+                    Text("まずは内容を読んで理解しましょう")
+                        .font(ModernFont.bodySmall)
+                        .foregroundColor(ModernTheme.textSecondary)
+                }
+                Spacer()
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 20)
+
+            switch lesson.content {
+            case .concept(let concept):
+                ConceptLessonView(concept: concept, course: course)
+
+            case .scenario(let scenario):
+                VStack(alignment: .leading, spacing: 14) {
+                    LearningSectionCard(
+                        title: "シナリオ",
+                        icon: "doc.text.fill",
+                        color: course.level.modernColor
+                    ) {
+                        Text(scenario.setup)
+                            .font(ModernFont.bodyMedium)
+                            .foregroundColor(ModernTheme.textPrimary)
+                            .lineSpacing(6)
+                    }
+
+                    LearningSectionCard(
+                        title: "目標",
+                        icon: "target",
+                        color: ModernTheme.success
+                    ) {
+                        Text(scenario.goal)
+                            .font(ModernFont.bodyMedium)
+                            .foregroundColor(ModernTheme.textPrimary)
+                            .lineSpacing(6)
+                    }
+
+                    LearningSectionCard(
+                        title: "ステップ概要",
+                        icon: "list.number",
+                        color: ModernTheme.secondary
+                    ) {
+                        VStack(alignment: .leading, spacing: 10) {
+                            ForEach(Array(scenario.steps.enumerated()), id: \.offset) { index, step in
+                                HStack(alignment: .top, spacing: 10) {
+                                    Text("\(index + 1)")
+                                        .font(ModernFont.labelLarge)
+                                        .foregroundColor(.white)
+                                        .frame(width: 24, height: 24)
+                                        .background(Circle().fill(course.level.modernColor))
+                                    Text(step.prompt)
+                                        .font(ModernFont.bodyMedium)
+                                        .foregroundColor(ModernTheme.textPrimary)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+
+            case .quest(let quest):
+                VStack(alignment: .leading, spacing: 14) {
+                    LearningSectionCard(
+                        title: "状況",
+                        icon: "doc.text.fill",
+                        color: course.level.modernColor
+                    ) {
+                        Text(quest.scenario)
+                            .font(ModernFont.bodyMedium)
+                            .foregroundColor(ModernTheme.textPrimary)
+                            .lineSpacing(6)
+                    }
+
+                    LearningSectionCard(
+                        title: "あなたの任務",
+                        icon: "flag.fill",
+                        color: ModernTheme.success
+                    ) {
+                        Text(quest.prompt)
+                            .font(ModernFont.bodyMedium)
+                            .foregroundColor(ModernTheme.textPrimary)
+                            .lineSpacing(6)
+                    }
+                }
+                .padding(.horizontal, 20)
+
+            case .quiz(let quiz):
+                VStack(alignment: .leading, spacing: 14) {
+                    LearningSectionCard(
+                        title: "クイズについて",
+                        icon: "questionmark.circle.fill",
+                        color: course.level.modernColor
+                    ) {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("全\(quiz.questions.count)問のクイズが出題されます。各問題を丁寧に読んで、正しい選択肢を選んでください。")
+                                .font(ModernFont.bodyMedium)
+                                .foregroundColor(ModernTheme.textPrimary)
+                                .lineSpacing(6)
+
+                            HStack(spacing: 10) {
+                                Image(systemName: "lightbulb.fill")
+                                    .foregroundColor(ModernTheme.warning)
+                                Text("間違えてもその場で解説が確認できます")
+                                    .font(ModernFont.bodySmall)
+                                    .foregroundColor(ModernTheme.textSecondary)
+                            }
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(ModernTheme.warningSoft.opacity(0.5))
+                            )
+                        }
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
         }
-        .padding(.vertical, 16)
+    }
+}
+
+// MARK: - Learning Section Card
+
+struct LearningSectionCard<Content: View>: View {
+    let title: String
+    let icon: String
+    let color: Color
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(color)
+                Text(title)
+                    .font(ModernFont.headlineSmall)
+                    .foregroundColor(ModernTheme.textPrimary)
+            }
+
+            content()
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(ModernTheme.bgCard)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(ModernTheme.border, lineWidth: 1)
+        )
+        .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
     }
 }
 
@@ -597,58 +1045,92 @@ struct LessonLearningTabView: View {
 
 struct ConceptLessonView: View {
     let concept: ConceptLesson
+    var course: Course? = nil
+
+    var accentColor: Color {
+        course?.level.modernColor ?? ModernTheme.primary
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(concept.headline)
-                .font(.system(.headline, design: .monospaced))
-                .foregroundColor(TerminalTheme.greenPrimary)
-                .padding(.horizontal, 16)
+                .font(ModernFont.headlineLarge)
+                .foregroundColor(ModernTheme.textPrimary)
+                .padding(.horizontal, 20)
 
-            ForEach(concept.sections) { section in
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(section.heading)
-                        .font(.system(.subheadline, design: .monospaced))
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
+            VStack(spacing: 14) {
+                ForEach(concept.sections) { section in
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(section.heading)
+                            .font(ModernFont.headlineSmall)
+                            .foregroundColor(ModernTheme.textPrimary)
 
-                    Text(section.body)
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.8))
-                        .lineSpacing(3)
+                        Text(section.body)
+                            .font(ModernFont.bodyMedium)
+                            .foregroundColor(ModernTheme.textSecondary)
+                            .lineSpacing(6)
 
-                    if let code = section.codeSample {
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text("$ \(code)")
-                                .font(.system(.caption, design: .monospaced))
-                                .foregroundColor(.green)
+                        if let code = section.codeSample {
+                            CodeBlock(text: code, accent: accentColor)
                         }
-                        .padding(10)
-                        .background(Color.black.opacity(0.5))
-                        .cornerRadius(6)
-                    }
 
-                    if let tip = section.tip {
-                        HStack(spacing: 8) {
-                            Image(systemName: "lightbulb.fill")
-                                .font(.caption)
-                                .foregroundColor(TerminalTheme.textSecondary)
-                            Text(tip)
-                                .font(.system(.caption2, design: .monospaced))
-                                .foregroundColor(.yellow.opacity(0.9))
+                        if let tip = section.tip {
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "lightbulb.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(ModernTheme.warning)
+                                Text(tip)
+                                    .font(ModernFont.bodySmall)
+                                    .foregroundColor(ModernTheme.textPrimary)
+                                    .lineSpacing(4)
+                            }
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(ModernTheme.warningSoft.opacity(0.5))
+                            )
                         }
-                        .padding(8)
-                        .background(Color.yellow.opacity(0.1))
-                        .cornerRadius(6)
                     }
+                    .padding(18)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(ModernTheme.bgCard)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(ModernTheme.border, lineWidth: 1)
+                    )
+                    .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
                 }
-                .padding(12)
-                .background(TerminalTheme.bgTertiary)
-                .cornerRadius(8)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 20)
         }
-        .padding(.vertical, 16)
+    }
+}
+
+// MARK: - Code Block (modern, dark-on-light)
+
+struct CodeBlock: View {
+    let text: String
+    var accent: Color = ModernTheme.primary
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Text("$")
+                .font(ModernFont.codeMedium)
+                .foregroundColor(accent)
+            Text(text)
+                .font(ModernFont.codeMedium)
+                .foregroundColor(ModernTheme.codeText)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(ModernTheme.codeBg)
+        )
     }
 }
 
@@ -663,73 +1145,38 @@ struct QuestLessonView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            // Scenario
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 8) {
-                    Image(systemName: "quote.opening")
-                        .foregroundColor(TerminalTheme.greenPrimary)
-                        .font(.caption)
-                    Text("シナリオ")
-                        .font(.system(.caption, design: .monospaced))
-                        .fontWeight(.bold)
-                        .foregroundColor(TerminalTheme.greenPrimary)
-                }
+            // Scenario card
+            LearningSectionCard(
+                title: "シナリオ",
+                icon: "quote.bubble.fill",
+                color: course.level.modernColor
+            ) {
                 Text(quest.scenario)
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.8))
+                    .font(ModernFont.bodyMedium)
+                    .foregroundColor(ModernTheme.textPrimary)
+                    .lineSpacing(5)
             }
-            .padding(12)
-            .background(Color.cyan.opacity(0.1))
-            .cornerRadius(8)
 
-            // Prompt
-            VStack(alignment: .leading, spacing: 8) {
-                Text("📝 問題")
-                    .font(.system(.caption, design: .monospaced))
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+            // Prompt card
+            LearningSectionCard(
+                title: "問題",
+                icon: "questionmark.circle.fill",
+                color: ModernTheme.secondary
+            ) {
                 Text(quest.prompt)
-                    .font(.system(.body, design: .monospaced))
-                    .foregroundColor(.white)
+                    .font(ModernFont.bodyLarge)
+                    .foregroundColor(ModernTheme.textPrimary)
+                    .lineSpacing(5)
             }
-            .padding(12)
-            .background(TerminalTheme.bgTertiary)
-            .cornerRadius(8)
 
-            // Hint Button
-            Button(action: {
-                withAnimation(.spring()) {
+            // Hint
+            HintBlock(text: quest.hint, isShown: vm.showHint) {
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                     vm.showHint.toggle()
                 }
-            }) {
-                HStack(spacing: 6) {
-                    Image(systemName: "lightbulb\(vm.showHint ? ".fill" : "")")
-                    Text(vm.showHint ? "ヒントを隠す" : "ヒント を見る")
-                }
-                .font(.system(.caption, design: .monospaced))
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity)
-                .padding(8)
-                .background(vm.showHint ? Color.yellow.opacity(0.2) : Color.white.opacity(0.05))
-                .foregroundColor(vm.showHint ? .yellow : .white.opacity(0.6))
-                .cornerRadius(6)
             }
 
-            if vm.showHint {
-                HStack(spacing: 8) {
-                    Image(systemName: "lightbulb.fill")
-                        .foregroundColor(TerminalTheme.textSecondary)
-                    Text(quest.hint)
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(TerminalTheme.textSecondary)
-                }
-                .padding(10)
-                .background(Color.yellow.opacity(0.1))
-                .cornerRadius(6)
-                .transition(.move(edge: .top).combined(with: .opacity))
-            }
-
-            // Terminal Output (Fixed height)
+            // Terminal Panel
             TerminalPanel(
                 input: vm.userInput,
                 output: vm.terminalOutput,
@@ -737,13 +1184,18 @@ struct QuestLessonView: View {
                 successMessage: quest.successMessage
             )
 
-            // Command Buttons
+            // Command options
             VStack(spacing: 10) {
-                HStack(spacing: 10) {
+                Text("コマンドを選択")
+                    .font(ModernFont.labelMedium)
+                    .foregroundColor(ModernTheme.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                VStack(spacing: 8) {
                     ForEach(quest.options) { option in
                         CommandButton(
                             option: option,
-                            accentColor: course.level.mainColor,
+                            accentColor: course.level.modernColor,
                             isSelected: vm.userInput == option.command,
                             isDisabled: vm.currentLessonState != .waiting
                         ) {
@@ -753,75 +1205,55 @@ struct QuestLessonView: View {
                         }
                     }
                 }
+            }
 
-                // Execute / Retry / Next buttons
-                HStack(spacing: 10) {
-                    if vm.currentLessonState == .wrong {
-                        Button(action: {
-                            let impact = UIImpactFeedbackGenerator(style: .light)
-                            impact.impactOccurred()
-                            vm.retry()
-                        }) {
-                            Label("もう一度", systemImage: "arrow.counterclockwise")
-                                .frame(maxWidth: .infinity)
-                                .padding(12)
-                                .background(Color.orange.opacity(0.2))
-                                .foregroundColor(.orange)
-                                .cornerRadius(8)
-                                .font(.system(.subheadline, design: .monospaced))
-                                .fontWeight(.semibold)
+            // Execute / Retry / Complete buttons
+            HStack(spacing: 10) {
+                if vm.currentLessonState == .wrong {
+                    PrimaryActionButton(
+                        title: "もう一度",
+                        icon: "arrow.counterclockwise",
+                        style: .secondary
+                    ) {
+                        let impact = UIImpactFeedbackGenerator(style: .light)
+                        impact.impactOccurred()
+                        vm.retry()
+                    }
+                }
+
+                if vm.currentLessonState != .correct && vm.currentLessonState != .completed {
+                    PrimaryActionButton(
+                        title: "実行",
+                        icon: "play.fill",
+                        style: .primary,
+                        color: course.level.modernColor,
+                        disabled: vm.userInput.isEmpty
+                    ) {
+                        let impact = UIImpactFeedbackGenerator(style: .heavy)
+                        impact.impactOccurred()
+                        vm.executeQuest(quest)
+                    }
+                }
+
+                if vm.currentLessonState == .correct {
+                    PrimaryActionButton(
+                        title: "完了",
+                        icon: "checkmark.circle.fill",
+                        style: .success
+                    ) {
+                        let impact = UINotificationFeedbackGenerator()
+                        impact.notificationOccurred(.success)
+                        showCompletion = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                            vm.completeLesson(lesson)
+                            vm.goBack()
                         }
                     }
-
-                    if vm.currentLessonState != .correct && vm.currentLessonState != .completed {
-                        Button(action: {
-                            let impact = UIImpactFeedbackGenerator(style: .heavy)
-                            impact.impactOccurred()
-                            vm.executeQuest(quest)
-                        }) {
-                            Label("実行", systemImage: "play.fill")
-                                .frame(maxWidth: .infinity)
-                                .padding(12)
-                                .background(vm.userInput.isEmpty ? Color.gray.opacity(0.2) : course.level.mainColor)
-                                .foregroundColor(vm.userInput.isEmpty ? .gray : .black)
-                                .cornerRadius(8)
-                                .font(.system(.subheadline, design: .monospaced))
-                                .fontWeight(.bold)
-                        }
-                        .disabled(vm.userInput.isEmpty)
-                    }
-
-                    if vm.currentLessonState == .correct {
-                        Button(action: {
-                            let impact = UINotificationFeedbackGenerator()
-                            impact.notificationOccurred(.success)
-                            showCompletion = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-                                vm.completeLesson(lesson)
-                                vm.goBack()
-                            }
-                        }) {
-                            Label("完了", systemImage: "checkmark.circle.fill")
-                                .frame(maxWidth: .infinity)
-                                .padding(12)
-                                .background(
-                                    LinearGradient(
-                                        colors: [course.level.mainColor, course.level.mainColor.opacity(0.7)],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .foregroundColor(.black)
-                                .cornerRadius(8)
-                                .font(.system(.subheadline, design: .monospaced))
-                                .fontWeight(.bold)
-                        }
-                        .transition(.scale.combined(with: .opacity))
-                    }
+                    .transition(.scale.combined(with: .opacity))
                 }
             }
         }
-        .padding(16)
+        .padding(.horizontal, 20)
         .animation(.spring(response: 0.4, dampingFraction: 0.7), value: vm.currentLessonState)
         .overlay(
             showCompletion ? SuccessOverlayView {
@@ -831,7 +1263,128 @@ struct QuestLessonView: View {
     }
 }
 
-// MARK: - Terminal Panel (Fixed Layout)
+// MARK: - Hint Block
+
+struct HintBlock: View {
+    let text: String
+    let isShown: Bool
+    let toggle: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Button(action: toggle) {
+                HStack(spacing: 8) {
+                    Image(systemName: isShown ? "lightbulb.fill" : "lightbulb")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(ModernTheme.warning)
+                    Text(isShown ? "ヒントを隠す" : "ヒントを見る")
+                        .font(ModernFont.bodyEmphasizedSmall)
+                        .foregroundColor(ModernTheme.textPrimary)
+                    Spacer()
+                    Image(systemName: isShown ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(ModernTheme.textTertiary)
+                }
+                .padding(14)
+            }
+
+            if isShown {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "info.circle.fill")
+                        .foregroundColor(ModernTheme.warning)
+                        .font(.system(size: 14))
+                    Text(text)
+                        .font(ModernFont.bodyMedium)
+                        .foregroundColor(ModernTheme.textPrimary)
+                        .lineSpacing(4)
+                }
+                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    Rectangle().fill(ModernTheme.warningSoft.opacity(0.4))
+                )
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(ModernTheme.bgCard)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(ModernTheme.warning.opacity(0.3), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+    }
+}
+
+// MARK: - Primary Action Button
+
+enum ActionStyle {
+    case primary
+    case secondary
+    case success
+    case danger
+}
+
+struct PrimaryActionButton: View {
+    let title: String
+    let icon: String
+    var style: ActionStyle = .primary
+    var color: Color = ModernTheme.primary
+    var disabled: Bool = false
+    let action: () -> Void
+
+    var fillColor: Color {
+        if disabled { return ModernTheme.borderStrong }
+        switch style {
+        case .primary: return color
+        case .secondary: return ModernTheme.bgSubtle
+        case .success: return ModernTheme.success
+        case .danger: return ModernTheme.danger
+        }
+    }
+
+    var foregroundColor: Color {
+        if disabled { return .white }
+        switch style {
+        case .primary, .success, .danger: return .white
+        case .secondary: return ModernTheme.textPrimary
+        }
+    }
+
+    var shadowColor: Color {
+        if disabled { return .clear }
+        switch style {
+        case .primary: return color.opacity(0.35)
+        case .success: return ModernTheme.success.opacity(0.35)
+        case .danger: return ModernTheme.danger.opacity(0.35)
+        case .secondary: return .clear
+        }
+    }
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 15, weight: .semibold))
+                Text(title)
+                    .font(ModernFont.bodyEmphasized)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(fillColor)
+            )
+            .foregroundColor(foregroundColor)
+            .shadow(color: shadowColor, radius: 10, x: 0, y: 4)
+        }
+        .disabled(disabled)
+    }
+}
+
+// MARK: - Terminal Panel (Modern Light)
 
 struct TerminalPanel: View {
     let input: String
@@ -841,30 +1394,42 @@ struct TerminalPanel: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Terminal header
-            HStack(spacing: 6) {
-                Circle().fill(TerminalTheme.accentRed).frame(width: 6, height: 6)
-                Circle().fill(TerminalTheme.accentYellow).frame(width: 6, height: 6)
-                Circle().fill(TerminalTheme.greenSecondary).frame(width: 6, height: 6)
+            // Terminal header bar
+            HStack(spacing: 8) {
+                Circle().fill(Color(hex: 0xFF5F57)).frame(width: 10, height: 10)
+                Circle().fill(Color(hex: 0xFEBC2E)).frame(width: 10, height: 10)
+                Circle().fill(Color(hex: 0x28C840)).frame(width: 10, height: 10)
                 Spacer()
-                Text("— terminal").font(.system(.caption2, design: .monospaced)).foregroundColor(TerminalTheme.textTertiary)
+                Text("terminal")
+                    .font(ModernFont.codeSmall)
+                    .foregroundColor(Color.white.opacity(0.5))
+                Spacer()
+                Color.clear.frame(width: 38, height: 1)
             }
-            .padding(8)
-            .background(TerminalTheme.bgSecondary)
-            .border(TerminalTheme.borderColor, width: 0.5)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(Color(hex: 0x0F172A))
 
-            // Terminal output - scrollable
+            // Terminal body
             ScrollViewReader { proxy in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 4) {
-                        // Prompt and input at the top
+                    VStack(alignment: .leading, spacing: 6) {
                         HStack(spacing: 6) {
-                            Text("fumiaki@linatex:~$")
-                                .foregroundColor(TerminalTheme.greenPrimary)
-                                .font(.system(.caption, design: .monospaced))
+                            Text("user@linatex")
+                                .foregroundColor(Color(hex: 0x10B981))
+                                .font(ModernFont.codeSmall)
+                            Text(":")
+                                .foregroundColor(Color.white.opacity(0.5))
+                                .font(ModernFont.codeSmall)
+                            Text("~")
+                                .foregroundColor(Color(hex: 0x60A5FA))
+                                .font(ModernFont.codeSmall)
+                            Text("$")
+                                .foregroundColor(Color.white.opacity(0.7))
+                                .font(ModernFont.codeSmall)
                             Text(input)
-                                .foregroundColor(inputColor)
-                                .font(.system(.caption, design: .monospaced))
+                                .foregroundColor(.white)
+                                .font(ModernFont.codeSmall)
                             if state == .waiting {
                                 CursorView()
                             }
@@ -872,79 +1437,37 @@ struct TerminalPanel: View {
                         }
                         .id("input")
 
-                        // Output
                         if !output.isEmpty {
                             Text(output)
-                                .font(.system(.caption2, design: .monospaced))
-                                .foregroundColor(outputColor)
-                                .lineSpacing(1)
+                                .font(ModernFont.codeSmall)
+                                .foregroundColor(Color.white.opacity(0.85))
+                                .lineSpacing(2)
                                 .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .id("output")
-                        }
-
-                        // Feedback
-                        if state == .correct {
-                            HStack(spacing: 6) {
-                                Text("✓")
-                                    .foregroundColor(TerminalTheme.greenPrimary)
-                                Text(successMessage)
-                                    .font(.system(.caption2, design: .monospaced))
-                                    .foregroundColor(TerminalTheme.greenSecondary)
-                            }
-                            .padding(.top, 4)
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
-                            .id("success")
-                        }
-
-                        if state == .wrong {
-                            Text("✗ コマンドが違います")
-                                .font(.system(.caption2, design: .monospaced))
-                                .foregroundColor(TerminalTheme.accentRed)
-                                .padding(.top, 4)
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
-                                .id("error")
                         }
 
                         Spacer()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(10)
+                    .padding(14)
                     .onChange(of: output) { _ in
-                        withAnimation {
-                            proxy.scrollTo("output", anchor: .bottom)
-                        }
+                        withAnimation { proxy.scrollTo("output", anchor: .bottom) }
                     }
                     .onChange(of: state) { _ in
                         if state == .correct {
-                            withAnimation {
-                                proxy.scrollTo("success", anchor: .bottom)
-                            }
+                            withAnimation { proxy.scrollTo("success", anchor: .bottom) }
                         } else if state == .wrong {
-                            withAnimation {
-                                proxy.scrollTo("error", anchor: .bottom)
-                            }
+                            withAnimation { proxy.scrollTo("error", anchor: .bottom) }
                         }
                     }
                 }
             }
-            .frame(minHeight: 140)
-            .background(TerminalTheme.bgTertiary)
+            .frame(minHeight: 160)
+            .background(Color(hex: 0x1E293B))
         }
-        .background(TerminalTheme.bgPrimary)
-        .border(TerminalTheme.borderColor, width: 1)
-        .cornerRadius(4)
-    }
-
-    var inputColor: Color {
-        switch state {
-        case .correct: return TerminalTheme.greenPrimary
-        case .wrong: return TerminalTheme.accentRed
-        default: return TerminalTheme.textPrimary
-        }
-    }
-
-    var outputColor: Color {
-        state == .wrong ? TerminalTheme.accentRed : TerminalTheme.textSecondary
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .shadow(color: ModernTheme.shadowColorMedium, radius: 12, x: 0, y: 4)
     }
 }
 
@@ -954,18 +1477,18 @@ struct CursorView: View {
     @State private var visible = true
     var body: some View {
         Rectangle()
-            .fill(TerminalTheme.greenPrimary)
-            .frame(width: 6, height: 12)
-            .opacity(visible ? 0.8 : 0.2)
+            .fill(Color(hex: 0x10B981))
+            .frame(width: 8, height: 14)
+            .opacity(visible ? 0.9 : 0.2)
             .onAppear {
-                withAnimation(.easeInOut(duration: 0.5).repeatForever()) {
+                withAnimation(.easeInOut(duration: 0.55).repeatForever()) {
                     visible.toggle()
                 }
             }
     }
 }
 
-// MARK: - Command Button
+// MARK: - Command Button (Modern Light)
 
 struct CommandButton: View {
     let option: CommandOption
@@ -974,31 +1497,44 @@ struct CommandButton: View {
     let isDisabled: Bool
     let action: () -> Void
 
-    @State private var isPressed = false
-
     var body: some View {
-        Button(action: {
-            action()
-        }) {
-            Text(option.label)
-                .font(.system(.caption, design: .monospaced))
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(isSelected
-                            ? TerminalTheme.greenPrimary.opacity(0.15)
-                            : TerminalTheme.bgTertiary
-                        )
-                )
-                .border(isSelected ? TerminalTheme.greenPrimary : TerminalTheme.borderColor, width: 1)
-                .foregroundColor(isSelected ? TerminalTheme.greenPrimary : TerminalTheme.textSecondary)
-                .scaleEffect(isPressed ? 0.96 : 1.0)
+        Button(action: action) {
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .stroke(isSelected ? accentColor : ModernTheme.borderStrong, lineWidth: 2)
+                        .frame(width: 20, height: 20)
+                    if isSelected {
+                        Circle()
+                            .fill(accentColor)
+                            .frame(width: 12, height: 12)
+                    }
+                }
+
+                Text(option.label)
+                    .font(ModernFont.codeMedium)
+                    .foregroundColor(ModernTheme.textPrimary)
+                    .multilineTextAlignment(.leading)
+
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isSelected ? accentColor.opacity(0.08) : ModernTheme.bgCard)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(
+                        isSelected ? accentColor : ModernTheme.border,
+                        lineWidth: isSelected ? 1.5 : 1
+                    )
+            )
         }
+        .buttonStyle(.plain)
         .disabled(isDisabled)
-        .opacity(isDisabled ? 0.5 : 1.0)
+        .opacity(isDisabled ? 0.55 : 1.0)
     }
 }
 

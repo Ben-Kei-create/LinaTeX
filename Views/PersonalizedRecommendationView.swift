@@ -7,32 +7,32 @@ struct PersonalizedRecommendationView: View {
     let onSelectLesson: (Lesson) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             if let recommendation = vm.personalizedRecommendation {
-                // Header with Priority Indicator
-                HStack(alignment: .center, spacing: 8) {
-                    Image(systemName: priorityIcon(recommendation.priority))
-                        .font(.system(size: 20))
-                        .foregroundColor(priorityColor(recommendation.priority))
+                HStack(spacing: 10) {
+                    ZStack {
+                        Circle()
+                            .fill(priorityColor(recommendation.priority).opacity(0.15))
+                            .frame(width: 38, height: 38)
+                        Image(systemName: priorityIcon(recommendation.priority))
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(priorityColor(recommendation.priority))
+                    }
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(recommendation.title)
-                            .font(.system(.subheadline, design: .monospaced))
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .font(ModernFont.headlineSmall)
+                            .foregroundColor(ModernTheme.textPrimary)
 
                         Text(recommendation.reason)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.7))
+                            .font(ModernFont.bodySmall)
+                            .foregroundColor(ModernTheme.textSecondary)
+                            .lineLimit(2)
                     }
 
                     Spacer()
                 }
 
-                Divider()
-                    .background(TerminalTheme.borderColor)
-
-                // Recommended Lessons
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(recommendation.lessons, id: \.id) { lesson in
                         RecommendedLessonCard(lesson: lesson) {
@@ -41,40 +41,40 @@ struct PersonalizedRecommendationView: View {
                     }
                 }
             } else {
-                VStack(alignment: .center, spacing: 12) {
-                    Image(systemName: "hourglass.circle")
-                        .font(.system(size: 32))
-                        .foregroundColor(TerminalTheme.greenSecondary.opacity(0.5))
+                HStack(spacing: 12) {
+                    ZStack {
+                        Circle()
+                            .fill(ModernTheme.primarySoft)
+                            .frame(width: 38, height: 38)
+                        Image(systemName: "sparkles")
+                            .foregroundColor(ModernTheme.primary)
+                            .font(.system(size: 14, weight: .semibold))
+                    }
 
-                    Text("分析中...")
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.6))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("AIがあなたに最適なレッスンを準備中")
+                            .font(ModernFont.bodyEmphasizedSmall)
+                            .foregroundColor(ModernTheme.textPrimary)
+                        Text("レッスンを進めると、おすすめが表示されます")
+                            .font(ModernFont.captionSmall)
+                            .foregroundColor(ModernTheme.textSecondary)
+                    }
 
-                    Text("もっとレッスンを進めると、AIが個人化された推奨を提供します")
-                        .font(.system(.caption2, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.4))
-                        .multilineTextAlignment(.center)
+                    Spacer()
                 }
-                .padding(12)
-                .frame(maxWidth: .infinity)
             }
         }
-        .padding(12)
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            LinearGradient(
-                colors: [
-                    TerminalTheme.greenPrimary.opacity(0.05),
-                    TerminalTheme.greenSecondary.opacity(0.03)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            RoundedRectangle(cornerRadius: 18)
+                .fill(ModernTheme.bgCard)
         )
-        .cornerRadius(8)
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(TerminalTheme.borderColor, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(ModernTheme.border, lineWidth: 1)
         )
+        .shadow(color: ModernTheme.shadowColor, radius: 10, x: 0, y: 3)
         .onAppear {
             vm.updateLearningProfile()
             vm.updatePersonalizedRecommendation()
@@ -83,17 +83,17 @@ struct PersonalizedRecommendationView: View {
 
     private func priorityIcon(_ priority: Int) -> String {
         switch priority {
-        case 1: return "exclamationmark.circle.fill"
-        case 2: return "star.circle.fill"
-        default: return "checkmark.circle.fill"
+        case 1: return "flame.fill"
+        case 2: return "star.fill"
+        default: return "sparkles"
         }
     }
 
     private func priorityColor(_ priority: Int) -> Color {
         switch priority {
-        case 1: return .red
-        case 2: return .yellow
-        default: return .green
+        case 1: return ModernTheme.danger
+        case 2: return ModernTheme.warning
+        default: return ModernTheme.primary
         }
     }
 }
@@ -106,37 +106,40 @@ struct RecommendedLessonCard: View {
 
     var body: some View {
         Button(action: onTap) {
-            HStack(alignment: .center, spacing: 10) {
+            HStack(spacing: 12) {
+                Text(lesson.emoji)
+                    .font(.system(size: 22))
+                    .frame(width: 38, height: 38)
+                    .background(Circle().fill(ModernTheme.bgSubtle))
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(lesson.title)
-                        .font(.system(.subheadline, design: .monospaced))
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .font(ModernFont.bodyEmphasizedSmall)
+                        .foregroundColor(ModernTheme.textPrimary)
+                        .multilineTextAlignment(.leading)
 
-                    HStack(spacing: 8) {
+                    HStack(spacing: 4) {
                         Image(systemName: "clock")
-                            .font(.system(size: 12))
+                            .font(.system(size: 10))
                         Text("\(lesson.estimatedMinutes)分")
-                            .font(.system(.caption2, design: .monospaced))
+                            .font(ModernFont.labelSmall)
                     }
-                    .foregroundColor(.white.opacity(0.6))
+                    .foregroundColor(ModernTheme.textTertiary)
                 }
 
                 Spacer()
 
-                HStack(spacing: 6) {
-                    Text(lesson.emoji)
-                        .font(.system(size: 16))
-
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(TerminalTheme.greenPrimary)
-                }
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(ModernTheme.primary)
             }
-            .padding(10)
-            .background(TerminalTheme.bgTertiary)
-            .cornerRadius(6)
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(ModernTheme.bgSubtle.opacity(0.5))
+            )
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -146,94 +149,65 @@ struct LearningProfileWidget: View {
     @ObservedObject var vm: AppViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            // Title
-            HStack(spacing: 8) {
-                Image(systemName: "brain")
-                    .font(.system(size: 16))
-                    .foregroundColor(TerminalTheme.greenTertiary)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(ModernTheme.accentSoft)
+                        .frame(width: 36, height: 36)
+                    Image(systemName: "brain.head.profile")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(ModernTheme.accent)
+                }
 
-                Text("AI学習分析")
-                    .font(.system(.caption, design: .monospaced))
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("AI学習分析")
+                        .font(ModernFont.headlineSmall)
+                        .foregroundColor(ModernTheme.textPrimary)
+                    Text("あなたに合わせた学習プロフィール")
+                        .font(ModernFont.captionSmall)
+                        .foregroundColor(ModernTheme.textSecondary)
+                }
 
                 Spacer()
-
-                Text("Beta")
-                    .font(.system(.caption2, design: .monospaced))
-                    .fontWeight(.bold)
-                    .foregroundColor(TerminalTheme.greenTertiary)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(TerminalTheme.greenTertiary.opacity(0.2))
-                    .cornerRadius(4)
             }
 
-            Divider()
-                .background(TerminalTheme.borderColor)
-
-            // Learning Style
             if let profile = vm.learningProfile {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 8) {
-                        Circle()
-                            .fill(TerminalTheme.greenPrimary)
-                            .frame(width: 8, height: 8)
-
-                        Text("学習スタイル")
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.7))
-
-                        Spacer()
-
-                        Text(styleLabel(profile.learningStyle))
-                            .font(.system(.caption, design: .monospaced))
-                            .fontWeight(.bold)
-                            .foregroundColor(TerminalTheme.greenPrimary)
-                    }
-
-                    HStack(spacing: 8) {
-                        Circle()
-                            .fill(TerminalTheme.accentYellow)
-                            .frame(width: 8, height: 8)
-
-                        Text("学習ペース")
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.7))
-
-                        Spacer()
-
-                        Text(paceLabel(profile.pace))
-                            .font(.system(.caption, design: .monospaced))
-                            .fontWeight(.bold)
-                            .foregroundColor(TerminalTheme.accentYellow)
-                    }
-
+                VStack(spacing: 10) {
+                    ProfileRow(
+                        icon: "graduationcap.fill",
+                        label: "学習スタイル",
+                        value: styleLabel(profile.learningStyle),
+                        color: ModernTheme.primary
+                    )
+                    ProfileRow(
+                        icon: "speedometer",
+                        label: "学習ペース",
+                        value: paceLabel(profile.pace),
+                        color: ModernTheme.secondary
+                    )
                     if !profile.weakTopics.isEmpty {
-                        HStack(spacing: 8) {
-                            Circle()
-                                .fill(TerminalTheme.accentRed)
-                                .frame(width: 8, height: 8)
-
-                            Text("強化すべき分野")
-                                .font(.system(.caption, design: .monospaced))
-                                .foregroundColor(.white.opacity(0.7))
-
-                            Spacer()
-
-                            Text(profile.weakTopics.first ?? "")
-                                .font(.system(.caption, design: .monospaced))
-                                .fontWeight(.bold)
-                                .foregroundColor(TerminalTheme.accentRed)
-                        }
+                        ProfileRow(
+                            icon: "exclamationmark.triangle.fill",
+                            label: "強化分野",
+                            value: profile.weakTopics.first ?? "",
+                            color: ModernTheme.warning
+                        )
                     }
                 }
             }
         }
-        .padding(10)
-        .background(TerminalTheme.bgTertiary)
-        .cornerRadius(8)
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(ModernTheme.bgCard)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(ModernTheme.border, lineWidth: 1)
+        )
+        .shadow(color: ModernTheme.shadowColor, radius: 10, x: 0, y: 3)
         .onAppear {
             vm.updateLearningProfile()
         }
@@ -258,17 +232,39 @@ struct LearningProfileWidget: View {
     }
 }
 
+struct ProfileRow: View {
+    let icon: String
+    let label: String
+    let value: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(color)
+                .frame(width: 22)
+            Text(label)
+                .font(ModernFont.bodySmall)
+                .foregroundColor(ModernTheme.textSecondary)
+            Spacer()
+            Text(value)
+                .font(ModernFont.bodyEmphasizedSmall)
+                .foregroundColor(ModernTheme.textPrimary)
+        }
+    }
+}
+
 #Preview {
     ZStack {
-        TerminalTheme.bgPrimary
+        ModernTheme.backgroundGradient
             .ignoresSafeArea()
 
         VStack(spacing: 16) {
             PersonalizedRecommendationView(vm: AppViewModel()) { _ in }
             LearningProfileWidget(vm: AppViewModel())
-
             Spacer()
         }
-        .padding(16)
+        .padding(20)
     }
 }

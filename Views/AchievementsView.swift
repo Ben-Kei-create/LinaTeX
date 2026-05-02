@@ -14,148 +14,172 @@ struct AchievementsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Header
-            HStack(alignment: .center, spacing: 12) {
-                Image(systemName: "star.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(TerminalTheme.accentYellow)
+        ZStack {
+            ModernTheme.backgroundGradient.ignoresSafeArea()
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("アチーブメント")
-                        .font(.system(.headline, design: .monospaced))
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                    Text("あなたの成果を見る")
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.6))
-                }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    // Header
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("アチーブメント")
+                                .font(ModernFont.displayMedium)
+                                .foregroundColor(ModernTheme.textPrimary)
+                            Text("学習の成果を確認しましょう")
+                                .font(ModernFont.bodyMedium)
+                                .foregroundColor(ModernTheme.textSecondary)
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
 
-                Spacer()
-
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("\(unlockedBadges.count)/\(allAchievements.count)")
-                        .font(.system(.headline, design: .monospaced))
-                        .fontWeight(.bold)
-                        .foregroundColor(TerminalTheme.greenPrimary)
-                    Text("獲得済み")
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.6))
-                }
-            }
-            .padding(12)
-            .background(TerminalTheme.bgTertiary)
-            .cornerRadius(8)
-
-            if !unlockedBadges.isEmpty {
-                // Unlocked achievements
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("🏆 獲得済みのアチーブメント")
-                        .font(.system(.caption, design: .monospaced))
-                        .fontWeight(.bold)
-                        .foregroundColor(TerminalTheme.accentYellow)
-
-                    LazyVGrid(columns: [
-                        GridItem(.flexible(), spacing: 10),
-                        GridItem(.flexible(), spacing: 10),
-                        GridItem(.flexible(), spacing: 10),
-                    ], spacing: 10) {
-                        ForEach(unlockedBadges, id: \.id) { badge in
-                            AchievementBadgeView(achievement: badge, unlocked: true)
+                    // Stats card
+                    HStack(spacing: 16) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("獲得済み")
+                                .font(ModernFont.labelMedium)
+                                .foregroundColor(.white.opacity(0.85))
+                            Text("\(unlockedBadges.count) / \(allAchievements.count)")
+                                .font(ModernFont.displayMedium)
+                                .foregroundColor(.white)
+                        }
+                        Spacer()
+                        ZStack {
+                            Circle()
+                                .fill(Color.white.opacity(0.18))
+                                .frame(width: 64, height: 64)
+                            Image(systemName: "trophy.fill")
+                                .font(.system(size: 28))
+                                .foregroundColor(.white)
                         }
                     }
-                }
-            }
+                    .padding(20)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color(hex: 0xF59E0B), Color(hex: 0xEF4444)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                    )
+                    .shadow(color: Color(hex: 0xF59E0B).opacity(0.25), radius: 16, x: 0, y: 6)
+                    .padding(.horizontal, 20)
 
-            if !lockedBadges.isEmpty {
-                // Locked achievements
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("🔒 チャレンジ中のアチーブメント")
-                        .font(.system(.caption, design: .monospaced))
-                        .fontWeight(.bold)
-                        .foregroundColor(.white.opacity(0.6))
+                    // Unlocked
+                    if !unlockedBadges.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .foregroundColor(ModernTheme.success)
+                                Text("獲得済み")
+                                    .font(ModernFont.headlineMedium)
+                                    .foregroundColor(ModernTheme.textPrimary)
+                            }
+                            .padding(.horizontal, 20)
 
-                    LazyVGrid(columns: [
-                        GridItem(.flexible(), spacing: 10),
-                        GridItem(.flexible(), spacing: 10),
-                        GridItem(.flexible(), spacing: 10),
-                    ], spacing: 10) {
-                        ForEach(lockedBadges, id: \.id) { badge in
-                            AchievementBadgeView(achievement: badge, unlocked: false)
+                            LazyVGrid(columns: [
+                                GridItem(.flexible(), spacing: 12),
+                                GridItem(.flexible(), spacing: 12),
+                                GridItem(.flexible(), spacing: 12),
+                            ], spacing: 12) {
+                                ForEach(unlockedBadges, id: \.id) { badge in
+                                    AchievementBadgeView(achievement: badge, unlocked: true)
+                                }
+                            }
+                            .padding(.horizontal, 20)
                         }
                     }
+
+                    // Locked
+                    if !lockedBadges.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "lock.fill")
+                                    .foregroundColor(ModernTheme.textTertiary)
+                                Text("チャレンジ中")
+                                    .font(ModernFont.headlineMedium)
+                                    .foregroundColor(ModernTheme.textPrimary)
+                            }
+                            .padding(.horizontal, 20)
+
+                            LazyVGrid(columns: [
+                                GridItem(.flexible(), spacing: 12),
+                                GridItem(.flexible(), spacing: 12),
+                                GridItem(.flexible(), spacing: 12),
+                            ], spacing: 12) {
+                                ForEach(lockedBadges, id: \.id) { badge in
+                                    AchievementBadgeView(achievement: badge, unlocked: false)
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                        }
+                    }
+
+                    Spacer(minLength: 30)
                 }
             }
-
-            Spacer()
         }
-        .padding(16)
-        .background(TerminalTheme.bgSecondary)
-        .cornerRadius(12)
         .onAppear {
             vm.checkAndUnlockAchievements()
         }
     }
 }
 
-// MARK: - Achievement Badge View
+// MARK: - Achievement Badge
 
 struct AchievementBadgeView: View {
     let achievement: Achievement
     let unlocked: Bool
 
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
-            Text(achievement.icon)
-                .font(.system(size: 32))
-                .opacity(unlocked ? 1.0 : 0.4)
+        VStack(spacing: 8) {
+            ZStack {
+                Circle()
+                    .fill(unlocked ? ModernTheme.warningSoft : ModernTheme.bgSubtle)
+                    .frame(width: 56, height: 56)
+                Text(achievement.icon)
+                    .font(.system(size: 30))
+                    .opacity(unlocked ? 1.0 : 0.4)
+            }
 
-            VStack(alignment: .center, spacing: 4) {
+            VStack(spacing: 2) {
                 Text(achievement.name)
-                    .font(.system(.caption2, design: .monospaced))
-                    .fontWeight(.bold)
-                    .foregroundColor(unlocked ? .white : .white.opacity(0.5))
+                    .font(ModernFont.labelMedium)
+                    .foregroundColor(unlocked ? ModernTheme.textPrimary : ModernTheme.textTertiary)
+                    .multilineTextAlignment(.center)
                     .lineLimit(2)
 
                 Text(achievement.description)
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundColor(unlocked ? .white.opacity(0.7) : .white.opacity(0.3))
-                    .lineLimit(2)
+                    .font(ModernFont.captionSmall)
+                    .foregroundColor(unlocked ? ModernTheme.textSecondary : ModernTheme.textTertiary)
                     .multilineTextAlignment(.center)
+                    .lineLimit(2)
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(10)
+        .padding(.vertical, 14)
+        .padding(.horizontal, 6)
         .background(
-            unlocked ?
-            LinearGradient(
-                colors: [TerminalTheme.accentYellow.opacity(0.1), TerminalTheme.accentYellow.opacity(0.05)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ) :
-            LinearGradient(
-                colors: [TerminalTheme.borderColor, TerminalTheme.borderColor.opacity(0.5)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            RoundedRectangle(cornerRadius: 14)
+                .fill(ModernTheme.bgCard)
         )
-        .cornerRadius(8)
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: 14)
                 .stroke(
-                    unlocked ? TerminalTheme.accentYellow.opacity(0.3) : TerminalTheme.borderColor,
+                    unlocked ? ModernTheme.warning.opacity(0.4) : ModernTheme.border,
                     lineWidth: 1
                 )
+        )
+        .shadow(
+            color: unlocked ? ModernTheme.warning.opacity(0.15) : ModernTheme.shadowColor,
+            radius: 8, x: 0, y: 2
         )
     }
 }
 
 #Preview {
-    ZStack {
-        TerminalTheme.bgPrimary
-            .ignoresSafeArea()
-
-        AchievementsView(vm: AppViewModel())
-            .padding(16)
-    }
+    AchievementsView(vm: AppViewModel())
 }
