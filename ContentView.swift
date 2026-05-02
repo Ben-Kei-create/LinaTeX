@@ -1454,13 +1454,6 @@ struct TerminalPanel: View {
                     .onChange(of: output) { _ in
                         withAnimation { proxy.scrollTo("output", anchor: .bottom) }
                     }
-                    .onChange(of: state) { _ in
-                        if state == .correct {
-                            withAnimation { proxy.scrollTo("success", anchor: .bottom) }
-                        } else if state == .wrong {
-                            withAnimation { proxy.scrollTo("error", anchor: .bottom) }
-                        }
-                    }
                 }
             }
             .frame(minHeight: 160)
