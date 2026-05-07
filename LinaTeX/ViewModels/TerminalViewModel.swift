@@ -40,7 +40,10 @@ class AppViewModel: ObservableObject {
     private var typingSessionID = UUID()
     private var isNavigationLocked = false
 
-    let courses: [Course] = comprehensiveAllCourses
+    // Theme preference
+    @Published var isDarkMode: Bool = false
+
+    var courses: [Course] { comprehensiveAllCourses }
 
     var successRate: Double {
         totalLessonAttempts > 0 ? Double(correctAnswers) / Double(totalLessonAttempts) * 100 : 0
