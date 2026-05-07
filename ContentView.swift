@@ -17,7 +17,7 @@ struct ContentView: View {
                     }
                 }
         }
-        .preferredColorScheme(.light)
+        .preferredColorScheme(vm.isDarkMode ? .dark : .light)
         .tint(ModernTheme.primary)
     }
 }

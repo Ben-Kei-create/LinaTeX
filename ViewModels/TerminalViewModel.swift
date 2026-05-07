@@ -36,6 +36,9 @@ class AppViewModel: ObservableObject {
     @Published var showHint: Bool = false
     @Published var isTyping: Bool = false
 
+    // Theme preference
+    @Published var isDarkMode: Bool = false
+
     var courses: [Course] { comprehensiveAllCourses }
 
     var successRate: Double {
