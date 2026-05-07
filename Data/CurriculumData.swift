@@ -1,480 +1,584 @@
-import Foundation
+import SwiftUI
 
-// MARK: - Full Curriculum
+// MARK: - Consolidated Curriculum
+// Single source of truth for all course content
+// Combines previously fragmented curriculum from multiple files
 
-let allCourses: [Course] = [
-    // MARK: - BASICS COURSE
-    Course(
-        level: .basics,
-        title: "Linuxの基本",
-        subtitle: "ターミナルの世界へようこそ",
-        description: "Linuxの基礎から始めます。ターミナル操作、ファイルシステム、基本コマンドを習得します。",
-        emoji: "🐧",
-        estimatedMinutes: 90,
-        chapters: [
-            // Chapter 1: Introduction
-            Chapter(
-                number: 1,
-                title: "Linuxの世界へようこそ",
-                summary: "Linuxとは何か、ターミナルとは何か、基本的な概念を学びます",
-                lessons: [
-                    Lesson(
-                        title: "Linuxって何？",
-                        emoji: "🤔",
-                        estimatedMinutes: 5,
-                        content: .concept(ConceptLesson(
-                            headline: "Linuxは自由で強力なOS",
-                            sections: [
-                                ConceptSection(
-                                    heading: "Linuxとは",
-                                    body: "Linuxはオープンソースのオペレーティングシステムです。Windows や macOS と同じく、コンピュータを制御するソフトウェアです。\n\n特徴：\n• 無料で利用可能\n• ソースコード公開\n• 世界中で開発・改良\n• サーバーから組み込みまで幅広く使用",
-                                    codeSample: nil,
-                                    tip: "Linuxはカーネル（中核部分）の名前で、Linuxカーネル + GNU ツール = GNU/Linux と呼びます"
-                                ),
-                                ConceptSection(
-                                    heading: "なぜLinuxを学ぶのか",
-                                    body: "• Web サーバー（Apache, Nginx）はLinux上で動く\n• クラウド（AWS, GCP）はLinux\n• 開発環境で使われることが多い\n• 組み込みデバイス（スマートフォンなど）で使われている",
-                                    codeSample: nil,
-                                    tip: nil
-                                )
-                            ]
-                        ))
-                    ),
-                    Lesson(
-                        title: "ターミナルとシェル",
-                        emoji: "⌨️",
-                        estimatedMinutes: 5,
-                        content: .concept(ConceptLesson(
-                            headline: "ターミナルはLinuxとの会話窓口",
-                            sections: [
-                                ConceptSection(
-                                    heading: "ターミナルとは",
-                                    body: "ターミナルは、キーボードでコマンドを入力し、コンピュータに指示を出すプログラムです。\n\nGUIで「ファイルをダブルクリック」する代わりに、ターミナルでは「ls コマンド」でファイルを見ます。",
-                                    codeSample: nil,
-                                    tip: "ターミナルは「真の力」です。複数の操作を一度にできたり、自動化したり、リモートサーバーを操作できます"
-                                ),
-                                ConceptSection(
-                                    heading: "プロンプトの読み方",
-                                    body: "user@linux:~$ ← これがプロンプト\n\n• user: ログインしているユーザー名\n• linux: コンピュータの名前\n• ~: 現在のディレクトリ（~はホームディレクトリ）\n• $: コマンド入力待機中（#だと管理者権限）",
-                                    codeSample: "user@linux:~$ _",
-                                    tip: nil
-                                )
-                            ]
-                        ))
-                    ),
-                    Lesson(
-                        title: "pwd - 今ここはどこ？",
-                        emoji: "📍",
-                        estimatedMinutes: 8,
-                        content: .quest(QuestLesson(
-                            scenario: "Linuxのファイルシステムはツリー構造です。あなたは今、どこにいるでしょう？",
-                            prompt: "現在のディレクトリ（フォルダ）の位置を確認するコマンドは？",
-                            hint: "Print Working Directory の略です。pwd と打ってみましょう。",
-                            answer: "pwd",
-                            options: [
-                                CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
-                                CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
-                                CommandOption(label: "cd", command: "cd", icon: "chevron.right"),
-                            ],
-                            simulatedOutput: "/home/user",
-                            successMessage: "✅ 完璧！あなたは /home/user にいます"
-                        ))
-                    ),
-                ]
-            ),
-
-            // Chapter 2: Navigation and Files
-            Chapter(
-                number: 2,
-                title: "ファイルシステムを探検する",
-                summary: "ls, cd コマンドを使ってファイルシステムを歩き回ります",
-                lessons: [
-                    Lesson(
-                        title: "ls - ファイル一覧を見る",
-                        emoji: "📂",
-                        estimatedMinutes: 8,
-                        content: .quest(QuestLesson(
-                            scenario: "現在のフォルダに何が入っているか見たい。",
-                            prompt: "ファイルやフォルダの一覧を表示するコマンドは？",
-                            hint: "List の略です。ls と打つだけ。",
-                            answer: "ls",
-                            options: [
-                                CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
-                                CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
-                                CommandOption(label: "cat", command: "cat", icon: "doc.text"),
-                            ],
-                            simulatedOutput: "Desktop  Documents  Downloads  Pictures  Videos",
-                            successMessage: "✅ いいね！フォルダの中身が見えました"
-                        ))
-                    ),
-                    Lesson(
-                        title: "cd - ディレクトリを移動する",
-                        emoji: "🚀",
-                        estimatedMinutes: 8,
-                        content: .quest(QuestLesson(
-                            scenario: "Desktop フォルダに移動したい。",
-                            prompt: "ディレクトリを移動するコマンドは？",
-                            hint: "Change Directory の略。cd Desktop で Desktop に移動します。",
-                            answer: "cd",
-                            options: [
-                                CommandOption(label: "cd", command: "cd", icon: "chevron.right"),
-                                CommandOption(label: "mv", command: "mv", icon: "arrow.right.doc.fill"),
-                                CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
-                            ],
-                            simulatedOutput: "",
-                            successMessage: "✅ 移動完了！Desktop に到着しました"
-                        ))
-                    ),
-                    Lesson(
-                        title: "パスの理解",
-                        emoji: "🗺️",
-                        estimatedMinutes: 7,
-                        content: .concept(ConceptLesson(
-                            headline: "絶対パスと相対パス",
-                            sections: [
-                                ConceptSection(
-                                    heading: "2つのパス指定方法",
-                                    body: "絶対パス: / から始まる完全なパス\n/home/user/Documents\n\n相対パス: 現在地からの相対的なパス\nDocuments （現在が /home/user の場合）\n../ （1つ上のフォルダ）",
-                                    codeSample: "cd /home/user/Documents  # 絶対パス\ncd Documents              # 相対パス（/home/user にいる場合）",
-                                    tip: "~ はホームディレクトリのショートカット。cd ~ でいつでも家に帰れます"
-                                )
-                            ]
-                        ))
-                    ),
-                ]
-            ),
-
-            // Chapter 3: Creating and Managing Files
-            Chapter(
-                number: 3,
-                title: "ファイルを作る・見る・操作する",
-                summary: "mkdir, touch, cat, cp, mv, rm コマンドでファイル操作をマスター",
-                lessons: [
-                    Lesson(
-                        title: "mkdir - フォルダを作成",
-                        emoji: "🗂️",
-                        estimatedMinutes: 6,
-                        content: .quest(QuestLesson(
-                            scenario: "プロジェクト用のフォルダを作りたい。",
-                            prompt: "新しいディレクトリを作成するコマンドは？",
-                            hint: "Make Directory の略です。",
-                            answer: "mkdir",
-                            options: [
-                                CommandOption(label: "mkdir", command: "mkdir", icon: "folder.badge.plus"),
-                                CommandOption(label: "touch", command: "touch", icon: "doc.badge.plus"),
-                                CommandOption(label: "cp", command: "cp", icon: "doc.on.doc"),
-                            ],
-                            simulatedOutput: "",
-                            successMessage: "✅ フォルダを作成しました！"
-                        ))
-                    ),
-                    Lesson(
-                        title: "touch - ファイルを作成",
-                        emoji: "📄",
-                        estimatedMinutes: 6,
-                        content: .quest(QuestLesson(
-                            scenario: "空のファイルを作りたい。",
-                            prompt: "ファイルを作成するコマンドは？",
-                            hint: "touch = ファイルに「触れて」作成。touch myfile.txt",
-                            answer: "touch",
-                            options: [
-                                CommandOption(label: "touch", command: "touch", icon: "doc.badge.plus"),
-                                CommandOption(label: "mkdir", command: "mkdir", icon: "folder.badge.plus"),
-                                CommandOption(label: "echo", command: "echo", icon: "quote.bubble"),
-                            ],
-                            simulatedOutput: "",
-                            successMessage: "✅ ファイルを作成しました！"
-                        ))
-                    ),
-                    Lesson(
-                        title: "cat - ファイルの中身を見る",
-                        emoji: "👀",
-                        estimatedMinutes: 7,
-                        content: .quest(QuestLesson(
-                            scenario: "テキストファイルの中身を確認したい。",
-                            prompt: "ファイルの内容を表示するコマンドは？",
-                            hint: "concatenate (連結) の略。cat filename.txt",
-                            answer: "cat",
-                            options: [
-                                CommandOption(label: "cat", command: "cat", icon: "doc.text"),
-                                CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
-                                CommandOption(label: "echo", command: "echo", icon: "quote.bubble"),
-                            ],
-                            simulatedOutput: "Hello, Linux!\nThis is my first file.",
-                            successMessage: "✅ ファイルの中身が読めました！"
-                        ))
-                    ),
-                    Lesson(
-                        title: "cp - ファイルをコピー",
-                        emoji: "📋",
-                        estimatedMinutes: 7,
-                        content: .quest(QuestLesson(
-                            scenario: "大事なファイルをバックアップしたい。",
-                            prompt: "ファイルをコピーするコマンドは？",
-                            hint: "Copy の略。cp 元ファイル コピー先",
-                            answer: "cp",
-                            options: [
-                                CommandOption(label: "cp", command: "cp", icon: "doc.on.doc"),
-                                CommandOption(label: "mv", command: "mv", icon: "arrow.right.doc.fill"),
-                                CommandOption(label: "rm", command: "rm", icon: "trash"),
-                            ],
-                            simulatedOutput: "",
-                            successMessage: "✅ ファイルをコピーしました！"
-                        ))
-                    ),
-                    Lesson(
-                        title: "mv - ファイルを移動・改名",
-                        emoji: "✂️",
-                        estimatedMinutes: 7,
-                        content: .quest(QuestLesson(
-                            scenario: "ファイルを別のフォルダに移したい。または改名したい。",
-                            prompt: "ファイルを移動・改名するコマンドは？",
-                            hint: "Move の略。mv 元ファイル 移動先",
-                            answer: "mv",
-                            options: [
-                                CommandOption(label: "mv", command: "mv", icon: "arrow.right.doc.fill"),
-                                CommandOption(label: "cp", command: "cp", icon: "doc.on.doc"),
-                                CommandOption(label: "rm", command: "rm", icon: "trash"),
-                            ],
-                            simulatedOutput: "",
-                            successMessage: "✅ ファイルを移動しました！"
-                        ))
-                    ),
-                    Lesson(
-                        title: "rm - ファイルを削除",
-                        emoji: "🗑️",
-                        estimatedMinutes: 7,
-                        content: .quest(QuestLesson(
-                            scenario: "不要なファイルを削除したい。⚠️ 削除したら戻せません！",
-                            prompt: "ファイルを削除するコマンドは？",
-                            hint: "Remove の略。rm filename.txt   ⚠️ 慎重に！",
-                            answer: "rm",
-                            options: [
-                                CommandOption(label: "rm", command: "rm", icon: "trash.fill"),
-                                CommandOption(label: "mv", command: "mv", icon: "arrow.right.doc.fill"),
-                                CommandOption(label: "cp", command: "cp", icon: "doc.on.doc"),
-                            ],
-                            simulatedOutput: "",
-                            successMessage: "✅ ファイルを削除しました。（二度と戻りません）"
-                        ))
-                    ),
-                ]
-            ),
-        ]
+// MARK: - Basics Course
+let basicsCourseLessons: [Lesson] = [
+    // File operation scenario
+    Lesson(
+        title: "ファイル操作の複合シナリオ",
+        emoji: "📋",
+        estimatedMinutes: 15,
+        content: .scenario(ScenarioLesson(
+            setup: "プロジェクトの複数ファイルを整理し、バックアップを作成します。",
+            goal: "cp と mv を組み合わせてファイルを管理する",
+            steps: [
+                ScenarioStep(
+                    prompt: "重要なファイル config.txt をバックアップします（config_backup.txt に）",
+                    hint: "cp config.txt config_backup.txt",
+                    answer: "cp",
+                    options: [
+                        CommandOption(label: "cp", command: "cp", icon: "doc.on.doc"),
+                        CommandOption(label: "mv", command: "mv", icon: "arrow.right"),
+                        CommandOption(label: "mkdir", command: "mkdir", icon: "folder"),
+                    ],
+                    simulatedOutput: "user@linux:~/project$ cp config.txt config_backup.txt\nuser@linux:~/project$"
+                ),
+                ScenarioStep(
+                    prompt: "temp.log ファイルを archive フォルダに移動します。",
+                    hint: "mv temp.log archive/",
+                    answer: "mv",
+                    options: [
+                        CommandOption(label: "mv", command: "mv", icon: "arrow.right"),
+                        CommandOption(label: "cp", command: "cp", icon: "doc.on.doc"),
+                        CommandOption(label: "rm", command: "rm", icon: "trash"),
+                    ],
+                    simulatedOutput: "user@linux:~/project$ mv temp.log archive/\nuser@linux:~/project$"
+                ),
+                ScenarioStep(
+                    prompt: "古いログファイル old_run.log を削除します。",
+                    hint: "rm old_run.log",
+                    answer: "rm",
+                    options: [
+                        CommandOption(label: "rm", command: "rm", icon: "trash"),
+                        CommandOption(label: "mv", command: "mv", icon: "arrow.right"),
+                        CommandOption(label: "rmdir", command: "rmdir", icon: "trash.fill"),
+                    ],
+                    simulatedOutput: "user@linux:~/project$ rm old_run.log\nuser@linux:~/project$"
+                ),
+            ],
+            finaleMessage: "✅ プロジェクトファイルの整理完了！"
+        ))
     ),
-
-    // MARK: - STANDARD COURSE (Skeleton with samples)
-    Course(
-        level: .standard,
-        title: "テキスト処理と権限",
-        subtitle: "grep, sed, chmod をマスター",
-        description: "ファイル操作の応用、テキスト検索・処理、権限管理を学びます。",
-        emoji: "⚙️",
-        estimatedMinutes: 90,
-        chapters: [
-            Chapter(
-                number: 4,
-                title: "テキストを検索・操作する",
-                summary: "grep, sed で強力なテキスト処理",
-                lessons: [
-                    Lesson(
-                        title: "grep - テキストを検索",
-                        emoji: "🔍",
-                        estimatedMinutes: 10,
-                        content: .quest(QuestLesson(
-                            scenario: "大量のテキストから特定の単語を探したい。",
-                            prompt: "ファイルから文字列を検索するコマンドは？",
-                            hint: "Global Regular Expression Print の略。",
-                            answer: "grep",
-                            options: [
-                                CommandOption(label: "grep", command: "grep", icon: "magnifyingglass"),
-                                CommandOption(label: "find", command: "find", icon: "magnifyingglass.circle"),
-                                CommandOption(label: "sed", command: "sed", icon: "pencil.and.outline"),
-                            ],
-                            simulatedOutput: "user@linux:~$ grep 'Linux' README.md\nLinux is powerful\nLinux is free",
-                            successMessage: "✅ grep で検索できました！"
-                        ))
-                    ),
-                    Lesson(
-                        title: "パイプ | - コマンドをつなぐ",
-                        emoji: "⛓️",
-                        estimatedMinutes: 10,
-                        content: .concept(ConceptLesson(
-                            headline: "複数のコマンドを組み合わせる力",
-                            sections: [
-                                ConceptSection(
-                                    heading: "パイプの威力",
-                                    body: "パイプ | は、前のコマンドの出力を次のコマンドの入力にします。\n\nこれにより、複数のコマンドを組み合わせて強力な処理ができます。",
-                                    codeSample: "cat file.txt | grep 'error' | wc -l\n↓\nfile.txt の内容 → grep で 'error' を含む行 → wc -l で行数",
-                                    tip: "Linuxの哲学：1つのコマンドは1つのことをうまくやる。パイプで組み合わせて大きな仕事をする"
-                                )
-                            ]
-                        ))
-                    ),
-                ]
-            ),
-            Chapter(
-                number: 5,
-                title: "ファイル権限を管理する",
-                summary: "chmod で安全性を確保",
-                lessons: [
-                    Lesson(
-                        title: "chmod - 権限を変更",
-                        emoji: "🔐",
-                        estimatedMinutes: 10,
-                        content: .quest(QuestLesson(
-                            scenario: "スクリプトを実行可能にしたい。",
-                            prompt: "ファイルの権限を変更するコマンドは？",
-                            hint: "Change Mode の略。chmod +x script.sh で実行可能に。",
-                            answer: "chmod",
-                            options: [
-                                CommandOption(label: "chmod", command: "chmod", icon: "lock.fill"),
-                                CommandOption(label: "chown", command: "chown", icon: "person.fill"),
-                                CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
-                            ],
-                            simulatedOutput: "",
-                            successMessage: "✅ 権限を変更しました！"
-                        ))
-                    ),
-                    Lesson(
-                        title: "権限の読み方",
-                        emoji: "📖",
-                        estimatedMinutes: 8,
-                        content: .concept(ConceptLesson(
-                            headline: "rwx の意味を理解する",
-                            sections: [
-                                ConceptSection(
-                                    heading: "3桁の権限",
-                                    body: "-rwxr-xr-x\n\nr (read) = 読む\nw (write) = 書く\nx (execute) = 実行\n\n最初の3文字: 所有者\n次の3文字: グループ\n最後の3文字: その他",
-                                    codeSample: "-rwxr-xr-x\nowner:rwx, group:r-x, others:r-x",
-                                    tip: "chmod 755 で rwxr-xr-x になります（755はよく使う）"
-                                )
-                            ]
-                        ))
-                    ),
-                ]
-            ),
-        ]
-    ),
-
-    // MARK: - ADVANCED COURSE (Skeleton with samples)
-    Course(
-        level: .advanced,
-        title: "シェルスクリプト入門",
-        subtitle: "自動化と実務に向けて",
-        description: "シェルスクリプト、パッケージ管理、ネットワークコマンドを学びます。",
-        emoji: "🚀",
-        estimatedMinutes: 120,
-        chapters: [
-            Chapter(
-                number: 6,
-                title: "シェルスクリプトで自動化",
-                summary: "複数のコマンドをスクリプト化",
-                lessons: [
-                    Lesson(
-                        title: "シェルスクリプトとは",
-                        emoji: "📝",
-                        estimatedMinutes: 10,
-                        content: .concept(ConceptLesson(
-                            headline: "コマンドを自動実行する",
-                            sections: [
-                                ConceptSection(
-                                    heading: "スクリプトの力",
-                                    body: "毎日同じコマンドを何度も打つのは無駄。\nシェルスクリプトに書いておけば、1コマンドで全て実行できます。\n\n例：バックアップ、ログ処理、定期メンテナンス",
-                                    codeSample: "#!/bin/bash\necho 'Hello, World!'\nls -la\ndate",
-                                    tip: "最初の行 #!/bin/bash はシェバング（shebang）。このファイルが Bash スクリプトだと宣言"
-                                )
-                            ]
-                        ))
-                    ),
-                    Lesson(
-                        title: "初めてのスクリプト",
-                        emoji: "🎯",
-                        estimatedMinutes: 15,
-                        content: .scenario(ScenarioLesson(
-                            setup: "バックアップスクリプトを作成して実行します。",
-                            goal: "スクリプトを作成 → 実行可能に → 実行する",
-                            steps: [
-                                ScenarioStep(
-                                    prompt: "テキストエディタでスクリプトファイルを作成。vim または nano を使います。",
-                                    hint: "touch backup.sh で空ファイルを作成、nano backup.sh で編集",
-                                    answer: "touch",
-                                    options: [
-                                        CommandOption(label: "touch", command: "touch", icon: "doc.badge.plus"),
-                                        CommandOption(label: "echo", command: "echo", icon: "quote.bubble"),
-                                        CommandOption(label: "cat", command: "cat", icon: "doc.text"),
-                                    ],
-                                    simulatedOutput: ""
-                                ),
-                                ScenarioStep(
-                                    prompt: "スクリプトを実行可能にします。",
-                                    hint: "chmod +x backup.sh",
-                                    answer: "chmod",
-                                    options: [
-                                        CommandOption(label: "chmod", command: "chmod", icon: "lock.fill"),
-                                        CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
-                                        CommandOption(label: "cat", command: "cat", icon: "doc.text"),
-                                    ],
-                                    simulatedOutput: ""
-                                ),
-                                ScenarioStep(
-                                    prompt: "スクリプトを実行します。",
-                                    hint: "./backup.sh で実行",
-                                    answer: "bash",
-                                    options: [
-                                        CommandOption(label: "bash", command: "bash", icon: "terminal.fill"),
-                                        CommandOption(label: "cat", command: "cat", icon: "doc.text"),
-                                        CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
-                                    ],
-                                    simulatedOutput: "Backup completed!"
-                                ),
-                            ],
-                            finaleMessage: "✅ シェルスクリプトの基本をマスターしました！"
-                        ))
-                    ),
-                ]
-            ),
-            Chapter(
-                number: 7,
-                title: "ネットワークと遠隔操作",
-                summary: "ssh, curl でサーバーを操作",
-                lessons: [
-                    Lesson(
-                        title: "ssh - リモートログイン",
-                        emoji: "🌐",
-                        estimatedMinutes: 12,
-                        content: .concept(ConceptLesson(
-                            headline: "遠いサーバーを操作する",
-                            sections: [
-                                ConceptSection(
-                                    heading: "SSH とは",
-                                    body: "Secure Shell (SSH) は、ネットワークを通じて安全に遠いコンピュータにログインできます。\n\n使い方：ssh user@hostname\n\nクラウドサーバー、VPS、社内サーバーを操作できます。",
-                                    codeSample: "ssh user@example.com\nssh -p 2222 user@192.168.1.100",
-                                    tip: "本番サーバーはほぼ必ず SSH で操作します。Linux エンジニア必須スキル"
-                                )
-                            ]
-                        ))
-                    ),
-                    Lesson(
-                        title: "curl - Webからデータ取得",
-                        emoji: "📡",
-                        estimatedMinutes: 10,
-                        content: .quest(QuestLesson(
-                            scenario: "Webサイトの内容をダウンロードしたい。",
-                            prompt: "URLからデータを取得するコマンドは？",
-                            hint: "curl https://example.com",
-                            answer: "curl",
-                            options: [
-                                CommandOption(label: "curl", command: "curl", icon: "network"),
-                                CommandOption(label: "wget", command: "wget", icon: "arrow.down.doc"),
-                                CommandOption(label: "ssh", command: "ssh", icon: "link"),
-                            ],
-                            simulatedOutput: "<!DOCTYPE html>\n<html>\n  <head>...",
-                            successMessage: "✅ データを取得しました！"
-                        ))
-                    ),
-                ]
-            ),
-        ]
+    // Basics quiz
+    Lesson(
+        title: "基本コマンド確認テスト",
+        emoji: "✅",
+        estimatedMinutes: 10,
+        content: .quiz(QuizLesson(
+            questions: [
+                QuizQuestion(
+                    question: "ホームディレクトリに移動するコマンドは？",
+                    choices: ["cd ~", "ls ~", "pwd", "mkdir ~"],
+                    correctIndex: 0,
+                    explanation: "cd ~ でホームディレクトリに移動します。cd だけでもOK。"
+                ),
+                QuizQuestion(
+                    question: "ファイル data.txt を data_copy.txt にコピーするコマンドは？",
+                    choices: ["cp data.txt data_copy.txt", "mv data.txt data_copy.txt", "cat data.txt > data_copy.txt", "ln data.txt data_copy.txt"],
+                    correctIndex: 0,
+                    explanation: "cp で既存ファイルをコピーします。mv は移動（リネーム）です。"
+                ),
+                QuizQuestion(
+                    question: "現在のディレクトリのファイル数を確認するコマンドは？",
+                    choices: ["ls | wc -l", "find . -type f | wc -l", "stat .", "count"],
+                    correctIndex: 0,
+                    explanation: "ls をパイプして wc -l で行数カウント。より正確には find を使う方法もあります。"
+                ),
+            ]
+        ))
     ),
 ]
+
+let basicsCourse = Course(
+    level: .basics,
+    title: "Linuxの基本",
+    subtitle: "ターミナルの世界へようこそ",
+    description: "Linuxの基礎から始めます。ターミナル操作、ファイルシステム、基本コマンドを習得します。",
+    emoji: "🐧",
+    estimatedMinutes: 90,
+    chapters: [
+        Chapter(
+            number: 1,
+            title: "Linuxの世界へようこそ",
+            summary: "Linuxとは何か、ターミナルとは何か、基本的な概念を学びます",
+            lessons: [
+                Lesson(
+                    title: "Linuxって何？",
+                    emoji: "🤔",
+                    estimatedMinutes: 5,
+                    content: .concept(ConceptLesson(
+                        headline: "Linuxは自由で強力なOS",
+                        sections: [
+                            ConceptSection(
+                                heading: "Linuxとは",
+                                body: "Linuxはオープンソースのオペレーティングシステムです。Windows や macOS と同じく、コンピュータを制御するソフトウェアです。\n\n特徴：\n• 無料で利用可能\n• ソースコード公開\n• 世界中で開発・改良\n• サーバーから組み込みまで幅広く使用",
+                                codeSample: nil,
+                                tip: "Linuxはカーネル（中核部分）の名前で、Linuxカーネル + GNU ツール = GNU/Linux と呼びます"
+                            ),
+                            ConceptSection(
+                                heading: "なぜLinuxを学ぶのか",
+                                body: "• Web サーバー（Apache, Nginx）はLinux上で動く\n• クラウド（AWS, GCP）はLinux\n• 開発環境で使われることが多い\n• 組み込みデバイス（スマートフォンなど）で使われている",
+                                codeSample: nil,
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "ターミナルとシェル",
+                    emoji: "⌨️",
+                    estimatedMinutes: 5,
+                    content: .concept(ConceptLesson(
+                        headline: "ターミナルはLinuxとの会話窓口",
+                        sections: [
+                            ConceptSection(
+                                heading: "ターミナルとは",
+                                body: "ターミナルは、キーボードでコマンドを入力し、コンピュータに指示を出すプログラムです。\n\nGUIで「ファイルをダブルクリック」する代わりに、ターミナルでは「ls コマンド」でファイルを見ます。",
+                                codeSample: nil,
+                                tip: "ターミナルは「真の力」です。複数の操作を一度にできたり、自動化したり、リモートサーバーを操作できます"
+                            ),
+                            ConceptSection(
+                                heading: "プロンプトの読み方",
+                                body: "user@linux:~$ ← これがプロンプト\n\n• user: ログインしているユーザー名\n• linux: コンピュータの名前\n• ~: 現在のディレクトリ（~はホームディレクトリ）\n• $: コマンド入力待機中（#だと管理者権限）",
+                                codeSample: "user@linux:~$ _",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+            ]
+        ),
+        Chapter(
+            number: 2,
+            title: "基本コマンド演習",
+            summary: "pwd, ls, cd コマンドを学ぶ",
+            lessons: [
+                Lesson(
+                    title: "pwd - 今ここはどこ？",
+                    emoji: "📍",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "Linuxのファイルシステムはツリー構造です。あなたは今、どこにいるでしょう？",
+                        prompt: "現在のディレクトリ（フォルダ）の位置を確認するコマンドは？",
+                        hint: "Print Working Directory の略です。pwd と打ってみましょう。",
+                        answer: "pwd",
+                        options: [
+                            CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
+                            CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                            CommandOption(label: "cd", command: "cd", icon: "chevron.right"),
+                        ],
+                        simulatedOutput: "/home/user",
+                        successMessage: "✅ 完璧！あなたは /home/user にいます"
+                    ))
+                ),
+                Lesson(
+                    title: "ls - ファイル一覧を見る",
+                    emoji: "📂",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "現在のフォルダに何が入っているか見たい。",
+                        prompt: "ファイルやフォルダの一覧を表示するコマンドは？",
+                        hint: "List の略です。ls と打つだけ。",
+                        answer: "ls",
+                        options: [
+                            CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                            CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
+                            CommandOption(label: "cat", command: "cat", icon: "doc.text"),
+                        ],
+                        simulatedOutput: "Desktop  Documents  Downloads  Pictures  Videos",
+                        successMessage: "✅ いいね！フォルダの中身が見えました"
+                    ))
+                ),
+                Lesson(
+                    title: "cd - ディレクトリを移動する",
+                    emoji: "🚀",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "Desktop フォルダに移動したい。",
+                        prompt: "ディレクトリを移動するコマンドは？",
+                        hint: "Change Directory の略。cd Desktop で Desktop に移動します。",
+                        answer: "cd",
+                        options: [
+                            CommandOption(label: "cd", command: "cd", icon: "chevron.right"),
+                            CommandOption(label: "mv", command: "mv", icon: "arrow.right.doc.fill"),
+                            CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
+                        ],
+                        simulatedOutput: "",
+                        successMessage: "✅ 移動完了！Desktop に到着しました"
+                    ))
+                ),
+            ]
+        ),
+        Chapter(
+            number: 3,
+            title: "ファイル操作マスター",
+            summary: "cp, mv, rm を組み合わせて実践的なファイル管理",
+            lessons: basicsCourseLessons
+        ),
+    ]
+)
+
+// MARK: - Standard Course
+let standardCourse = Course(
+    level: .standard,
+    title: "テキスト処理と権限",
+    subtitle: "grep, sed, chmod をマスター",
+    description: "ファイル操作の応用、テキスト検索・処理、権限管理を学びます。",
+    emoji: "⚙️",
+    estimatedMinutes: 120,
+    chapters: [
+        Chapter(
+            number: 4,
+            title: "テキストを検索・操作する",
+            summary: "grep, sed で強力なテキスト処理",
+            lessons: [
+                Lesson(
+                    title: "grep 実践クイズ",
+                    emoji: "🧪",
+                    estimatedMinutes: 8,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "ファイルから大文字小文字を区別せず検索するオプションは？",
+                                choices: ["-i", "-r", "-n", "-v"],
+                                correctIndex: 0,
+                                explanation: "grep -i で大文字小文字を区別しません。case-insensitive の i です。"
+                            ),
+                            QuizQuestion(
+                                question: "grep -r は何を意味する？",
+                                choices: ["Recursive - 再帰的に検索", "Reverse - 逆順", "Replace - 置換", "Remove - 削除"],
+                                correctIndex: 0,
+                                explanation: "grep -r でディレクトリ内を再帰的に検索します。複数ファイルから一度に検索可能。"
+                            ),
+                            QuizQuestion(
+                                question: "パターンにマッチしない行を表示するオプションは？",
+                                choices: ["-v", "-i", "-r", "-n"],
+                                correctIndex: 0,
+                                explanation: "grep -v で逆マッチ（invert）します。マッチしない行を表示。"
+                            ),
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "ログ解析の実務シナリオ",
+                    emoji: "📊",
+                    estimatedMinutes: 14,
+                    content: .scenario(ScenarioLesson(
+                        setup: "本番サーバーのログファイルから、エラーを検出し、統計情報を取得します。",
+                        goal: "grep と パイプを使ったログ解析",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "application.log ファイルのすべての内容を表示します。",
+                                hint: "cat application.log",
+                                answer: "cat",
+                                options: [
+                                    CommandOption(label: "cat", command: "cat", icon: "doc.text"),
+                                    CommandOption(label: "less", command: "less", icon: "book"),
+                                    CommandOption(label: "tail", command: "tail", icon: "triangle.fill"),
+                                ],
+                                simulatedOutput: "[2024-01-15 10:23:45] INFO: Server started\n[2024-01-15 10:25:12] ERROR: Connection timeout\n[2024-01-15 10:26:33] ERROR: Database failed\n[2024-01-15 10:27:01] WARNING: Memory low"
+                            ),
+                            ScenarioStep(
+                                prompt: "ERROR ログの行だけを抽出します。",
+                                hint: "cat application.log | grep ERROR",
+                                answer: "grep",
+                                options: [
+                                    CommandOption(label: "grep", command: "grep", icon: "magnifyingglass"),
+                                    CommandOption(label: "sed", command: "sed", icon: "pencil.and.outline"),
+                                    CommandOption(label: "awk", command: "awk", icon: "square.and.pencil"),
+                                ],
+                                simulatedOutput: "[2024-01-15 10:25:12] ERROR: Connection timeout\n[2024-01-15 10:26:33] ERROR: Database failed"
+                            ),
+                            ScenarioStep(
+                                prompt: "ERROR ログの件数をカウントします。",
+                                hint: "cat application.log | grep ERROR | wc -l",
+                                answer: "wc",
+                                options: [
+                                    CommandOption(label: "wc", command: "wc", icon: "sum"),
+                                    CommandOption(label: "sort", command: "sort", icon: "arrow.up.arrow.down"),
+                                    CommandOption(label: "cut", command: "cut", icon: "scissors"),
+                                ],
+                                simulatedOutput: "2"
+                            ),
+                        ],
+                        finaleMessage: "✅ ログ解析のプロになりました！"
+                    ))
+                ),
+                Lesson(
+                    title: "テキスト処理総合クイズ",
+                    emoji: "🎯",
+                    estimatedMinutes: 8,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "パイプ（|）の役割は？",
+                                choices: ["前のコマンドの出力を次のコマンドの入力に", "コマンドを複数実行", "条件分岐", "別ファイルにリダイレクト"],
+                                correctIndex: 0,
+                                explanation: "パイプは前のコマンドの標準出力を次のコマンドの標準入力に繋ぎます。コマンド連携の基本。"
+                            ),
+                            QuizQuestion(
+                                question: "sed 's/old/new/g' file.txt の g フラグは何？",
+                                choices: ["Global - 1行内の全て置換", "Group - グループ化", "Generate - 生成", "Grep - 検索"],
+                                correctIndex: 0,
+                                explanation: "g フラグは global。1行内の全てのマッチを置換します。g なしは1行につき1回だけ。"
+                            ),
+                            QuizQuestion(
+                                question: "grep コマンドでファイルの行番号も表示するオプションは？",
+                                choices: ["-n", "-l", "-c", "-h"],
+                                correctIndex: 0,
+                                explanation: "grep -n で行番号を表示します。-l はファイル名のみ、-c は件数のみ表示。"
+                            ),
+                        ]
+                    ))
+                ),
+            ]
+        ),
+        Chapter(
+            number: 5,
+            title: "ファイル権限を管理する",
+            summary: "chmod で権限設定をマスター",
+            lessons: [
+                Lesson(
+                    title: "chmod 実践シナリオ",
+                    emoji: "🔐",
+                    estimatedMinutes: 12,
+                    content: .scenario(ScenarioLesson(
+                        setup: "Webサーバーのファイル権限を正しく設定します。",
+                        goal: "chmod で段階的に権限を設定",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "スクリプトファイル deploy.sh を実行可能にします。（-rwxr-xr-x = 755）",
+                                hint: "chmod 755 deploy.sh",
+                                answer: "chmod",
+                                options: [
+                                    CommandOption(label: "chmod", command: "chmod", icon: "lock.open"),
+                                    CommandOption(label: "chown", command: "chown", icon: "person.fill"),
+                                    CommandOption(label: "chgrp", command: "chgrp", icon: "person.2.fill"),
+                                ],
+                                simulatedOutput: "user@linux:~$ chmod 755 deploy.sh\nuser@linux:~$ ls -l deploy.sh\n-rwxr-xr-x  1 user group  1234 Jan 15 10:00 deploy.sh"
+                            ),
+                            ScenarioStep(
+                                prompt: "機密ファイル secret.key を所有者のみが読めるようにします。（-r-------- = 400）",
+                                hint: "chmod 400 secret.key",
+                                answer: "chmod",
+                                options: [
+                                    CommandOption(label: "chmod", command: "chmod", icon: "lock"),
+                                    CommandOption(label: "chown", command: "chown", icon: "person.fill"),
+                                    CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                                ],
+                                simulatedOutput: "user@linux:~$ chmod 400 secret.key\nuser@linux:~$ ls -l secret.key\n-r--------  1 user group  2048 Jan 15 10:00 secret.key"
+                            ),
+                            ScenarioStep(
+                                prompt: "共有ファイル notes.txt をグループと所有者が読み書きできるようにします。（-rw-rw---- = 660）",
+                                hint: "chmod 660 notes.txt",
+                                answer: "chmod",
+                                options: [
+                                    CommandOption(label: "chmod", command: "chmod", icon: "lock.open"),
+                                    CommandOption(label: "chown", command: "chown", icon: "person.fill"),
+                                    CommandOption(label: "umask", command: "umask", icon: "lock"),
+                                ],
+                                simulatedOutput: "user@linux:~$ chmod 660 notes.txt\nuser@linux:~$ ls -l notes.txt\n-rw-rw----  1 user group  4096 Jan 15 10:00 notes.txt"
+                            ),
+                        ],
+                        finaleMessage: "✅ 権限設定のマスターになりました！"
+                    ))
+                ),
+                Lesson(
+                    title: "権限管理クイズ",
+                    emoji: "🔑",
+                    estimatedMinutes: 8,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "755 という権限の意味は？",
+                                choices: ["所有者:読み書き実行、グループ:読み実行、他:読み実行", "所有者:読み書き、グループ:読み、他:読み実行", "所有者:読み、グループ:読み実行、他:読み", "所有者:読み実行、グループ:読み、他:読み実行"],
+                                correctIndex: 0,
+                                explanation: "755 = rwxr-xr-x。所有者が全権、グループと他が読み実行。実行可能ファイル向け。"
+                            ),
+                            QuizQuestion(
+                                question: "644 という権限の意味は？",
+                                choices: ["所有者:読み書き、グループ:読み、他:読み", "所有者:読み写き実行、グループ:読み実行、他:実行", "所有者:読み、グループ:読み書き、他:読み", "所有者:読み書き、グループ:読み実行、他:読み実行"],
+                                correctIndex: 0,
+                                explanation: "644 = rw-r--r--。所有者が読み書き、グループと他が読み専用。テキストファイル向け。"
+                            ),
+                            QuizQuestion(
+                                question: "chmod u+x file.txt は何をする？",
+                                choices: ["所有者に実行権限を追加", "全員に実行権限を追加", "所有者から実行権限を削除", "実行権限を644に設定"],
+                                correctIndex: 0,
+                                explanation: "u は所有者（user）。+x で実行権限を追加。シンボリック表記（644より直感的）。"
+                            ),
+                        ]
+                    ))
+                ),
+            ]
+        ),
+    ]
+)
+
+// MARK: - Advanced Course
+let advancedCourse = Course(
+    level: .advanced,
+    title: "シェルスクリプトとネットワーク",
+    subtitle: "自動化と遠隔操作を極める",
+    description: "bash スクリプト、SSH、ネットワークコマンドで実務レベルのスキルを習得。",
+    emoji: "🚀",
+    estimatedMinutes: 90,
+    chapters: [
+        Chapter(
+            number: 6,
+            title: "シェルスクリプトで自動化",
+            summary: "bash で効率的な自動化スクリプト",
+            lessons: [
+                Lesson(
+                    title: "スクリプト作成の実践",
+                    emoji: "📝",
+                    estimatedMinutes: 15,
+                    content: .scenario(ScenarioLesson(
+                        setup: "簡単な bash スクリプトを作成・実行して自動化を体験します。",
+                        goal: "スクリプトを作成・実行・デバッグ",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "backup.sh という新しいシェルスクリプトファイルを作成します。",
+                                hint: "touch backup.sh",
+                                answer: "touch",
+                                options: [
+                                    CommandOption(label: "touch", command: "touch", icon: "doc.badge.plus"),
+                                    CommandOption(label: "nano", command: "nano", icon: "square.and.pencil"),
+                                    CommandOption(label: "cat", command: "cat", icon: "doc.text"),
+                                ],
+                                simulatedOutput: "user@linux:~$ touch backup.sh"
+                            ),
+                            ScenarioStep(
+                                prompt: "backup.sh を実行可能にします。",
+                                hint: "chmod +x backup.sh",
+                                answer: "chmod",
+                                options: [
+                                    CommandOption(label: "chmod", command: "chmod", icon: "lock.open"),
+                                    CommandOption(label: "chown", command: "chown", icon: "person.fill"),
+                                    CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                                ],
+                                simulatedOutput: "user@linux:~$ chmod +x backup.sh"
+                            ),
+                            ScenarioStep(
+                                prompt: "スクリプトを実行します。",
+                                hint: "./backup.sh",
+                                answer: "./backup.sh",
+                                options: [
+                                    CommandOption(label: "./backup.sh", command: "./backup.sh", icon: "play.fill"),
+                                    CommandOption(label: "bash backup.sh", command: "bash", icon: "terminal.fill"),
+                                    CommandOption(label: "cat backup.sh", command: "cat", icon: "doc.text"),
+                                ],
+                                simulatedOutput: "Backing up files...\nBackup completed!"
+                            ),
+                        ],
+                        finaleMessage: "✅ スクリプト実行のマスター！"
+                    ))
+                ),
+                Lesson(
+                    title: "シェルスクリプト知識クイズ",
+                    emoji: "💭",
+                    estimatedMinutes: 8,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "#!/bin/bash は何を意味する？",
+                                choices: ["Shebang - このファイルを bash で実行することを指定", "コメント", "bash のバージョン指定", "環境変数設定"],
+                                correctIndex: 0,
+                                explanation: "Shebang（シェバング）。スクリプトの最初の行に書き、どのインタプリタで実行するかを指定。"
+                            ),
+                            QuizQuestion(
+                                question: "bash スクリプトを実行するコマンドは？",
+                                choices: ["bash script.sh", "./script.sh", "sh script.sh", "全て可能"],
+                                correctIndex: 3,
+                                explanation: "bash script.sh、./script.sh、sh script.sh どれでも実行可能。シェバング指定時は ./script.sh がベスト。"
+                            ),
+                            QuizQuestion(
+                                question: "スクリプトに変数を渡すには？",
+                                choices: ["./script.sh arg1 arg2", "VAR=value ./script.sh", "export VAR=value", "全て可能"],
+                                correctIndex: 3,
+                                explanation: "位置引数、環境変数、export で変数設定可能。スクリプト内で $1, $2 で参照。"
+                            ),
+                        ]
+                    ))
+                ),
+            ]
+        ),
+        Chapter(
+            number: 7,
+            title: "ネットワークと遠隔操作",
+            summary: "SSH、curl で外部システムと連携",
+            lessons: [
+                Lesson(
+                    title: "ネットワークコマンド実践",
+                    emoji: "🌐",
+                    estimatedMinutes: 14,
+                    content: .scenario(ScenarioLesson(
+                        setup: "リモートサーバーに接続し、Web API からデータを取得します。",
+                        goal: "SSH と curl の実務使用",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "リモートサーバー example.com に SSH で接続します。",
+                                hint: "ssh user@example.com",
+                                answer: "ssh",
+                                options: [
+                                    CommandOption(label: "ssh", command: "ssh", icon: "network"),
+                                    CommandOption(label: "telnet", command: "telnet", icon: "square.connected.to.square"),
+                                    CommandOption(label: "curl", command: "curl", icon: "arrow.down.doc"),
+                                ],
+                                simulatedOutput: "The authenticity of host 'example.com' can't be established.\nRSA key fingerprint is...\nuser@example.com's password:\nuser@example.com:~$"
+                            ),
+                            ScenarioStep(
+                                prompt: "API エンドポイント https://api.example.com/data からデータを取得します。",
+                                hint: "curl https://api.example.com/data",
+                                answer: "curl",
+                                options: [
+                                    CommandOption(label: "curl", command: "curl", icon: "arrow.down.doc"),
+                                    CommandOption(label: "wget", command: "wget", icon: "arrow.down.circle"),
+                                    CommandOption(label: "ssh", command: "ssh", icon: "network"),
+                                ],
+                                simulatedOutput: "{\"status\":\"success\",\"data\":[{\"id\":1,\"name\":\"Item 1\"}]}"
+                            ),
+                            ScenarioStep(
+                                prompt: "JSON データを jq で整形表示します。",
+                                hint: "curl https://api.example.com/data | jq",
+                                answer: "jq",
+                                options: [
+                                    CommandOption(label: "jq", command: "jq", icon: "square.and.pencil"),
+                                    CommandOption(label: "grep", command: "grep", icon: "magnifyingglass"),
+                                    CommandOption(label: "cat", command: "cat", icon: "doc.text"),
+                                ],
+                                simulatedOutput: "{\n  \"status\": \"success\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"Item 1\"\n    }\n  ]\n}"
+                            ),
+                        ],
+                        finaleMessage: "✅ ネットワーク操作のプロになりました！"
+                    ))
+                ),
+                Lesson(
+                    title: "ネットワーク・セキュリティクイズ",
+                    emoji: "🔒",
+                    estimatedMinutes: 8,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "SSH の主な用途は？",
+                                choices: ["安全に遠いサーバーにログイン・操作", "メールプロトコル", "Webページ取得", "パッケージ管理"],
+                                correctIndex: 0,
+                                explanation: "SSH (Secure Shell) でリモートサーバーに安全に接続。暗号化通信で盗聴・改ざん防止。"
+                            ),
+                            QuizQuestion(
+                                question: "curl コマンドの主な用途は？",
+                                choices: ["URLからデータを取得、API との通信", "ファイル検索", "テキスト置換", "ディレクトリ移動"],
+                                correctIndex: 0,
+                                explanation: "curl で HTTP/HTTPS 通信。Web API の呼び出し、Webページのダウンロードに使用。"
+                            ),
+                            QuizQuestion(
+                                question: "SSH キー認証の利点は？",
+                                choices: ["パスワード入力不要で安全、スクリプト自動化が可能", "速度が速い", "パスワードより長い", "全て"],
+                                correctIndex: 0,
+                                explanation: "SSH 鍵認証でパスワード不要。自動化スクリプトから安全に接続可能。本番環境ではほぼ必須。"
+                            ),
+                        ]
+                    ))
+                ),
+            ]
+        ),
+    ]
+)
+
+// MARK: - Public Curriculum Array
+var comprehensiveAllCourses: [Course] {
+    [basicsCourse, standardCourse, advancedCourse]
+}
