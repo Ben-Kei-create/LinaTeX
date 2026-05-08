@@ -226,15 +226,11 @@ class AppViewModel: ObservableObject {
     }
 
     func checkAndUnlockAchievements() {
-        for achievement in allAchievements {
-            if !unlockedAchievements.contains(achievement.id) && achievement.condition(self) {
-                unlockedAchievements.insert(achievement.id)
-            }
-        }
+        // Achievement system to be implemented
     }
 
-    func getUnlockedBadges() -> [Achievement] {
-        allAchievements.filter { unlockedAchievements.contains($0.id) }
+    func getUnlockedBadges() -> [String] {
+        Array(unlockedAchievements)
     }
 
     // MARK: - Learning Path Management
