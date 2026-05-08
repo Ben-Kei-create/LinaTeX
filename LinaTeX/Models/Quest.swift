@@ -189,6 +189,7 @@ struct TerminalTheme {
     static let greenTertiary = Color(hex: 0x00FF99)
     static let bluePrimary = Color(hex: 0x3B82F6)
     static let emeraldPrimary = Color(hex: 0x10B981)
+    static let emeraldSoft = Color(hex: 0xD1FAE5)
     static let textPrimary = Color.white
     static let textSecondary = Color(hex: 0xB0B0B0)
     static let textTertiary = Color(hex: 0x808080)
