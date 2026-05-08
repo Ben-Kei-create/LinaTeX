@@ -19,12 +19,8 @@
 		A56E6D5C2F9B86DC00DB1F2E /* Quest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */; };
 		A56E6D662F9B86E800DB1F2E /* ComprehensiveCurriculum.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5F2F9B86E800DB1F2E /* ComprehensiveCurriculum.swift */; };
 		A56E6D672F9B86E800DB1F2E /* CurriculumData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */; };
-		A56E6D682F9B86E800DB1F2E /* FinalCurriculumIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D622F9B86E800DB1F2E /* FinalCurriculumIntegration.swift */; };
 		A56E6D692F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */; };
-		A56E6D6A2F9B86E800DB1F2E /* PracticalLinuxContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D632F9B86E800DB1F2E /* PracticalLinuxContent.swift */; };
-		A56E6D6B2F9B86E800DB1F2E /* AdvancedCurriculum.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5D2F9B86E800DB1F2E /* AdvancedCurriculum.swift */; };
 		A56E6D6C2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */; };
-		A56E6D6D2F9B86E800DB1F2E /* ExtendedQuizContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D612F9B86E800DB1F2E /* ExtendedQuizContent.swift */; };
 		A56E6D722F9B86F900DB1F2E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A56E6D712F9B86F900DB1F2E /* README.md */; };
 		A56E6D732F9B86F900DB1F2E /* color_updates.md in Resources */ = {isa = PBXBuildFile; fileRef = A56E6D702F9B86F900DB1F2E /* color_updates.md */; };
 		A56E6D772F9B870100DB1F2E /* LinaTeXApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D752F9B870100DB1F2E /* LinaTeXApp.swift */; };
@@ -42,13 +38,9 @@
 		A56E6D4F2F9B86CF00DB1F2E /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 		A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandDictionaryView.swift; sourceTree = "<group>"; };
 		A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quest.swift; sourceTree = "<group>"; };
-		A56E6D5D2F9B86E800DB1F2E /* AdvancedCurriculum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedCurriculum.swift; sourceTree = "<group>"; };
 		A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPracticalScenarios.swift; sourceTree = "<group>"; };
 		A56E6D5F2F9B86E800DB1F2E /* ComprehensiveCurriculum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComprehensiveCurriculum.swift; sourceTree = "<group>"; };
 		A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurriculumData.swift; sourceTree = "<group>"; };
-		A56E6D612F9B86E800DB1F2E /* ExtendedQuizContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtendedQuizContent.swift; sourceTree = "<group>"; };
-		A56E6D622F9B86E800DB1F2E /* FinalCurriculumIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinalCurriculumIntegration.swift; sourceTree = "<group>"; };
-		A56E6D632F9B86E800DB1F2E /* PracticalLinuxContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticalLinuxContent.swift; sourceTree = "<group>"; };
 		A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticalScenariosAdvanced.swift; sourceTree = "<group>"; };
 		A56E6D702F9B86F900DB1F2E /* color_updates.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = color_updates.md; sourceTree = "<group>"; };
 		A56E6D712F9B86F900DB1F2E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -122,13 +114,9 @@
 		A56E6D652F9B86E800DB1F2E /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				A56E6D5D2F9B86E800DB1F2E /* AdvancedCurriculum.swift */,
 				A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */,
 				A56E6D5F2F9B86E800DB1F2E /* ComprehensiveCurriculum.swift */,
 				A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */,
-				A56E6D612F9B86E800DB1F2E /* ExtendedQuizContent.swift */,
-				A56E6D622F9B86E800DB1F2E /* FinalCurriculumIntegration.swift */,
-				A56E6D632F9B86E800DB1F2E /* PracticalLinuxContent.swift */,
 				A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */,
 			);
 			path = Data;
@@ -211,12 +199,8 @@
 				A56E6D542F9B86CF00DB1F2E /* ParticleEffects.swift in Sources */,
 				A56E6D662F9B86E800DB1F2E /* ComprehensiveCurriculum.swift in Sources */,
 				A56E6D672F9B86E800DB1F2E /* CurriculumData.swift in Sources */,
-				A56E6D682F9B86E800DB1F2E /* FinalCurriculumIntegration.swift in Sources */,
 				A56E6D692F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift in Sources */,
-				A56E6D6A2F9B86E800DB1F2E /* PracticalLinuxContent.swift in Sources */,
-				A56E6D6B2F9B86E800DB1F2E /* AdvancedCurriculum.swift in Sources */,
 				A56E6D6C2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift in Sources */,
-				A56E6D6D2F9B86E800DB1F2E /* ExtendedQuizContent.swift in Sources */,
 				A56E6D772F9B870100DB1F2E /* LinaTeXApp.swift in Sources */,
 				A56E6D552F9B86CF00DB1F2E /* LearningContentView.swift in Sources */,
 				A56E6D572F9B86CF00DB1F2E /* SplashScreenView.swift in Sources */,
