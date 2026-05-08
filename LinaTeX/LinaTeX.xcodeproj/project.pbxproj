@@ -17,7 +17,18 @@
 		A56E6D592F9B86CF00DB1F2E /* LessonImplementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */; };
 		A5D1C0A02FA0000000000002 /* CommandDictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */; };
 		A56E6D5C2F9B86DC00DB1F2E /* Quest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */; };
-		A56E6D5D2F9B86DC00DB1F2E /* ModernTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5B2F9B86DC00DB1F2E /* ModernTheme.swift */; };
+		BB0000010000000000000001 /* ModernTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000001 /* ModernTheme.swift */; };
+		BB0000010000000000000002 /* HomeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000002 /* HomeViews.swift */; };
+		BB0000010000000000000003 /* CourseDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000003 /* CourseDetailViews.swift */; };
+		BB0000010000000000000004 /* LessonFlowViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000004 /* LessonFlowViews.swift */; };
+		BB0000010000000000000005 /* ActionButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000005 /* ActionButtons.swift */; };
+		BB0000010000000000000006 /* LessonLearningTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000006 /* LessonLearningTab.swift */; };
+		BB0000010000000000000007 /* ConceptLessonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000007 /* ConceptLessonView.swift */; };
+		BB0000010000000000000008 /* QuestLessonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000008 /* QuestLessonView.swift */; };
+		BB0000010000000000000009 /* TerminalComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000009 /* TerminalComponents.swift */; };
+		BB000001000000000000000A /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002000000000000000A /* AchievementsView.swift */; };
+		BB000001000000000000000B /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002000000000000000B /* StatisticsView.swift */; };
+		BB000001000000000000000C /* PersonalizedRecommendationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002000000000000000C /* PersonalizedRecommendationView.swift */; };
 		A56E6D672F9B86E800DB1F2E /* CurriculumData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */; };
 		A56E6D692F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */; };
 		A56E6D6C2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */; };
@@ -38,7 +49,18 @@
 		A56E6D4F2F9B86CF00DB1F2E /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
 		A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandDictionaryView.swift; sourceTree = "<group>"; };
 		A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quest.swift; sourceTree = "<group>"; };
-		A56E6D5B2F9B86DC00DB1F2E /* ModernTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTheme.swift; sourceTree = "<group>"; };
+		BB0000020000000000000001 /* ModernTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTheme.swift; sourceTree = "<group>"; };
+		BB0000020000000000000002 /* HomeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViews.swift; sourceTree = "<group>"; };
+		BB0000020000000000000003 /* CourseDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDetailViews.swift; sourceTree = "<group>"; };
+		BB0000020000000000000004 /* LessonFlowViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonFlowViews.swift; sourceTree = "<group>"; };
+		BB0000020000000000000005 /* ActionButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtons.swift; sourceTree = "<group>"; };
+		BB0000020000000000000006 /* LessonLearningTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonLearningTab.swift; sourceTree = "<group>"; };
+		BB0000020000000000000007 /* ConceptLessonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConceptLessonView.swift; sourceTree = "<group>"; };
+		BB0000020000000000000008 /* QuestLessonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestLessonView.swift; sourceTree = "<group>"; };
+		BB0000020000000000000009 /* TerminalComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalComponents.swift; sourceTree = "<group>"; };
+		BB000002000000000000000A /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
+		BB000002000000000000000B /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		BB000002000000000000000C /* PersonalizedRecommendationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizedRecommendationView.swift; sourceTree = "<group>"; };
 		A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPracticalScenarios.swift; sourceTree = "<group>"; };
 		A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurriculumData.swift; sourceTree = "<group>"; };
 		A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticalScenariosAdvanced.swift; sourceTree = "<group>"; };
@@ -76,6 +98,17 @@
 				A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */,
 				A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */,
 				A56E6D4F2F9B86CF00DB1F2E /* SplashScreenView.swift */,
+				BB0000020000000000000002 /* HomeViews.swift */,
+				BB0000020000000000000003 /* CourseDetailViews.swift */,
+				BB0000020000000000000004 /* LessonFlowViews.swift */,
+				BB0000020000000000000005 /* ActionButtons.swift */,
+				BB0000020000000000000006 /* LessonLearningTab.swift */,
+				BB0000020000000000000007 /* ConceptLessonView.swift */,
+				BB0000020000000000000008 /* QuestLessonView.swift */,
+				BB0000020000000000000009 /* TerminalComponents.swift */,
+				BB000002000000000000000A /* AchievementsView.swift */,
+				BB000002000000000000000B /* StatisticsView.swift */,
+				BB000002000000000000000C /* PersonalizedRecommendationView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -107,7 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */,
-				A56E6D5B2F9B86DC00DB1F2E /* ModernTheme.swift */,
+				BB0000020000000000000001 /* ModernTheme.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -204,6 +237,18 @@
 				A56E6D552F9B86CF00DB1F2E /* LearningContentView.swift in Sources */,
 				A56E6D572F9B86CF00DB1F2E /* SplashScreenView.swift in Sources */,
 				A56E6D592F9B86CF00DB1F2E /* LessonImplementations.swift in Sources */,
+				BB0000010000000000000001 /* ModernTheme.swift in Sources */,
+				BB0000010000000000000002 /* HomeViews.swift in Sources */,
+				BB0000010000000000000003 /* CourseDetailViews.swift in Sources */,
+				BB0000010000000000000004 /* LessonFlowViews.swift in Sources */,
+				BB0000010000000000000005 /* ActionButtons.swift in Sources */,
+				BB0000010000000000000006 /* LessonLearningTab.swift in Sources */,
+				BB0000010000000000000007 /* ConceptLessonView.swift in Sources */,
+				BB0000010000000000000008 /* QuestLessonView.swift in Sources */,
+				BB0000010000000000000009 /* TerminalComponents.swift in Sources */,
+				BB000001000000000000000A /* AchievementsView.swift in Sources */,
+				BB000001000000000000000B /* StatisticsView.swift in Sources */,
+				BB000001000000000000000C /* PersonalizedRecommendationView.swift in Sources */,
 				A5D1C0A02FA0000000000002 /* CommandDictionaryView.swift in Sources */,
 				A56E6D5C2F9B86DC00DB1F2E /* Quest.swift in Sources */,
 				A56E6D492F9B86BD00DB1F2E /* LearningPathAnalyzer.swift in Sources */,

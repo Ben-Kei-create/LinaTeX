@@ -198,6 +198,10 @@ struct TerminalTheme {
     static let accentRed = Color(hex: 0xFF4444)
     static let accentYellow = Color(hex: 0xFFAA00)
     static let buttonRadius: CGFloat = 10
+    // Terminal display colors
+    static let terminalBackground = Color(hex: 0x1E293B)
+    static let terminalText = Color(hex: 0x10B981)
+    static let terminalMuted = Color(hex: 0x64748B)
 }
 
 // MARK: - Color helper
