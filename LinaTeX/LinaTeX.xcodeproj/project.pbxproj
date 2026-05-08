@@ -17,7 +17,6 @@
 		A56E6D592F9B86CF00DB1F2E /* LessonImplementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */; };
 		A5D1C0A02FA0000000000002 /* CommandDictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */; };
 		A56E6D5C2F9B86DC00DB1F2E /* Quest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */; };
-		A56E6D662F9B86E800DB1F2E /* ComprehensiveCurriculum.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5F2F9B86E800DB1F2E /* ComprehensiveCurriculum.swift */; };
 		A56E6D672F9B86E800DB1F2E /* CurriculumData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */; };
 		A56E6D692F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */; };
 		A56E6D6C2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */; };
@@ -39,7 +38,6 @@
 		A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandDictionaryView.swift; sourceTree = "<group>"; };
 		A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quest.swift; sourceTree = "<group>"; };
 		A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPracticalScenarios.swift; sourceTree = "<group>"; };
-		A56E6D5F2F9B86E800DB1F2E /* ComprehensiveCurriculum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComprehensiveCurriculum.swift; sourceTree = "<group>"; };
 		A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurriculumData.swift; sourceTree = "<group>"; };
 		A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticalScenariosAdvanced.swift; sourceTree = "<group>"; };
 		A56E6D702F9B86F900DB1F2E /* color_updates.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = color_updates.md; sourceTree = "<group>"; };
@@ -115,7 +113,6 @@
 			isa = PBXGroup;
 			children = (
 				A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */,
-				A56E6D5F2F9B86E800DB1F2E /* ComprehensiveCurriculum.swift */,
 				A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */,
 				A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */,
 			);
@@ -197,7 +194,6 @@
 			files = (
 				A5056D0E2F97BB940019CF44 /* ContentView.swift in Sources */,
 				A56E6D542F9B86CF00DB1F2E /* ParticleEffects.swift in Sources */,
-				A56E6D662F9B86E800DB1F2E /* ComprehensiveCurriculum.swift in Sources */,
 				A56E6D672F9B86E800DB1F2E /* CurriculumData.swift in Sources */,
 				A56E6D692F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift in Sources */,
 				A56E6D6C2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift in Sources */,
