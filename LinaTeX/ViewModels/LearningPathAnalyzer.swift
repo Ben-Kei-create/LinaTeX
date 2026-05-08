@@ -81,7 +81,8 @@ class LearningPathAnalyzer {
     // MARK: - Learning Pace Calculation
 
     private static func calculateLearningPace(_ vm: AppViewModel) -> LearningPace {
-        let completedPerDay = Double(vm.completedLessons.count) / max(1, Double(max(1, EstimatedSchedule.estimatedCompletionDays)))
+        let estimatedDays = 30 // Estimated learning schedule in days
+        let completedPerDay = Double(vm.completedLessons.count) / max(1, Double(estimatedDays))
 
         if completedPerDay > 2.0 {
             return .fast
