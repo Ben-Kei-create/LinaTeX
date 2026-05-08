@@ -35,57 +35,57 @@ struct LessonView: View {
             ModernTheme.backgroundGradient.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Header
+                // Header - compact
                 HStack {
                     Button(action: { vm.goBack() }) {
-                        HStack(spacing: 4) {
+                        HStack(spacing: 3) {
                             Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(.system(size: 14, weight: .semibold))
                             Text("戻る")
-                                .font(ModernFont.bodyEmphasizedSmall)
+                                .font(ModernFont.labelMedium)
                         }
                         .foregroundColor(course.level.modernColor)
                     }
                     Spacer()
                     Text(course.title)
-                        .font(ModernFont.bodyEmphasizedSmall)
+                        .font(ModernFont.labelMedium)
                         .foregroundColor(ModernTheme.textPrimary)
                         .lineLimit(1)
                     Spacer()
-                    Color.clear.frame(width: 56, height: 1)
+                    Color.clear.frame(width: 44, height: 1)
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
-                .background(ModernTheme.bgCard.opacity(0.7))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(ModernTheme.bgCard.opacity(0.6))
                 .overlay(
                     Rectangle()
                         .fill(ModernTheme.border)
-                        .frame(height: 1),
+                        .frame(height: 0.5),
                     alignment: .bottom
                 )
 
                 ScrollView {
-                    VStack(spacing: 18) {
-                        // Lesson Header Card
-                        HStack(spacing: 14) {
+                    VStack(spacing: 14) {
+                        // Lesson Header Card - compact
+                        HStack(spacing: 12) {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 14)
+                                RoundedRectangle(cornerRadius: 12)
                                     .fill(course.level.modernSoft)
-                                    .frame(width: 56, height: 56)
+                                    .frame(width: 44, height: 44)
                                 Text(lesson.emoji)
-                                    .font(.system(size: 30))
+                                    .font(.system(size: 24))
                             }
 
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: 2) {
                                 Text(lesson.title)
-                                    .font(ModernFont.headlineMedium)
+                                    .font(ModernFont.headlineSmall)
                                     .foregroundColor(ModernTheme.textPrimary)
-                                HStack(spacing: 8) {
-                                    HStack(spacing: 4) {
+                                HStack(spacing: 6) {
+                                    HStack(spacing: 2) {
                                         Image(systemName: "clock.fill")
-                                            .font(.system(size: 11))
+                                            .font(.system(size: 9))
                                         Text("\(lesson.estimatedMinutes)分")
-                                            .font(ModernFont.labelMedium)
+                                            .font(ModernFont.labelSmall)
                                     }
                                     .foregroundColor(ModernTheme.textTertiary)
 
@@ -95,13 +95,13 @@ struct LessonView: View {
                             }
                             Spacer()
                         }
-                        .padding(16)
+                        .padding(12)
                         .background(
-                            RoundedRectangle(cornerRadius: 16)
+                            RoundedRectangle(cornerRadius: 14)
                                 .fill(ModernTheme.bgCard)
                         )
-                        .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
-                        .padding(.horizontal, 20)
+                        .shadow(color: ModernTheme.shadowColor, radius: 6, x: 0, y: 1)
+                        .padding(.horizontal, 16)
 
                         // Flow indicator
                         LessonFlowIndicator(
@@ -109,7 +109,7 @@ struct LessonView: View {
                             isCompleted: vm.isLessonCompleted(lesson),
                             color: course.level.modernColor
                         )
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 16)
 
                         // Content based on selected tab
                         Group {
@@ -129,12 +129,12 @@ struct LessonView: View {
                             }
                         }
                     }
-                    .padding(.vertical, 16)
+                    .padding(.vertical, 12)
                 }
 
-                // Footer: Tab selector + Ad
-                VStack(spacing: 10) {
-                    HStack(spacing: 10) {
+                // Footer: Tab selector + Ad - compact
+                VStack(spacing: 8) {
+                    HStack(spacing: 8) {
                         TabSelectorButton(
                             icon: "book.fill",
                             label: "学習",
@@ -148,7 +148,7 @@ struct LessonView: View {
 
                         TabSelectorButton(
                             icon: "target",
-                            label: "問題に挑戦",
+                            label: "問題",
                             isSelected: selectedTab == .problem,
                             color: course.level.modernColor
                         ) {
@@ -157,17 +157,17 @@ struct LessonView: View {
                             }
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 10)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
 
-                    // Ad banner
-                    HStack(spacing: 10) {
+                    // Ad banner - compact
+                    HStack(spacing: 8) {
                         Image(systemName: "sparkles")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(ModernTheme.warning)
-                        VStack(alignment: .leading, spacing: 2) {
+                        VStack(alignment: .leading, spacing: 1) {
                             Text("LinaTeX Pro")
-                                .font(ModernFont.labelLarge)
+                                .font(ModernFont.labelSmall)
                                 .foregroundColor(ModernTheme.textPrimary)
                             Text("広告")
                                 .font(ModernFont.captionSmall)
@@ -175,21 +175,21 @@ struct LessonView: View {
                         }
                         Spacer()
                         Image(systemName: "xmark")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.system(size: 10, weight: .semibold))
                             .foregroundColor(ModernTheme.textTertiary)
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, 11)
+                    .padding(.vertical, 8)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(ModernTheme.warningSoft.opacity(0.5))
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(ModernTheme.warningSoft.opacity(0.3))
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(ModernTheme.warning.opacity(0.2), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(ModernTheme.warning.opacity(0.15), lineWidth: 0.5)
                     )
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 12)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
                 }
                 .background(
                     ModernTheme.bgCard

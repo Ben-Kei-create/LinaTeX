@@ -74,28 +74,28 @@ struct FlowStep: View {
     }
 
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 4) {
             ZStack {
                 Circle()
                     .fill(fillColor)
-                    .frame(width: 36, height: 36)
+                    .frame(width: 30, height: 30)
                 if isDone {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 12, weight: .bold))
                         .foregroundColor(iconColor)
                 } else {
                     Image(systemName: icon)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(iconColor)
                 }
             }
             .shadow(
-                color: (isActive || isDone) ? color.opacity(0.3) : Color.clear,
-                radius: 6, x: 0, y: 2
+                color: (isActive || isDone) ? color.opacity(0.2) : Color.clear,
+                radius: 4, x: 0, y: 1
             )
 
             Text(label)
-                .font(ModernFont.labelSmall)
+                .font(ModernFont.captionSmall)
                 .foregroundColor(labelColor)
                 .fontWeight(isActive ? .semibold : .regular)
         }
@@ -111,10 +111,10 @@ struct FlowConnector: View {
 
     var body: some View {
         Rectangle()
-            .fill(isActive ? color : ModernTheme.borderStrong)
-            .frame(height: 2)
-            .padding(.bottom, 22)
-            .padding(.horizontal, -4)
+            .fill(isActive ? color : ModernTheme.border)
+            .frame(height: 1.5)
+            .padding(.bottom, 18)
+            .padding(.horizontal, -2)
     }
 }
 
@@ -129,22 +129,22 @@ struct TabSelectorButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 12, weight: .semibold))
                 Text(label)
-                    .font(ModernFont.bodyEmphasizedSmall)
+                    .font(ModernFont.labelMedium)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, 9)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 10)
                     .fill(isSelected ? color : ModernTheme.bgSubtle)
             )
             .foregroundColor(isSelected ? .white : ModernTheme.textSecondary)
             .shadow(
-                color: isSelected ? color.opacity(0.3) : Color.clear,
-                radius: 8, x: 0, y: 3
+                color: isSelected ? color.opacity(0.2) : Color.clear,
+                radius: 5, x: 0, y: 1
             )
         }
     }

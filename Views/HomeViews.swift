@@ -14,49 +14,49 @@ struct HomeView: View {
             ModernTheme.backgroundGradient.ignoresSafeArea()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment: .leading, spacing: 16) {
                     // MARK: - Hero Header
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 4) {
                         HStack(alignment: .top) {
-                            VStack(alignment: .leading, spacing: 6) {
+                            VStack(alignment: .leading, spacing: 2) {
                                 Text("LinaTeX")
                                     .font(ModernFont.displayLarge)
                                     .foregroundColor(ModernTheme.textPrimary)
 
                                 Text("Linuxを楽しく学ぼう")
-                                    .font(ModernFont.bodyMedium)
+                                    .font(ModernFont.bodySmall)
                                     .foregroundColor(ModernTheme.textSecondary)
                             }
                             Spacer()
                             NavigationLink(destination: StatisticsView(vm: vm)) {
                                 Image(systemName: "chart.bar.fill")
-                                    .font(.system(size: 18, weight: .semibold))
+                                    .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(ModernTheme.primary)
-                                    .frame(width: 44, height: 44)
+                                    .frame(width: 36, height: 36)
                                     .background(
                                         Circle().fill(ModernTheme.bgCard)
                                     )
-                                    .shadow(color: ModernTheme.shadowColor, radius: 6, x: 0, y: 2)
+                                    .shadow(color: ModernTheme.shadowColor, radius: 4, x: 0, y: 1)
                             }
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
 
                     // MARK: - Progress Card (Hero Style)
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 10) {
                         HStack {
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: 2) {
                                 Text("学習進捗")
-                                    .font(ModernFont.labelMedium)
+                                    .font(ModernFont.labelSmall)
                                     .foregroundColor(.white.opacity(0.85))
                                 Text("\(totalCompleted) / \(totalLessons) レッスン")
-                                    .font(ModernFont.headlineMedium)
+                                    .font(ModernFont.headlineSmall)
                                     .foregroundColor(.white)
                             }
                             Spacer()
                             Text("\(Int(vm.totalProgress() * 100))%")
-                                .font(ModernFont.displayMedium)
+                                .font(ModernFont.displaySmall)
                                 .foregroundColor(.white)
                         }
 
@@ -66,13 +66,13 @@ struct HomeView: View {
                             track: Color.white.opacity(0.25)
                         )
                     }
-                    .padding(20)
+                    .padding(14)
                     .background(
-                        RoundedRectangle(cornerRadius: 20)
+                        RoundedRectangle(cornerRadius: 16)
                             .fill(ModernTheme.heroGradient)
                     )
-                    .shadow(color: ModernTheme.secondary.opacity(0.25), radius: 20, x: 0, y: 8)
-                    .padding(.horizontal, 20)
+                    .shadow(color: ModernTheme.secondary.opacity(0.2), radius: 12, x: 0, y: 4)
+                    .padding(.horizontal, 16)
 
                     // MARK: - AI Recommendation
                     PersonalizedRecommendationView(vm: vm) { lesson in
@@ -84,22 +84,22 @@ struct HomeView: View {
                             vm.navigateToLesson(lesson, in: course)
                         }
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 16)
 
                     // MARK: - Courses Section
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 10) {
                         HStack {
                             Text("コース一覧")
-                                .font(ModernFont.headlineLarge)
+                                .font(ModernFont.headlineSmall)
                                 .foregroundColor(ModernTheme.textPrimary)
                             Spacer()
                             Text("\(vm.courses.count)コース")
-                                .font(ModernFont.labelMedium)
+                                .font(ModernFont.labelSmall)
                                 .foregroundColor(ModernTheme.textTertiary)
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 16)
 
-                        VStack(spacing: 14) {
+                        VStack(spacing: 10) {
                             ForEach(vm.courses) { course in
                                 CourseCard(course: course, vm: vm)
                                     .onTapGesture {
@@ -109,7 +109,7 @@ struct HomeView: View {
                         }
                     }
 
-                    Spacer(minLength: 40)
+                    Spacer(minLength: 24)
                 }
             }
         }
@@ -152,77 +152,72 @@ struct CourseCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(alignment: .top, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
                 // Level emoji badge
                 ZStack {
-                    RoundedRectangle(cornerRadius: 14)
+                    RoundedRectangle(cornerRadius: 12)
                         .fill(course.level.modernGradient)
-                        .frame(width: 56, height: 56)
+                        .frame(width: 48, height: 48)
                     Text(course.emoji)
-                        .font(.system(size: 30))
+                        .font(.system(size: 24))
                 }
-                .shadow(color: course.level.modernColor.opacity(0.3), radius: 8, x: 0, y: 4)
+                .shadow(color: course.level.modernColor.opacity(0.2), radius: 6, x: 0, y: 2)
 
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(course.level.japanese)
                         .modernPill(color: course.level.modernColor)
 
                     Text(course.title)
-                        .font(ModernFont.headlineMedium)
+                        .font(ModernFont.headlineSmall)
                         .foregroundColor(ModernTheme.textPrimary)
                         .lineLimit(2)
 
                     Text(course.subtitle)
-                        .font(ModernFont.bodySmall)
+                        .font(ModernFont.captionSmall)
                         .foregroundColor(ModernTheme.textSecondary)
-                        .lineLimit(2)
+                        .lineLimit(1)
                 }
 
                 Spacer(minLength: 0)
             }
 
-            Text(course.description)
-                .font(ModernFont.bodySmall)
-                .foregroundColor(ModernTheme.textSecondary)
-                .lineSpacing(3)
-                .lineLimit(3)
-
-            // Stats row
-            HStack(spacing: 16) {
+            // Stats row - compact
+            HStack(spacing: 12) {
                 Label {
-                    Text("\(course.totalLessons)レッスン")
-                        .font(ModernFont.labelMedium)
+                    Text("\(course.totalLessons)")
+                        .font(ModernFont.labelSmall)
                 } icon: {
                     Image(systemName: "book.closed.fill")
-                        .font(.system(size: 12))
+                        .font(.system(size: 11))
                 }
-                .foregroundColor(ModernTheme.textSecondary)
+                .foregroundColor(ModernTheme.textTertiary)
 
                 Label {
                     Text("\(course.estimatedMinutes)分")
-                        .font(ModernFont.labelMedium)
+                        .font(ModernFont.labelSmall)
                 } icon: {
                     Image(systemName: "clock.fill")
-                        .font(.system(size: 12))
+                        .font(.system(size: 11))
                 }
-                .foregroundColor(ModernTheme.textSecondary)
+                .foregroundColor(ModernTheme.textTertiary)
 
                 Spacer()
 
                 if progress > 0 {
                     Text("\(Int(progress * 100))%")
-                        .font(ModernFont.labelLarge)
+                        .font(ModernFont.labelMedium)
                         .foregroundColor(course.level.modernColor)
                 }
             }
 
             // Progress bar
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
                 ProgressBarView(
                     progress: progress,
                     tint: course.level.modernColor,
-                    track: ModernTheme.bgSubtle
+                    track: ModernTheme.bgSubtle,
+                    height: 6
                 )
 
                 if progress > 0 {
@@ -232,16 +227,16 @@ struct CourseCard: View {
                 }
             }
         }
-        .padding(18)
+        .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 14)
                 .fill(ModernTheme.bgCard)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .stroke(ModernTheme.border, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(ModernTheme.border, lineWidth: 0.5)
         )
-        .shadow(color: ModernTheme.shadowColor, radius: 10, x: 0, y: 3)
-        .padding(.horizontal, 20)
+        .shadow(color: ModernTheme.shadowColor, radius: 6, x: 0, y: 2)
+        .padding(.horizontal, 16)
     }
 }

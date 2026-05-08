@@ -49,20 +49,20 @@ struct PrimaryActionButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 13, weight: .semibold))
                 Text(title)
-                    .font(ModernFont.bodyEmphasized)
+                    .font(ModernFont.bodyEmphasizedSmall)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
+            .padding(.vertical, 10)
             .background(
-                RoundedRectangle(cornerRadius: 14)
+                RoundedRectangle(cornerRadius: 12)
                     .fill(fillColor)
             )
             .foregroundColor(foregroundColor)
-            .shadow(color: shadowColor, radius: 10, x: 0, y: 4)
+            .shadow(color: shadowColor, radius: 6, x: 0, y: 2)
         }
         .disabled(disabled)
     }
@@ -78,48 +78,48 @@ struct HintBlock: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Button(action: toggle) {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     Image(systemName: isShown ? "lightbulb.fill" : "lightbulb")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(ModernTheme.warning)
-                    Text(isShown ? "ヒントを隠す" : "ヒントを見る")
-                        .font(ModernFont.bodyEmphasizedSmall)
+                    Text(isShown ? "隠す" : "ヒント")
+                        .font(ModernFont.labelMedium)
                         .foregroundColor(ModernTheme.textPrimary)
                     Spacer()
                     Image(systemName: isShown ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(ModernTheme.textTertiary)
                 }
-                .padding(14)
+                .padding(10)
             }
 
             if isShown {
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "info.circle.fill")
                         .foregroundColor(ModernTheme.warning)
-                        .font(.system(size: 14))
+                        .font(.system(size: 12))
                     Text(text)
-                        .font(ModernFont.bodyMedium)
+                        .font(ModernFont.bodySmall)
                         .foregroundColor(ModernTheme.textPrimary)
-                        .lineSpacing(4)
+                        .lineSpacing(2)
                 }
-                .padding(14)
+                .padding(10)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    Rectangle().fill(ModernTheme.warningSoft.opacity(0.4))
+                    Rectangle().fill(ModernTheme.warningSoft.opacity(0.3))
                 )
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
         .background(
-            RoundedRectangle(cornerRadius: 14)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(ModernTheme.bgCard)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(ModernTheme.warning.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(ModernTheme.warning.opacity(0.2), lineWidth: 0.5)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
@@ -134,41 +134,41 @@ struct CommandButton: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? accentColor : ModernTheme.borderStrong, lineWidth: 2)
-                        .frame(width: 20, height: 20)
+                        .stroke(isSelected ? accentColor : ModernTheme.border, lineWidth: 1.5)
+                        .frame(width: 16, height: 16)
                     if isSelected {
                         Circle()
                             .fill(accentColor)
-                            .frame(width: 12, height: 12)
+                            .frame(width: 9, height: 9)
                     }
                 }
 
                 Text(option.label)
-                    .font(ModernFont.codeMedium)
+                    .font(ModernFont.codeSmall)
                     .foregroundColor(ModernTheme.textPrimary)
                     .multilineTextAlignment(.leading)
 
                 Spacer()
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 11)
+            .padding(.vertical, 9)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? accentColor.opacity(0.08) : ModernTheme.bgCard)
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(isSelected ? accentColor.opacity(0.06) : ModernTheme.bgSubtle)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 10)
                     .stroke(
                         isSelected ? accentColor : ModernTheme.border,
-                        lineWidth: isSelected ? 1.5 : 1
+                        lineWidth: isSelected ? 1.2 : 0.5
                     )
             )
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
-        .opacity(isDisabled ? 0.55 : 1.0)
+        .opacity(isDisabled ? 0.5 : 1.0)
     }
 }

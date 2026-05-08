@@ -10,42 +10,36 @@ struct TerminalPanel: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Terminal header bar
-            HStack(spacing: 8) {
-                Circle().fill(Color(hex: 0xFF5F57)).frame(width: 10, height: 10)
-                Circle().fill(Color(hex: 0xFEBC2E)).frame(width: 10, height: 10)
-                Circle().fill(Color(hex: 0x28C840)).frame(width: 10, height: 10)
+            // Terminal header bar - compact
+            HStack(spacing: 6) {
+                Circle().fill(Color(hex: 0xFF5F57)).frame(width: 8, height: 8)
+                Circle().fill(Color(hex: 0xFEBC2E)).frame(width: 8, height: 8)
+                Circle().fill(Color(hex: 0x28C840)).frame(width: 8, height: 8)
                 Spacer()
                 Text("terminal")
-                    .font(ModernFont.codeSmall)
-                    .foregroundColor(Color.white.opacity(0.5))
+                    .font(.system(size: 10, weight: .regular, design: .monospaced))
+                    .foregroundColor(Color.white.opacity(0.4))
                 Spacer()
-                Color.clear.frame(width: 38, height: 1)
+                Color.clear.frame(width: 30, height: 1)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 7)
             .background(Color(hex: 0x0F172A))
 
-            // Terminal body
+            // Terminal body - compact
             ScrollViewReader { proxy in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack(spacing: 6) {
-                            Text("user@linatex")
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 4) {
+                            Text("user")
                                 .foregroundColor(Color(hex: 0x10B981))
-                                .font(ModernFont.codeSmall)
-                            Text(":")
-                                .foregroundColor(Color.white.opacity(0.5))
-                                .font(ModernFont.codeSmall)
-                            Text("~")
-                                .foregroundColor(Color(hex: 0x60A5FA))
-                                .font(ModernFont.codeSmall)
-                            Text("$")
-                                .foregroundColor(Color.white.opacity(0.7))
-                                .font(ModernFont.codeSmall)
+                                .font(.system(size: 11, weight: .regular, design: .monospaced))
+                            Text("$ ")
+                                .foregroundColor(Color.white.opacity(0.6))
+                                .font(.system(size: 11, weight: .regular, design: .monospaced))
                             Text(input)
                                 .foregroundColor(.white)
-                                .font(ModernFont.codeSmall)
+                                .font(.system(size: 11, weight: .regular, design: .monospaced))
                             if state == .waiting {
                                 CursorView()
                             }
@@ -55,9 +49,9 @@ struct TerminalPanel: View {
 
                         if !output.isEmpty {
                             Text(output)
-                                .font(ModernFont.codeSmall)
-                                .foregroundColor(Color.white.opacity(0.85))
-                                .lineSpacing(2)
+                                .font(.system(size: 11, weight: .regular, design: .monospaced))
+                                .foregroundColor(Color.white.opacity(0.8))
+                                .lineSpacing(1)
                                 .textSelection(.enabled)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .id("output")
@@ -66,17 +60,17 @@ struct TerminalPanel: View {
                         Spacer()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(14)
+                    .padding(10)
                     .onChange(of: output) { _ in
                         withAnimation { proxy.scrollTo("output", anchor: .bottom) }
                     }
                 }
             }
-            .frame(minHeight: 160)
+            .frame(minHeight: 120)
             .background(Color(hex: 0x1E293B))
         }
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .shadow(color: ModernTheme.shadowColorMedium, radius: 12, x: 0, y: 4)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .shadow(color: ModernTheme.shadowColorMedium, radius: 8, x: 0, y: 2)
     }
 }
 
@@ -88,7 +82,7 @@ struct CursorView: View {
     var body: some View {
         Rectangle()
             .fill(Color(hex: 0x10B981))
-            .frame(width: 8, height: 14)
+            .frame(width: 6, height: 11)
             .opacity(visible ? 0.9 : 0.2)
             .onAppear {
                 withAnimation(.easeInOut(duration: 0.55).repeatForever()) {

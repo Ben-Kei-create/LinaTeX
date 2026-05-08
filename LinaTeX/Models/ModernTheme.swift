@@ -147,38 +147,38 @@ extension CourseLevel {
 // MARK: - Typography
 
 struct ModernFont {
-    // Display - Large headlines
-    static let displayLarge: Font = .system(size: 32, weight: .bold, design: .rounded)
-    static let displayMedium: Font = .system(size: 28, weight: .bold, design: .rounded)
-    static let displaySmall: Font = .system(size: 24, weight: .bold, design: .rounded)
+    // Display - Large headlines (modern, compact)
+    static let displayLarge: Font = .system(size: 26, weight: .bold)
+    static let displayMedium: Font = .system(size: 22, weight: .bold)
+    static let displaySmall: Font = .system(size: 20, weight: .bold)
 
     // Headlines
-    static let headlineLarge: Font = .system(size: 22, weight: .semibold, design: .rounded)
-    static let headlineMedium: Font = .system(size: 20, weight: .semibold, design: .rounded)
-    static let headlineSmall: Font = .system(size: 18, weight: .semibold, design: .rounded)
+    static let headlineLarge: Font = .system(size: 18, weight: .semibold)
+    static let headlineMedium: Font = .system(size: 16, weight: .semibold)
+    static let headlineSmall: Font = .system(size: 15, weight: .semibold)
 
     // Body
-    static let bodyLarge: Font = .system(size: 17, weight: .regular)
-    static let bodyMedium: Font = .system(size: 16, weight: .regular)
-    static let bodySmall: Font = .system(size: 15, weight: .regular)
+    static let bodyLarge: Font = .system(size: 15, weight: .regular)
+    static let bodyMedium: Font = .system(size: 14, weight: .regular)
+    static let bodySmall: Font = .system(size: 13, weight: .regular)
 
     // Body Emphasized
-    static let bodyEmphasized: Font = .system(size: 16, weight: .semibold)
-    static let bodyEmphasizedSmall: Font = .system(size: 15, weight: .semibold)
+    static let bodyEmphasized: Font = .system(size: 14, weight: .semibold)
+    static let bodyEmphasizedSmall: Font = .system(size: 13, weight: .semibold)
 
     // Labels
-    static let labelLarge: Font = .system(size: 14, weight: .semibold)
-    static let labelMedium: Font = .system(size: 13, weight: .medium)
-    static let labelSmall: Font = .system(size: 12, weight: .medium)
+    static let labelLarge: Font = .system(size: 13, weight: .semibold)
+    static let labelMedium: Font = .system(size: 12, weight: .medium)
+    static let labelSmall: Font = .system(size: 11, weight: .medium)
 
     // Caption
-    static let caption: Font = .system(size: 13, weight: .regular)
-    static let captionSmall: Font = .system(size: 11, weight: .regular)
+    static let caption: Font = .system(size: 12, weight: .regular)
+    static let captionSmall: Font = .system(size: 10, weight: .regular)
 
     // Mono for code
-    static let codeLarge: Font = .system(size: 15, weight: .regular, design: .monospaced)
-    static let codeMedium: Font = .system(size: 14, weight: .regular, design: .monospaced)
-    static let codeSmall: Font = .system(size: 13, weight: .regular, design: .monospaced)
+    static let codeLarge: Font = .system(size: 13, weight: .regular, design: .monospaced)
+    static let codeMedium: Font = .system(size: 12, weight: .regular, design: .monospaced)
+    static let codeSmall: Font = .system(size: 11, weight: .regular, design: .monospaced)
 }
 
 // MARK: - View Modifiers
