@@ -246,7 +246,7 @@ class AppViewModel: ObservableObject {
             return streak >= days
         case .successRate(let target):
             return successRate >= target
-        case .courseCompleted(let courseId):
+        case .courseCompleted:
             // TODO: Implement course completion check
             return false
         case .firstLesson:

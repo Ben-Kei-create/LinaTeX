@@ -8,7 +8,11 @@ struct ContentView: View {
             HomeView(vm: vm)
                 .navigationDestination(for: AppScreen.self) { screen in
                     switch screen {
+                    case .commandDictionary:
+                        CommandDictionaryView(vm: vm)
                     case .courseDetail(let course):
+                        CourseDetailView(course: course, vm: vm)
+                    case .chapter(_, let course):
                         CourseDetailView(course: course, vm: vm)
                     case .lesson(let lesson, let course):
                         LessonView(lesson: lesson, course: course, vm: vm)
