@@ -75,6 +75,16 @@ struct CodeBlock: View {
     let text: String
     var accent: Color = ModernTheme.primary
 
+    init(text: String, accent: Color = ModernTheme.primary) {
+        self.text = text
+        self.accent = accent
+    }
+
+    init(code: String, accent: Color = TerminalTheme.greenPrimary) {
+        self.text = code
+        self.accent = accent
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Text("$")

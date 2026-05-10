@@ -7,6 +7,7 @@ struct TerminalPanel: View {
     let output: String
     let state: LessonState
     let successMessage: String
+    var minHeight: CGFloat = 120
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -61,12 +62,12 @@ struct TerminalPanel: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(10)
-                    .onChange(of: output) { _ in
+                    .onChange(of: output) { _, _ in
                         withAnimation { proxy.scrollTo("output", anchor: .bottom) }
                     }
                 }
             }
-            .frame(minHeight: 120)
+            .frame(minHeight: minHeight)
             .background(Color(hex: 0x1E293B))
         }
         .clipShape(RoundedRectangle(cornerRadius: 12))

@@ -15,7 +15,16 @@ let package = Package(
         .target(
             name: "LinaTeX",
             dependencies: [],
-            path: "."
+            path: "LinaTeX",
+            exclude: [
+                "README.md",
+                "color_updates.md"
+            ]
+        ),
+        .testTarget(
+            name: "LinaTexTests",
+            dependencies: ["LinaTeX"],
+            path: "LinaTexTests"
         )
     ]
 )

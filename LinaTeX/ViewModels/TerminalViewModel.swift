@@ -27,7 +27,7 @@ class AppViewModel: ObservableObject {
     @Published var streak: Int = 0
     @Published var totalLessonAttempts: Int = 0
     @Published var correctAnswers: Int = 0
-    @Published var unlockedAchievements: Set<String> = []
+    @Published var unlockedAchievements: Set<String> = [] // IDs of unlocked achievements
     @Published var learningProfile: LearningProfile?
     @Published var personalizedRecommendation: PersonalizedRecommendation?
 
@@ -226,11 +226,61 @@ class AppViewModel: ObservableObject {
     }
 
     func checkAndUnlockAchievements() {
-        // Achievement system to be implemented
+        for achievement in allAchievements {
+            guard !unlockedAchievements.contains(achievement.id) else { continue }
+
+            let isUnlocked = checkAchievementRequirement(achievement.requirement)
+            if isUnlocked {
+                unlockedAchievements.insert(achievement.id)
+            }
+        }
     }
 
-    func getUnlockedBadges() -> [String] {
-        Array(unlockedAchievements)
+    private func checkAchievementRequirement(_ requirement: AchievementRequirement) -> Bool {
+        switch requirement {
+        case .lessonsCompleted(let count):
+            return completedLessons.count >= count
+        case .xpReached(let amount):
+            return totalXP >= amount
+        case .streakDays(let days):
+            return streak >= days
+        case .successRate(let target):
+            return successRate >= target
+        case .courseCompleted:
+            // TODO: Implement course completion check
+            return false
+        case .firstLesson:
+            return !completedLessons.isEmpty
+        case .allConceptLessons:
+            return checkAllLessonsOfType(.concept)
+        case .allQuestLessons:
+            return checkAllLessonsOfType(.quest)
+        case .allScenarioLessons:
+            return checkAllLessonsOfType(.scenario)
+        }
+    }
+
+    private func checkAllLessonsOfType(_ type: LessonType) -> Bool {
+        let allLessonsOfType = courses.flatMap { course in
+            course.chapters.flatMap { chapter in
+                chapter.lessons.filter { lesson in
+                    switch (lesson.content, type) {
+                    case (.concept, .concept): return true
+                    case (.quest, .quest): return true
+                    case (.scenario, .scenario): return true
+                    case (.quiz, .quiz): return true
+                    default: return false
+                    }
+                }
+            }
+        }
+
+        guard !allLessonsOfType.isEmpty else { return false }
+        return allLessonsOfType.allSatisfy { completedLessons.contains($0.id) }
+    }
+
+    func getUnlockedBadges() -> [Achievement] {
+        allAchievements.filter { unlockedAchievements.contains($0.id) }
     }
 
     // MARK: - Learning Path Management
