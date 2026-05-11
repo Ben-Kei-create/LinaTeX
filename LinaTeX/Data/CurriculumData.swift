@@ -6,7 +6,130 @@ import SwiftUI
 
 // MARK: - Basics Course
 let basicsCourseLessons: [Lesson] = [
-    // File operation scenario
+    // cp - Copy Files
+    Lesson(
+        title: "cp - ファイルをコピー",
+        emoji: "📋",
+        estimatedMinutes: 8,
+        content: .concept(ConceptLesson(
+            headline: "ファイルを複製する",
+            sections: [
+                ConceptSection(
+                    heading: "cp コマンドの役割",
+                    body: "cp（Copy）は、既存のファイルを複製して、別の名前または別の場所に保存します。\n\n元のファイルは変わらず、新しいコピーが作成されます。バックアップを作成するとき、または複数の用途に分けるときに使用します。",
+                    codeSample: "cp original.txt backup.txt\n# 元のファイルは変わらず、backup.txt が新しく作成される",
+                    tip: "ディレクトリ全体をコピーする場合は cp -r を使用します"
+                ),
+                ConceptSection(
+                    heading: "cp の使い方と注意点",
+                    body: "• cp ファイル名 新しい名前: シンプルなコピー\n• cp ファイル ディレクトリ/: ディレクトリ内にコピー\n• cp -r ディレクトリ ディレクトリ: ディレクトリ全体をコピー（-r は recursive）\n\n⚠️ 既存ファイルと同じ名前でコピーすると上書きされます。cp -i でコマンド実行前に確認できます。",
+                    codeSample: nil,
+                    tip: nil
+                )
+            ]
+        ))
+    ),
+    Lesson(
+        title: "cp - ファイル複製クエスト",
+        emoji: "🎯",
+        estimatedMinutes: 6,
+        content: .quest(QuestLesson(
+            scenario: "プロジェクトの重要な設定ファイルをバックアップする必要があります。",
+            prompt: "config.txt をバックアップ用に config_backup.txt として同じディレクトリにコピーするコマンドは？",
+            hint: "cp config.txt config_backup.txt でコピーできます。",
+            answer: "cp",
+            options: [
+                CommandOption(label: "cp", command: "cp", icon: "doc.on.doc"),
+                CommandOption(label: "mv", command: "mv", icon: "arrow.right"),
+                CommandOption(label: "cat", command: "cat", icon: "doc.text"),
+            ],
+            simulatedOutput: "user@linux:~/project$ cp config.txt config_backup.txt\nuser@linux:~/project$ ls\nconfig.txt  config_backup.txt",
+            successMessage: "✅ ファイルが正常にコピーされました"
+        ))
+    ),
+    // mv - Move/Rename Files
+    Lesson(
+        title: "mv - ファイルを移動・リネーム",
+        emoji: "🚀",
+        estimatedMinutes: 8,
+        content: .concept(ConceptLesson(
+            headline: "ファイルを移動する・名前を変える",
+            sections: [
+                ConceptSection(
+                    heading: "mv コマンドの役割",
+                    body: "mv（Move）は、ファイルを別の場所に移動したり、ファイルの名前を変えたりするコマンドです。\n\n重要な特徴: cp と異なり、元のファイルは残りません。ファイルは移動されます。同じディレクトリ内で使用すると、単なる「リネーム」になります。",
+                    codeSample: "mv old_name.txt new_name.txt\n# 同じディレクトリ内では名前変更\nmv file.txt archive/\n# ディレクトリを指定すると移動",
+                    tip: "cp コマンドとの最大の違いは、元のファイルが「置き換わる」点です"
+                ),
+                ConceptSection(
+                    heading: "mv の使用シーン",
+                    body: "• mv old_name.txt new_name.txt: ファイルをリネーム\n• mv file.txt directory/: ファイルを別のディレクトリに移動\n• mv directory/* archive/: ディレクトリ内の複数ファイルを移動\n• mv old_dir new_dir: ディレクトリ全体をリネーム・移動",
+                    codeSample: nil,
+                    tip: nil
+                )
+            ]
+        ))
+    ),
+    Lesson(
+        title: "mv - ファイル移動クエスト",
+        emoji: "🎯",
+        estimatedMinutes: 6,
+        content: .quest(QuestLesson(
+            scenario: "プロジェクトの一時ログファイル temp.log を、archive フォルダに移動して整理する必要があります。",
+            prompt: "temp.log ファイルを archive/ ディレクトリに移動するコマンドは？",
+            hint: "mv temp.log archive/ で移動できます。スラッシュでディレクトリを指定します。",
+            answer: "mv",
+            options: [
+                CommandOption(label: "mv", command: "mv", icon: "arrow.right"),
+                CommandOption(label: "cp", command: "cp", icon: "doc.on.doc"),
+                CommandOption(label: "rm", command: "rm", icon: "trash"),
+            ],
+            simulatedOutput: "user@linux:~/project$ mv temp.log archive/\nuser@linux:~/project$ ls archive/\ntemp.log",
+            successMessage: "✅ ファイルが archive/ に移動されました"
+        ))
+    ),
+    // rm - Remove Files
+    Lesson(
+        title: "rm - ファイルを削除",
+        emoji: "🗑️",
+        estimatedMinutes: 8,
+        content: .concept(ConceptLesson(
+            headline: "不要なファイルを消す",
+            sections: [
+                ConceptSection(
+                    heading: "rm コマンドの役割",
+                    body: "rm（Remove）は、ファイルを削除するコマンドです。\n\n⚠️ 非常に強力なコマンドです。削除したファイルはゴミ箱に行かず、完全に消えます。そのため、削除前に必ず確認することが重要です。実務では -i オプション（確認を求める）をよく使用します。",
+                    codeSample: "rm old_file.txt\n# ファイルは完全に削除される\nrm -i file.txt\n# 確認を求めてから削除",
+                    tip: "削除する前に ls で対象ファイルを確認する習慣をつけましょう"
+                ),
+                ConceptSection(
+                    heading: "rm の注意点と使い分け",
+                    body: "• rm ファイル: ファイル削除（復旧不可）\n• rm -i ファイル: 確認してから削除\n• rm -r ディレクトリ: ディレクトリ全体を削除\n• rm -f: 強制削除（確認なし）- 危険！\n\n一度削除するとバックアップがない限り復旧できません。重要なファイルは必ず cp でバックアップしてから削除しましょう。",
+                    codeSample: nil,
+                    tip: nil
+                )
+            ]
+        ))
+    ),
+    Lesson(
+        title: "rm - ファイル削除クエスト",
+        emoji: "🎯",
+        estimatedMinutes: 6,
+        content: .quest(QuestLesson(
+            scenario: "古いログファイルが溜まっているので、不要な old_run.log を削除する必要があります。",
+            prompt: "old_run.log ファイルを削除するコマンドは？",
+            hint: "rm old_run.log で削除できます。実務では rm -i で確認しながら削除することをお勧めします。",
+            answer: "rm",
+            options: [
+                CommandOption(label: "rm", command: "rm", icon: "trash"),
+                CommandOption(label: "mv", command: "mv", icon: "arrow.right"),
+                CommandOption(label: "rmdir", command: "rmdir", icon: "trash.fill"),
+            ],
+            simulatedOutput: "user@linux:~/project$ rm old_run.log\nuser@linux:~/project$",
+            successMessage: "✅ ファイルが削除されました（復旧不可）"
+        ))
+    ),
+    // Combined scenario lesson
     Lesson(
         title: "ファイル操作の複合シナリオ",
         emoji: "📋",
@@ -72,10 +195,16 @@ let basicsCourseLessons: [Lesson] = [
                     explanation: "cp で既存ファイルをコピーします。mv は移動（リネーム）です。"
                 ),
                 QuizQuestion(
-                    question: "現在のディレクトリのファイル数を確認するコマンドは？",
-                    choices: ["ls | wc -l", "find . -type f | wc -l", "stat .", "count"],
+                    question: "ファイル important.doc を削除するコマンドは？",
+                    choices: ["rm important.doc", "mv important.doc /trash", "rmdir important.doc", "delete important.doc"],
                     correctIndex: 0,
-                    explanation: "ls をパイプして wc -l で行数カウント。より正確には find を使う方法もあります。"
+                    explanation: "rm でファイルを削除します。削除後は復旧できないため、-i オプションで確認することをお勧めします。"
+                ),
+                QuizQuestion(
+                    question: "ファイルの名前を old_name.txt から new_name.txt に変更するコマンドは？",
+                    choices: ["mv old_name.txt new_name.txt", "cp old_name.txt new_name.txt", "rename old_name.txt new_name.txt", "rn old_name.txt new_name.txt"],
+                    correctIndex: 0,
+                    explanation: "mv でファイルをリネーム（移動）します。同じディレクトリ内での mv は名前変更になります。"
                 ),
             ]
         ))
