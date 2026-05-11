@@ -222,49 +222,162 @@ let basicsCourse = Course(
         Chapter(
             number: 1,
             title: "Linuxの世界へようこそ",
-            summary: "Linuxとは何か、ターミナルとは何か、基本的な概念を学びます",
+            summary: "カーネル・ディストリビューション・シェルの仕組みを理解し、コマンド実行の本質を掴む",
             lessons: [
+                // ─── 学習 1 ──────────────────────────────────────────────
                 Lesson(
-                    title: "Linuxって何？",
-                    emoji: "🤔",
-                    estimatedMinutes: 5,
+                    title: "カーネル・ディストリビューション・GNU",
+                    emoji: "🐧",
+                    estimatedMinutes: 8,
                     content: .concept(ConceptLesson(
-                        headline: "Linuxは自由で強力なOS",
+                        headline: "「Linux」は厳密にはカーネルの名前",
                         sections: [
                             ConceptSection(
-                                heading: "Linuxとは",
-                                body: "Linuxはオープンソースのオペレーティングシステムです。Windows や macOS と同じく、コンピュータを制御するソフトウェアです。\n\n特徴：\n• 無料で利用可能\n• ソースコード公開\n• 世界中で開発・改良\n• サーバーから組み込みまで幅広く使用",
-                                codeSample: nil,
-                                tip: "Linuxはカーネル（中核部分）の名前で、Linuxカーネル + GNU ツール = GNU/Linux と呼びます"
+                                heading: "Linux カーネルとは",
+                                body: "Linux（厳密には「Linuxカーネル」）は、ハードウェアとソフトウェアを仲介する OS の中核部品です。CPU・メモリ・ストレージ・ネットワークデバイスを直接制御し、プロセス管理・メモリ管理・ファイルシステムなどを担当します。\n\nLinus Torvalds が 1991 年に発表し、現在は世界規模のコミュニティで開発が続いています。",
+                                codeSample: "uname -r\n# カーネルバージョンを確認: 5.15.0-91-generic",
+                                tip: "「Linux を使う」というとき、実際には Linux カーネル + GNU ツール群 + パッケージ管理ツールなどがセットになった「ディストリビューション」を使っています"
                             ),
                             ConceptSection(
-                                heading: "なぜLinuxを学ぶのか",
-                                body: "• Web サーバー（Apache, Nginx）はLinux上で動く\n• クラウド（AWS, GCP）はLinux\n• 開発環境で使われることが多い\n• 組み込みデバイス（スマートフォンなど）で使われている",
+                                heading: "ディストリビューションとは",
+                                body: "カーネルだけではコンピュータは操作できません。コマンドラインツール・パッケージ管理・デフォルト設定などをまとめてパッケージ化したものが「ディストリビューション（ディストロ）」です。\n\n主要なディストリビューション：\n• Ubuntu / Debian 系: apt でパッケージ管理。開発用途や企業サーバーで広く利用。\n• Red Hat Enterprise Linux (RHEL) / CentOS 系: yum/dnf でパッケージ管理。エンタープライズ本番環境で採用多数。\n• Fedora: RHEL の実験場。最新技術をいち早く試せる。\n• Arch Linux: 最小構成から自分でカスタマイズ。学習目的に人気。\n\n本番サーバーでは RHEL/Ubuntu が圧倒的シェアを持ちます。",
+                                codeSample: "cat /etc/os-release\n# ディストリビューション名とバージョンを確認",
+                                tip: nil
+                            ),
+                            ConceptSection(
+                                heading: "GNU とフリーソフトウェア",
+                                body: "GNU プロジェクト（Richard Stallman 主導）は、ls・cp・grep などの基本コマンドを自由に使えるよう開発しました。これらを「GNU ツール」と呼びます。\n\nLinux カーネル + GNU ツール = 「GNU/Linux」が本来の正式名称です。\n\nGPL ライセンス（GNU General Public License）により、ソースコードの公開と改変の自由が保証されます。これが「オープンソース」の核心で、商用製品にも組み込みが可能なため、世界のサーバーの約 96% が Linux を採用しています。",
                                 codeSample: nil,
+                                tip: "Android も Linux カーネルの上で動いています"
+                            )
+                        ]
+                    ))
+                ),
+                // ─── 学習 2 ──────────────────────────────────────────────
+                Lesson(
+                    title: "シェルの種類とコマンド実行の仕組み",
+                    emoji: "⌨️",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "シェルはユーザーとカーネルを繋ぐ翻訳者",
+                        sections: [
+                            ConceptSection(
+                                heading: "ターミナルとシェルの違い",
+                                body: "混同されがちですが、役割が異なります。\n\n• ターミナル（端末エミュレータ）: 文字の入出力を行うウィンドウプログラム。画面に文字を表示するだけで、コマンドを解釈する能力はない。\n• シェル: コマンドを解釈し、カーネルへ命令を渡すプログラム。bash、sh、zsh などが「シェル」。\n\n「ターミナルを開く」→ ターミナルが bash などのシェルを起動→ ユーザーのコマンドをシェルが解釈 → カーネルへ渡す、という流れです。",
+                                codeSample: "echo $SHELL\n# 現在使用しているシェルのパスを確認\n# 例: /bin/bash",
+                                tip: nil
+                            ),
+                            ConceptSection(
+                                heading: "主要なシェルの種類",
+                                body: "• sh（Bourne Shell）: 最も古い標準シェル。POSIX 標準に準拠。Ubuntu では /bin/sh → dash へのシンボリックリンク。\n• bash（Bourne Again Shell）: sh の機能拡張版。Linux のデフォルトで最も広く使われる。\n• zsh（Z Shell）: bash 互換 + 高機能補完・プロンプトカスタマイズ。macOS のデフォルト。\n• ksh（Korn Shell）: 商用 Unix での採用が多い。POSIX 準拠。\n• dash: Ubuntu の /bin/sh 実態。bash より高速で軽量。POSIX 準拠。\n\n「bash スクリプト」と「sh スクリプト」の互換性：sh 向けに書いたスクリプトは bash でも動く（sh は bash のサブセット）。逆は保証されない。",
+                                codeSample: "#!/bin/bash   # bash で実行（bash 拡張機能が使える）\n#!/bin/sh      # POSIX sh で実行（最大の移植性）",
+                                tip: "本番環境用の汎用スクリプトは #!/bin/sh を使うと、異なるディストリビューションでも動作します"
+                            ),
+                            ConceptSection(
+                                heading: "コマンドが実行される仕組み（PATH）",
+                                body: "ターミナルで「ls」と入力したとき、シェルはどうやって ls プログラムを見つけるのか？\n\n1. まずシェルの「組み込みコマンド（built-in）」を確認（cd, echo, type など）\n2. なければ環境変数 PATH を左から順に検索\n3. PATH に含まれるディレクトリでコマンドファイルを発見 → 実行\n\nPATH は「:/」区切りのディレクトリリスト。通常 /usr/bin:/bin:/usr/local/bin など。\n\n「command not found」エラーは「PATH 上にコマンドが存在しない」を意味します。",
+                                codeSample: "echo $PATH\n# /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin\ntype ls\n# ls is hashed (/bin/ls)  ← 外部コマンド\ntype cd\n# cd is a shell builtin  ← 組み込みコマンド",
                                 tip: nil
                             )
                         ]
                     ))
                 ),
+                // ─── 学習 3 ──────────────────────────────────────────────
                 Lesson(
-                    title: "ターミナルとシェル",
-                    emoji: "⌨️",
-                    estimatedMinutes: 5,
+                    title: "Linuxファイルシステム階層（FHS）",
+                    emoji: "🗂️",
+                    estimatedMinutes: 8,
                     content: .concept(ConceptLesson(
-                        headline: "ターミナルはLinuxとの会話窓口",
+                        headline: "どこに何があるかを知る",
                         sections: [
                             ConceptSection(
-                                heading: "ターミナルとは",
-                                body: "ターミナルは、キーボードでコマンドを入力し、コンピュータに指示を出すプログラムです。\n\nGUIで「ファイルをダブルクリック」する代わりに、ターミナルでは「ls コマンド」でファイルを見ます。",
-                                codeSample: nil,
-                                tip: "ターミナルは「真の力」です。複数の操作を一度にできたり、自動化したり、リモートサーバーを操作できます"
+                                heading: "FHS（Filesystem Hierarchy Standard）",
+                                body: "Linux のディレクトリ構造は FHS という標準で定義されており、どのディストリビューションでも共通の場所にファイルが存在します。\n\n主要なディレクトリ：\n• / （ルート）: 全ての起点\n• /bin: 基本コマンド（ls, cp, mv など）→ 多くの環境で /usr/bin へのリンク\n• /sbin: システム管理コマンド（fdisk, ifconfig など）\n• /etc: 設定ファイル（nginx.conf, sshd_config など）\n• /var: 変動するデータ（ログ /var/log, キャッシュ /var/cache など）\n• /home: ユーザーのホームディレクトリ（/home/user）\n• /root: root ユーザーのホームディレクトリ\n• /tmp: 一時ファイル（再起動で消える）\n• /usr: ユーザー向けプログラム（/usr/bin, /usr/lib, /usr/share）\n• /proc: プロセス情報（仮想ファイルシステム）\n• /dev: デバイスファイル",
+                                codeSample: "ls /etc | head -10\n# 設定ファイルを確認\ntail -20 /var/log/syslog\n# システムログを確認",
+                                tip: "/proc/cpuinfo や /proc/meminfo のように、カーネル情報がファイルとして見える「全てはファイル」という Unix 哲学が Linux にも受け継がれています"
                             ),
                             ConceptSection(
-                                heading: "プロンプトの読み方",
-                                body: "user@linux:~$ ← これがプロンプト\n\n• user: ログインしているユーザー名\n• linux: コンピュータの名前\n• ~: 現在のディレクトリ（~はホームディレクトリ）\n• $: コマンド入力待機中（#だと管理者権限）",
-                                codeSample: "user@linux:~$ _",
+                                heading: "プロンプトを正確に読む",
+                                body: "プロンプトの形式: ユーザー名@ホスト名:カレントディレクトリ 記号\n\n例: admin@web01:/etc/nginx$\n• admin: ログインユーザー名\n• web01: マシン名（ホスト名）\n• /etc/nginx: 現在いるディレクトリ（絶対パス）\n• $: 一般ユーザー（root なら # になる）\n\n⚠️ # が表示されているとき root 権限があります。誤操作が即システム破壊になり得るため注意が必要です。",
+                                codeSample: "user@server:~$      # 一般ユーザー、ホームディレクトリ\nroot@server:/var#   # root ユーザー、/var にいる",
                                 tip: nil
                             )
+                        ]
+                    ))
+                ),
+                // ─── 問題 ─────────────────────────────────────────────────
+                Lesson(
+                    title: "Linux基礎・シェル・FHS 理解テスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 12,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "次のプロンプトを見てください。\n\nadmin@web01:/etc/nginx$\n\nこのユーザーは root 権限を持っているか？",
+                                choices: [
+                                    "持っていない（$ は一般ユーザーを示す）",
+                                    "持っている（admin という名前だから）",
+                                    "判断できない",
+                                    "持っている（/etc ディレクトリにいるから）"
+                                ],
+                                correctIndex: 0,
+                                explanation: "プロンプト末尾の $ は一般ユーザーを示します。root なら # になります。ユーザー名が admin であっても、root グループに所属するかどうかはプロンプトだけでは判断できませんが、# でないため現在の有効 UID は 0（root）ではありません。"
+                            ),
+                            QuizQuestion(
+                                question: "#!/bin/sh で始まるスクリプトを bash で実行したとき、動作は？",
+                                choices: [
+                                    "通常は動く（sh は bash のサブセットで bash は sh 互換）",
+                                    "必ず動かない（シェルが違うため）",
+                                    "bash は sh スクリプトを読めない",
+                                    "#!/bin/sh は bash を指定するシェバング"
+                                ],
+                                correctIndex: 0,
+                                explanation: "bash は Bourne Again Shell の略で sh の機能を包含しています。sh 準拠で書かれたスクリプトは bash で実行しても基本的に動きます。逆に bash 固有の拡張機能（配列、[[ ]] など）を使うと sh では動きません。"
+                            ),
+                            QuizQuestion(
+                                question: "システムの Nginx 設定ファイルを編集したい。どのディレクトリを探すべきか？",
+                                choices: [
+                                    "/etc",
+                                    "/var/nginx",
+                                    "/usr/bin",
+                                    "/home/nginx"
+                                ],
+                                correctIndex: 0,
+                                explanation: "/etc はシステム全体の設定ファイルを格納する FHS の標準ディレクトリです。Nginx の場合 /etc/nginx/nginx.conf、Apache なら /etc/apache2/ などに設定ファイルがあります。/var はログやキャッシュ、/usr/bin はコマンドの実体が置かれます。"
+                            ),
+                            QuizQuestion(
+                                question: "type cd を実行したところ「cd is a shell builtin」と表示された。これは何を意味するか？",
+                                choices: [
+                                    "cd はシェルに組み込まれた命令で、ファイルとしてディスク上には存在しない",
+                                    "cd は /bin/cd にある外部コマンド",
+                                    "cd はインストールが必要なツール",
+                                    "cd は使用不可能な状態にある"
+                                ],
+                                correctIndex: 0,
+                                explanation: "cd・echo・type・export などは「シェル組み込みコマンド（built-in）」です。外部プロセスを起動せずシェル自身が処理するため高速です。一方 ls や cp は /bin/ls のような実ファイルを持つ「外部コマンド」で、シェルが新しいプロセスを fork して実行します。"
+                            ),
+                            QuizQuestion(
+                                question: "コマンドを実行したら「command not found」になった。最も可能性が高い原因は？",
+                                choices: [
+                                    "コマンドが PATH の通ったディレクトリに存在しない（未インストール or パスが通っていない）",
+                                    "メモリ不足",
+                                    "ファイルの読み取り権限がない",
+                                    "ディスクが満杯"
+                                ],
+                                correctIndex: 0,
+                                explanation: "「command not found」はシェルが PATH 上のどのディレクトリを検索してもコマンドが見つからなかった場合に表示されます。コマンドが未インストール、または /usr/local/bin など PATH に含まれていないディレクトリにある場合に発生します。which コマンドや type コマンドでコマンドの場所を調べられます。"
+                            ),
+                            QuizQuestion(
+                                question: "Ubuntu では /bin/sh の実態は bash ではなく dash である。その主な理由は？",
+                                choices: [
+                                    "dash は POSIX 準拠で bash より軽量・高速なため、システム起動スクリプトの実行が速くなる",
+                                    "bash は Ubuntu にインストールされていないため",
+                                    "dash の方が多くの機能を持つため",
+                                    "bash は GPL ライセンスでない"
+                                ],
+                                correctIndex: 0,
+                                explanation: "Ubuntu は起動速度改善のため /bin/sh → dash（Debian Almquist Shell）を使っています。dash は bash より大幅に小さく高速です。POSIX 準拠スクリプトであれば dash で問題なく動作します。bash は別途 /bin/bash として存在し、ユーザーのデフォルトシェルとして通常使われます。"
+                            ),
                         ]
                     ))
                 ),
