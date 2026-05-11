@@ -175,36 +175,67 @@ let basicsCourseLessons: [Lesson] = [
             finaleMessage: "✅ プロジェクトファイルの整理完了！"
         ))
     ),
-    // Basics quiz
+    // Basics quiz (Chapter 3)
     Lesson(
-        title: "基本コマンド確認テスト",
+        title: "ファイル操作の深掘りテスト",
         emoji: "✅",
-        estimatedMinutes: 10,
+        estimatedMinutes: 12,
         content: .quiz(QuizLesson(
             questions: [
                 QuizQuestion(
-                    question: "ホームディレクトリに移動するコマンドは？",
-                    choices: ["cd ~", "ls ~", "pwd", "mkdir ~"],
+                    question: "cp -r src/ dst/ を実行した。src ディレクトリが存在して dst が存在しない場合、結果は？",
+                    choices: [
+                        "dst/ という名前のディレクトリが新規作成され、src の内容がコピーされる",
+                        "エラーになる（dst がないため）",
+                        "src が dst にリネームされる",
+                        "src の内容が /tmp/dst に保存される"
+                    ],
                     correctIndex: 0,
-                    explanation: "cd ~ でホームディレクトリに移動します。cd だけでもOK。"
+                    explanation: "cp -r は宛先が存在しない場合、宛先ディレクトリを新規作成してコピーします。一方、dst/ が既に存在する場合は dst/src/ というサブディレクトリが作られます。この挙動の違いは実務でよく混乱の原因になります。"
                 ),
                 QuizQuestion(
-                    question: "ファイル data.txt を data_copy.txt にコピーするコマンドは？",
-                    choices: ["cp data.txt data_copy.txt", "mv data.txt data_copy.txt", "cat data.txt > data_copy.txt", "ln data.txt data_copy.txt"],
+                    question: "mv a.txt b.txt を実行したとき、b.txt が既に存在していた場合どうなる？",
+                    choices: [
+                        "確認なしで b.txt は上書きされ、a.txt は削除される",
+                        "エラーになりどちらも変わらない",
+                        "a.txt と b.txt が両方残る",
+                        "a.txt_bak という名前で保存される"
+                    ],
                     correctIndex: 0,
-                    explanation: "cp で既存ファイルをコピーします。mv は移動（リネーム）です。"
+                    explanation: "mv はデフォルトで確認なく上書きします。既存ファイルを誤って消す事故を防ぐには mv -i（interactive）オプションを使います。-i を付けると上書き前に確認を求めます。cp も同様です。"
                 ),
                 QuizQuestion(
-                    question: "ファイル important.doc を削除するコマンドは？",
-                    choices: ["rm important.doc", "mv important.doc /trash", "rmdir important.doc", "delete important.doc"],
+                    question: "rm -rf / を実行しようとしたところ「Operation not permitted」となった。この保護機能の名前は？",
+                    choices: [
+                        "--preserve-root（ルートディレクトリへの再帰削除を防ぐデフォルト保護）",
+                        "SELinux のポリシー",
+                        "ファイルのイミュータブルフラグ",
+                        "sudo が必要なため"
+                    ],
                     correctIndex: 0,
-                    explanation: "rm でファイルを削除します。削除後は復旧できないため、-i オプションで確認することをお勧めします。"
+                    explanation: "GNU coreutils の rm にはデフォルトで --preserve-root オプションが有効で、/ を rm -r の対象にすることを防ぎます。--no-preserve-root で無効にできますが、実行すると取り返しがつかないため絶対に行わないでください。"
                 ),
                 QuizQuestion(
-                    question: "ファイルの名前を old_name.txt から new_name.txt に変更するコマンドは？",
-                    choices: ["mv old_name.txt new_name.txt", "cp old_name.txt new_name.txt", "rename old_name.txt new_name.txt", "rn old_name.txt new_name.txt"],
+                    question: "cp コマンドでファイルのタイムスタンプ・権限・オーナー情報も含めてコピーするオプションは？",
+                    choices: [
+                        "cp -p（preserve: 属性を保持）",
+                        "cp -a（archive、-p -r -d の組み合わせ）",
+                        "どちらも正しい（-p は単体属性保持、-a はより完全なバックアップ用）",
+                        "cp -x"
+                    ],
+                    correctIndex: 2,
+                    explanation: "cp -p はタイムスタンプ・モード・オーナーを保持します。cp -a はさらにシンボリックリンクも保持する「アーカイブモード」で、バックアップ目的では -a が完全です。両方正しいですが目的によって使い分けます。"
+                ),
+                QuizQuestion(
+                    question: "rm でファイルを削除した後、同じ容量のファイルで回復を試みたが失敗した。なぜか？",
+                    choices: [
+                        "rm は inode とデータブロックへの参照を削除するため、データは残っていても通常手段では復旧不可",
+                        "rm はファイルを暗号化して削除するため",
+                        "削除後は即座にディスクから消去されるため",
+                        "ゴミ箱に移動されるが容量が足りないため"
+                    ],
                     correctIndex: 0,
-                    explanation: "mv でファイルをリネーム（移動）します。同じディレクトリ内での mv は名前変更になります。"
+                    explanation: "rm はディレクトリエントリ（ファイル名→inode のマッピング）と inode を削除しますが、データブロック自体は即座には消えません。ただし他のファイルで上書きされる前なら forensics ツール（testdisk, extundelete）で復旧できる場合があります。重要ファイルはバックアップが必須です。"
                 ),
             ]
         ))
@@ -222,49 +253,162 @@ let basicsCourse = Course(
         Chapter(
             number: 1,
             title: "Linuxの世界へようこそ",
-            summary: "Linuxとは何か、ターミナルとは何か、基本的な概念を学びます",
+            summary: "カーネル・ディストリビューション・シェルの仕組みを理解し、コマンド実行の本質を掴む",
             lessons: [
+                // ─── 学習 1 ──────────────────────────────────────────────
                 Lesson(
-                    title: "Linuxって何？",
-                    emoji: "🤔",
-                    estimatedMinutes: 5,
+                    title: "カーネル・ディストリビューション・GNU",
+                    emoji: "🐧",
+                    estimatedMinutes: 8,
                     content: .concept(ConceptLesson(
-                        headline: "Linuxは自由で強力なOS",
+                        headline: "「Linux」は厳密にはカーネルの名前",
                         sections: [
                             ConceptSection(
-                                heading: "Linuxとは",
-                                body: "Linuxはオープンソースのオペレーティングシステムです。Windows や macOS と同じく、コンピュータを制御するソフトウェアです。\n\n特徴：\n• 無料で利用可能\n• ソースコード公開\n• 世界中で開発・改良\n• サーバーから組み込みまで幅広く使用",
-                                codeSample: nil,
-                                tip: "Linuxはカーネル（中核部分）の名前で、Linuxカーネル + GNU ツール = GNU/Linux と呼びます"
+                                heading: "Linux カーネルとは",
+                                body: "Linux（厳密には「Linuxカーネル」）は、ハードウェアとソフトウェアを仲介する OS の中核部品です。CPU・メモリ・ストレージ・ネットワークデバイスを直接制御し、プロセス管理・メモリ管理・ファイルシステムなどを担当します。\n\nLinus Torvalds が 1991 年に発表し、現在は世界規模のコミュニティで開発が続いています。",
+                                codeSample: "uname -r\n# カーネルバージョンを確認: 5.15.0-91-generic",
+                                tip: "「Linux を使う」というとき、実際には Linux カーネル + GNU ツール群 + パッケージ管理ツールなどがセットになった「ディストリビューション」を使っています"
                             ),
                             ConceptSection(
-                                heading: "なぜLinuxを学ぶのか",
-                                body: "• Web サーバー（Apache, Nginx）はLinux上で動く\n• クラウド（AWS, GCP）はLinux\n• 開発環境で使われることが多い\n• 組み込みデバイス（スマートフォンなど）で使われている",
+                                heading: "ディストリビューションとは",
+                                body: "カーネルだけではコンピュータは操作できません。コマンドラインツール・パッケージ管理・デフォルト設定などをまとめてパッケージ化したものが「ディストリビューション（ディストロ）」です。\n\n主要なディストリビューション：\n• Ubuntu / Debian 系: apt でパッケージ管理。開発用途や企業サーバーで広く利用。\n• Red Hat Enterprise Linux (RHEL) / CentOS 系: yum/dnf でパッケージ管理。エンタープライズ本番環境で採用多数。\n• Fedora: RHEL の実験場。最新技術をいち早く試せる。\n• Arch Linux: 最小構成から自分でカスタマイズ。学習目的に人気。\n\n本番サーバーでは RHEL/Ubuntu が圧倒的シェアを持ちます。",
+                                codeSample: "cat /etc/os-release\n# ディストリビューション名とバージョンを確認",
+                                tip: nil
+                            ),
+                            ConceptSection(
+                                heading: "GNU とフリーソフトウェア",
+                                body: "GNU プロジェクト（Richard Stallman 主導）は、ls・cp・grep などの基本コマンドを自由に使えるよう開発しました。これらを「GNU ツール」と呼びます。\n\nLinux カーネル + GNU ツール = 「GNU/Linux」が本来の正式名称です。\n\nGPL ライセンス（GNU General Public License）により、ソースコードの公開と改変の自由が保証されます。これが「オープンソース」の核心で、商用製品にも組み込みが可能なため、世界のサーバーの約 96% が Linux を採用しています。",
                                 codeSample: nil,
+                                tip: "Android も Linux カーネルの上で動いています"
+                            )
+                        ]
+                    ))
+                ),
+                // ─── 学習 2 ──────────────────────────────────────────────
+                Lesson(
+                    title: "シェルの種類とコマンド実行の仕組み",
+                    emoji: "⌨️",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "シェルはユーザーとカーネルを繋ぐ翻訳者",
+                        sections: [
+                            ConceptSection(
+                                heading: "ターミナルとシェルの違い",
+                                body: "混同されがちですが、役割が異なります。\n\n• ターミナル（端末エミュレータ）: 文字の入出力を行うウィンドウプログラム。画面に文字を表示するだけで、コマンドを解釈する能力はない。\n• シェル: コマンドを解釈し、カーネルへ命令を渡すプログラム。bash、sh、zsh などが「シェル」。\n\n「ターミナルを開く」→ ターミナルが bash などのシェルを起動→ ユーザーのコマンドをシェルが解釈 → カーネルへ渡す、という流れです。",
+                                codeSample: "echo $SHELL\n# 現在使用しているシェルのパスを確認\n# 例: /bin/bash",
+                                tip: nil
+                            ),
+                            ConceptSection(
+                                heading: "主要なシェルの種類",
+                                body: "• sh（Bourne Shell）: 最も古い標準シェル。POSIX 標準に準拠。Ubuntu では /bin/sh → dash へのシンボリックリンク。\n• bash（Bourne Again Shell）: sh の機能拡張版。Linux のデフォルトで最も広く使われる。\n• zsh（Z Shell）: bash 互換 + 高機能補完・プロンプトカスタマイズ。macOS のデフォルト。\n• ksh（Korn Shell）: 商用 Unix での採用が多い。POSIX 準拠。\n• dash: Ubuntu の /bin/sh 実態。bash より高速で軽量。POSIX 準拠。\n\n「bash スクリプト」と「sh スクリプト」の互換性：sh 向けに書いたスクリプトは bash でも動く（sh は bash のサブセット）。逆は保証されない。",
+                                codeSample: "#!/bin/bash   # bash で実行（bash 拡張機能が使える）\n#!/bin/sh      # POSIX sh で実行（最大の移植性）",
+                                tip: "本番環境用の汎用スクリプトは #!/bin/sh を使うと、異なるディストリビューションでも動作します"
+                            ),
+                            ConceptSection(
+                                heading: "コマンドが実行される仕組み（PATH）",
+                                body: "ターミナルで「ls」と入力したとき、シェルはどうやって ls プログラムを見つけるのか？\n\n1. まずシェルの「組み込みコマンド（built-in）」を確認（cd, echo, type など）\n2. なければ環境変数 PATH を左から順に検索\n3. PATH に含まれるディレクトリでコマンドファイルを発見 → 実行\n\nPATH は「:/」区切りのディレクトリリスト。通常 /usr/bin:/bin:/usr/local/bin など。\n\n「command not found」エラーは「PATH 上にコマンドが存在しない」を意味します。",
+                                codeSample: "echo $PATH\n# /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin\ntype ls\n# ls is hashed (/bin/ls)  ← 外部コマンド\ntype cd\n# cd is a shell builtin  ← 組み込みコマンド",
                                 tip: nil
                             )
                         ]
                     ))
                 ),
+                // ─── 学習 3 ──────────────────────────────────────────────
                 Lesson(
-                    title: "ターミナルとシェル",
-                    emoji: "⌨️",
-                    estimatedMinutes: 5,
+                    title: "Linuxファイルシステム階層（FHS）",
+                    emoji: "🗂️",
+                    estimatedMinutes: 8,
                     content: .concept(ConceptLesson(
-                        headline: "ターミナルはLinuxとの会話窓口",
+                        headline: "どこに何があるかを知る",
                         sections: [
                             ConceptSection(
-                                heading: "ターミナルとは",
-                                body: "ターミナルは、キーボードでコマンドを入力し、コンピュータに指示を出すプログラムです。\n\nGUIで「ファイルをダブルクリック」する代わりに、ターミナルでは「ls コマンド」でファイルを見ます。",
-                                codeSample: nil,
-                                tip: "ターミナルは「真の力」です。複数の操作を一度にできたり、自動化したり、リモートサーバーを操作できます"
+                                heading: "FHS（Filesystem Hierarchy Standard）",
+                                body: "Linux のディレクトリ構造は FHS という標準で定義されており、どのディストリビューションでも共通の場所にファイルが存在します。\n\n主要なディレクトリ：\n• / （ルート）: 全ての起点\n• /bin: 基本コマンド（ls, cp, mv など）→ 多くの環境で /usr/bin へのリンク\n• /sbin: システム管理コマンド（fdisk, ifconfig など）\n• /etc: 設定ファイル（nginx.conf, sshd_config など）\n• /var: 変動するデータ（ログ /var/log, キャッシュ /var/cache など）\n• /home: ユーザーのホームディレクトリ（/home/user）\n• /root: root ユーザーのホームディレクトリ\n• /tmp: 一時ファイル（再起動で消える）\n• /usr: ユーザー向けプログラム（/usr/bin, /usr/lib, /usr/share）\n• /proc: プロセス情報（仮想ファイルシステム）\n• /dev: デバイスファイル",
+                                codeSample: "ls /etc | head -10\n# 設定ファイルを確認\ntail -20 /var/log/syslog\n# システムログを確認",
+                                tip: "/proc/cpuinfo や /proc/meminfo のように、カーネル情報がファイルとして見える「全てはファイル」という Unix 哲学が Linux にも受け継がれています"
                             ),
                             ConceptSection(
-                                heading: "プロンプトの読み方",
-                                body: "user@linux:~$ ← これがプロンプト\n\n• user: ログインしているユーザー名\n• linux: コンピュータの名前\n• ~: 現在のディレクトリ（~はホームディレクトリ）\n• $: コマンド入力待機中（#だと管理者権限）",
-                                codeSample: "user@linux:~$ _",
+                                heading: "プロンプトを正確に読む",
+                                body: "プロンプトの形式: ユーザー名@ホスト名:カレントディレクトリ 記号\n\n例: admin@web01:/etc/nginx$\n• admin: ログインユーザー名\n• web01: マシン名（ホスト名）\n• /etc/nginx: 現在いるディレクトリ（絶対パス）\n• $: 一般ユーザー（root なら # になる）\n\n⚠️ # が表示されているとき root 権限があります。誤操作が即システム破壊になり得るため注意が必要です。",
+                                codeSample: "user@server:~$      # 一般ユーザー、ホームディレクトリ\nroot@server:/var#   # root ユーザー、/var にいる",
                                 tip: nil
                             )
+                        ]
+                    ))
+                ),
+                // ─── 問題 ─────────────────────────────────────────────────
+                Lesson(
+                    title: "Linux基礎・シェル・FHS 理解テスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 12,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "次のプロンプトを見てください。\n\nadmin@web01:/etc/nginx$\n\nこのユーザーは root 権限を持っているか？",
+                                choices: [
+                                    "持っていない（$ は一般ユーザーを示す）",
+                                    "持っている（admin という名前だから）",
+                                    "判断できない",
+                                    "持っている（/etc ディレクトリにいるから）"
+                                ],
+                                correctIndex: 0,
+                                explanation: "プロンプト末尾の $ は一般ユーザーを示します。root なら # になります。ユーザー名が admin であっても、root グループに所属するかどうかはプロンプトだけでは判断できませんが、# でないため現在の有効 UID は 0（root）ではありません。"
+                            ),
+                            QuizQuestion(
+                                question: "#!/bin/sh で始まるスクリプトを bash で実行したとき、動作は？",
+                                choices: [
+                                    "通常は動く（sh は bash のサブセットで bash は sh 互換）",
+                                    "必ず動かない（シェルが違うため）",
+                                    "bash は sh スクリプトを読めない",
+                                    "#!/bin/sh は bash を指定するシェバング"
+                                ],
+                                correctIndex: 0,
+                                explanation: "bash は Bourne Again Shell の略で sh の機能を包含しています。sh 準拠で書かれたスクリプトは bash で実行しても基本的に動きます。逆に bash 固有の拡張機能（配列、[[ ]] など）を使うと sh では動きません。"
+                            ),
+                            QuizQuestion(
+                                question: "システムの Nginx 設定ファイルを編集したい。どのディレクトリを探すべきか？",
+                                choices: [
+                                    "/etc",
+                                    "/var/nginx",
+                                    "/usr/bin",
+                                    "/home/nginx"
+                                ],
+                                correctIndex: 0,
+                                explanation: "/etc はシステム全体の設定ファイルを格納する FHS の標準ディレクトリです。Nginx の場合 /etc/nginx/nginx.conf、Apache なら /etc/apache2/ などに設定ファイルがあります。/var はログやキャッシュ、/usr/bin はコマンドの実体が置かれます。"
+                            ),
+                            QuizQuestion(
+                                question: "type cd を実行したところ「cd is a shell builtin」と表示された。これは何を意味するか？",
+                                choices: [
+                                    "cd はシェルに組み込まれた命令で、ファイルとしてディスク上には存在しない",
+                                    "cd は /bin/cd にある外部コマンド",
+                                    "cd はインストールが必要なツール",
+                                    "cd は使用不可能な状態にある"
+                                ],
+                                correctIndex: 0,
+                                explanation: "cd・echo・type・export などは「シェル組み込みコマンド（built-in）」です。外部プロセスを起動せずシェル自身が処理するため高速です。一方 ls や cp は /bin/ls のような実ファイルを持つ「外部コマンド」で、シェルが新しいプロセスを fork して実行します。"
+                            ),
+                            QuizQuestion(
+                                question: "コマンドを実行したら「command not found」になった。最も可能性が高い原因は？",
+                                choices: [
+                                    "コマンドが PATH の通ったディレクトリに存在しない（未インストール or パスが通っていない）",
+                                    "メモリ不足",
+                                    "ファイルの読み取り権限がない",
+                                    "ディスクが満杯"
+                                ],
+                                correctIndex: 0,
+                                explanation: "「command not found」はシェルが PATH 上のどのディレクトリを検索してもコマンドが見つからなかった場合に表示されます。コマンドが未インストール、または /usr/local/bin など PATH に含まれていないディレクトリにある場合に発生します。which コマンドや type コマンドでコマンドの場所を調べられます。"
+                            ),
+                            QuizQuestion(
+                                question: "Ubuntu では /bin/sh の実態は bash ではなく dash である。その主な理由は？",
+                                choices: [
+                                    "dash は POSIX 準拠で bash より軽量・高速なため、システム起動スクリプトの実行が速くなる",
+                                    "bash は Ubuntu にインストールされていないため",
+                                    "dash の方が多くの機能を持つため",
+                                    "bash は GPL ライセンスでない"
+                                ],
+                                correctIndex: 0,
+                                explanation: "Ubuntu は起動速度改善のため /bin/sh → dash（Debian Almquist Shell）を使っています。dash は bash より大幅に小さく高速です。POSIX 準拠スクリプトであれば dash で問題なく動作します。bash は別途 /bin/bash として存在し、ユーザーのデフォルトシェルとして通常使われます。"
+                            ),
                         ]
                     ))
                 ),
@@ -391,8 +535,73 @@ let basicsCourse = Course(
                             CommandOption(label: "ls src", command: "ls", icon: "list.bullet"),
                             CommandOption(label: "pwd src", command: "pwd", icon: "mappin.circle.fill"),
                         ],
-                        simulatedOutput: "",
-                        successMessage: "✅ src フォルダに移動しました。pwd で確認してみてください！"
+                        simulatedOutput: "user@server:/var/www/html$ cd src\nuser@server:/var/www/html/src$",
+                        successMessage: "✅ src に移動！プロンプトのパスが変わったことに注目。pwd で確認できます。"
+                    ))
+                ),
+                // ─── 問題（クイズ）────────────────────────────────────────
+                Lesson(
+                    title: "ナビゲーション 理解テスト",
+                    emoji: "🗺️",
+                    estimatedMinutes: 10,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "ls -l の出力を見てください。\n\n-rw-r--r-- 2 alice web 4096 Jan 15 report.txt\n\n「2」は何を意味するか？",
+                                choices: [
+                                    "ハードリンク数（この inode を指すリンクが2つある）",
+                                    "ファイルのバージョン番号",
+                                    "グループに属するユーザー数",
+                                    "書き込み権限のビット値"
+                                ],
+                                correctIndex: 0,
+                                explanation: "ls -l の3列目はハードリンク数です。同じ inode（ファイルの実体）を指すファイル名が何個あるかを示します。通常のファイルは 1 ですが、ハードリンクを作ると増えます。ディレクトリの場合はサブディレクトリ数 + 2（. と ..）になります。"
+                            ),
+                            QuizQuestion(
+                                question: "現在 /var/www/html/project にいる。\ncd ../../ を実行後、pwd が返す値は？",
+                                choices: [
+                                    "/var/www",
+                                    "/var",
+                                    "/var/www/html",
+                                    "/"
+                                ],
+                                correctIndex: 0,
+                                explanation: "cd .. は1段上の親ディレクトリへ移動します。cd ../../ は2段上なので、/var/www/html/project → /var/www/html → /var/www となります。パスを手で追って確認する習慣をつけましょう。"
+                            ),
+                            QuizQuestion(
+                                question: "ls -l の出力の先頭文字が d で始まるエントリ（例: drwxr-xr-x）は何を示すか？",
+                                choices: [
+                                    "ディレクトリ",
+                                    "ダイナミックリンクライブラリ",
+                                    "削除済みファイル",
+                                    "デバイスファイル"
+                                ],
+                                correctIndex: 0,
+                                explanation: "ls -l の先頭文字はファイルタイプを示します。d=ディレクトリ、-=通常ファイル、l=シンボリックリンク、c=キャラクタデバイス、b=ブロックデバイス、p=パイプ、s=ソケット。実務で頻出の区別です。"
+                            ),
+                            QuizQuestion(
+                                question: "ホームディレクトリ /home/alice にいるとき cd を引数なしで実行し、その後 pwd を実行した。結果は？",
+                                choices: [
+                                    "/home/alice（引数なし cd はホームへ戻る）",
+                                    "/ （ルートへ移動）",
+                                    "何も起きない（引数なしは無効）",
+                                    "エラーになる"
+                                ],
+                                correctIndex: 0,
+                                explanation: "cd を引数なしで実行すると、環境変数 HOME に設定されたディレクトリ（通常は /home/ユーザー名）へ移動します。cd ~ も同じ動作です。深いディレクトリにいて素早くホームへ戻りたい場合に使います。"
+                            ),
+                            QuizQuestion(
+                                question: "ls を実行すると .bashrc が表示されなかった。原因は？",
+                                choices: [
+                                    ".（ドット）で始まるファイルは ls のデフォルト出力で非表示になる",
+                                    ".bashrc はシステムファイルで通常ユーザーには見えない",
+                                    "ファイルが存在しない",
+                                    "ls は txt ファイルしか表示しない"
+                                ],
+                                correctIndex: 0,
+                                explanation: "Linux では . で始まるファイル・ディレクトリは「隠しファイル」として扱われ、ls のデフォルト出力には含まれません。ls -a（または ls -la で詳細付き）で表示できます。.bashrc .gitignore .env などの設定ファイルに多く使われます。"
+                            ),
+                        ]
                     ))
                 ),
             ]
@@ -503,26 +712,41 @@ let standardCourse = Course(
                 Lesson(
                     title: "grep 実践クイズ",
                     emoji: "🧪",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 10,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "ファイルから大文字小文字を区別せず検索するオプションは？",
-                                choices: ["-i", "-r", "-n", "-v"],
+                                question: "次の2つのコマンドで出力が異なるのはどんな場合か？\n\nA: grep 'error' app.log\nB: grep -i 'error' app.log",
+                                choices: [
+                                    "ログに「Error」や「ERROR」が含まれる行がある場合（A は一致しないが B は一致する）",
+                                    "常に同じ結果になる",
+                                    "A の方がより多くの行を返す",
+                                    "B はファイルを変更してしまう"
+                                ],
                                 correctIndex: 0,
-                                explanation: "grep -i で大文字小文字を区別しません。case-insensitive の i です。"
+                                explanation: "grep はデフォルトで大文字小文字を区別します。-i を付けると区別しなくなります。実務のログは ERROR、Error、error など表記が混在することがあるため、ログ解析では -i を使うことが多いです。"
                             ),
                             QuizQuestion(
-                                question: "grep -r は何を意味する？",
-                                choices: ["Recursive - 再帰的に検索", "Reverse - 逆順", "Replace - 置換", "Remove - 削除"],
+                                question: "cat app.log | grep CRITICAL | wc -l を実行したら「0」と表示された。正確に何を意味するか？",
+                                choices: [
+                                    "app.log 内に「CRITICAL」という文字列を含む行が0行だった",
+                                    "app.log が空ファイルだった",
+                                    "grep が実行に失敗した",
+                                    "wc -l は0を表示しない（最低1）"
+                                ],
                                 correctIndex: 0,
-                                explanation: "grep -r でディレクトリ内を再帰的に検索します。複数ファイルから一度に検索可能。"
+                                explanation: "wc -l は標準入力の行数を表示します。grep に一致する行が0件なら、wc -l への入力も0行なので「0」と表示されます。CRITICAL ログが一件もないということで、これは正常な状態です。"
                             ),
                             QuizQuestion(
-                                question: "パターンにマッチしない行を表示するオプションは？",
-                                choices: ["-v", "-i", "-r", "-n"],
+                                question: "grep -l 'pattern' /var/log/*.log の出力は何か？",
+                                choices: [
+                                    "pattern を含む行ではなく、pattern を含むファイル名の一覧",
+                                    "pattern を含む行と行番号",
+                                    "pattern を含まないファイルの一覧",
+                                    "pattern が何行あるかを各ファイルごとに表示"
+                                ],
                                 correctIndex: 0,
-                                explanation: "grep -v で逆マッチ（invert）します。マッチしない行を表示。"
+                                explanation: "-l（lowercase L）は list の意。マッチした行の内容ではなく、マッチが見つかったファイル名だけを表示します。複数のログファイルから「このパターンを含むログはどれか」を調べるときに便利です。-c はマッチ件数を、-n は行番号を表示します。"
                             ),
                         ]
                     ))
@@ -575,26 +799,41 @@ let standardCourse = Course(
                 Lesson(
                     title: "テキスト処理総合クイズ",
                     emoji: "🎯",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "パイプ（|）の役割は？",
-                                choices: ["前のコマンドの出力を次のコマンドの入力に", "コマンドを複数実行", "条件分岐", "別ファイルにリダイレクト"],
+                                question: "1行に「apple」が3回現れるテキストに対して、以下2つの sed コマンドの出力の違いは？\n\nA: sed 's/apple/orange/' data.txt\nB: sed 's/apple/orange/g' data.txt",
+                                choices: [
+                                    "A は1行につき最初の1個だけ置換、B は全ての apple を置換する",
+                                    "A と B は同じ結果になる",
+                                    "A は全部、B は最後の1個だけ置換",
+                                    "A は行を削除、B は置換"
+                                ],
                                 correctIndex: 0,
-                                explanation: "パイプは前のコマンドの標準出力を次のコマンドの標準入力に繋ぎます。コマンド連携の基本。"
+                                explanation: "g フラグ（global）なしの sed は1行につき最初にマッチした1箇所だけを置換します。3回 apple が出現する行でも A では最初の1個だけ orange に変わります。設定ファイルの一括置換では g フラグを忘れると一部だけが変わり、見つかりにくいバグの原因になります。"
                             ),
                             QuizQuestion(
-                                question: "sed 's/old/new/g' file.txt の g フラグは何？",
-                                choices: ["Global - 1行内の全て置換", "Group - グループ化", "Generate - 生成", "Grep - 検索"],
+                                question: "sed -i 's/DEBUG/INFO/g' app.log を実行した。元のファイルはどうなるか？",
+                                choices: [
+                                    "ファイルそのものが書き換えられる（-i はファイルをインプレースで編集）",
+                                    "app.log は変更されず、結果が標準出力に表示される",
+                                    "app.log.bak というバックアップが自動作成される",
+                                    "エラーになる（-i は危険なため使用不可）"
+                                ],
                                 correctIndex: 0,
-                                explanation: "g フラグは global。1行内の全てのマッチを置換します。g なしは1行につき1回だけ。"
+                                explanation: "-i（in-place）オプションはファイルを直接書き換えます。バックアップなしで上書きされるため元に戻せません。安全のため sed -i.bak 's/DEBUG/INFO/g' app.log のようにバックアップ拡張子を指定するとよいです（app.log.bak が作成されます）。"
                             ),
                             QuizQuestion(
-                                question: "grep コマンドでファイルの行番号も表示するオプションは？",
-                                choices: ["-n", "-l", "-c", "-h"],
+                                question: "パイプで繋いだコマンド A | B | C がある。コマンド B がエラー終了した場合、デフォルトで C は実行されるか？",
+                                choices: [
+                                    "される（デフォルトでパイプはエラーを伝播しない。C は B の出力を受け取り実行される）",
+                                    "されない（エラーで即時中断）",
+                                    "A だけ再実行される",
+                                    "C はエラーコードを受け取って実行される"
+                                ],
                                 correctIndex: 0,
-                                explanation: "grep -n で行番号を表示します。-l はファイル名のみ、-c は件数のみ表示。"
+                                explanation: "bash のデフォルト動作では、パイプライン中のコマンドがエラー終了しても次のコマンドは実行されます。パイプライン全体の終了コードは最後のコマンド（C）のものになります。B のエラーに気づかず処理を続けるため、set -o pipefail を設定するか、各ステップで終了コードをチェックする習慣が重要です。"
                             ),
                         ]
                     ))
@@ -692,28 +931,54 @@ let standardCourse = Course(
                     ))
                 ),
                 Lesson(
-                    title: "権限管理クイズ",
+                    title: "権限管理の深掘りテスト",
                     emoji: "🔑",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "755 という権限の意味は？",
-                                choices: ["所有者:読み書き実行、グループ:読み実行、他:読み実行", "所有者:読み書き、グループ:読み、他:読み実行", "所有者:読み、グループ:読み実行、他:読み", "所有者:読み実行、グループ:読み、他:読み実行"],
+                                question: "umask 022 の場合、新規作成したファイルのデフォルト権限は？",
+                                choices: [
+                                    "644（rw-r--r--）",
+                                    "755（rwxr-xr-x）",
+                                    "777（rwxrwxrwx）",
+                                    "022（--------w-w）"
+                                ],
                                 correctIndex: 0,
-                                explanation: "755 = rwxr-xr-x。所有者が全権、グループと他が読み実行。実行可能ファイル向け。"
+                                explanation: "umask は新規ファイル作成時に「引く」ビットマスクです。ファイルのデフォルト最大権限は 666（実行なし）で、そこから umask 022 を引くと 644 になります。ディレクトリの最大権限は 777 で umask 022 を引くと 755。umask はセキュリティの観点で重要な設定です。"
                             ),
                             QuizQuestion(
-                                question: "644 という権限の意味は？",
-                                choices: ["所有者:読み書き、グループ:読み、他:読み", "所有者:読み写き実行、グループ:読み実行、他:実行", "所有者:読み、グループ:読み書き、他:読み", "所有者:読み書き、グループ:読み実行、他:読み実行"],
+                                question: "ls -l の出力が '-rwsr-xr-x' となっているファイルがあった。's' が示すのは？",
+                                choices: [
+                                    "Set UID ビット：このファイルを実行すると、所有者の権限でプロセスが動く",
+                                    "Sticky ビット：ファイルが常にメモリに残る",
+                                    "シンボリックリンクを示す",
+                                    "書き込み専用ファイル"
+                                ],
                                 correctIndex: 0,
-                                explanation: "644 = rw-r--r--。所有者が読み書き、グループと他が読み専用。テキストファイル向け。"
+                                explanation: "Set UID（SUID）ビットが設定されたコマンドは、実行者ではなくファイル所有者の権限で動作します。代表例は /usr/bin/passwd：一般ユーザーが実行しても /etc/shadow を書き換えられるのは SUID で root 権限で動くためです。SUID ファイルは攻撃者に悪用されることもあるため、不用意な設定は危険です。"
                             ),
                             QuizQuestion(
-                                question: "chmod u+x file.txt は何をする？",
-                                choices: ["所有者に実行権限を追加", "全員に実行権限を追加", "所有者から実行権限を削除", "実行権限を644に設定"],
+                                question: "ディレクトリに chmod 1777 を設定した。最初の '1' は何を意味するか？",
+                                choices: [
+                                    "スティッキービット：そのディレクトリ内のファイルは所有者か root しか削除できない",
+                                    "Set UID：ディレクトリ内のファイルの所有者を固定",
+                                    "読み専用フラグ",
+                                    "バージョン番号"
+                                ],
                                 correctIndex: 0,
-                                explanation: "u は所有者（user）。+x で実行権限を追加。シンボリック表記（644より直感的）。"
+                                explanation: "スティッキービット（Sticky bit）は /tmp のようなパブリックな書き込みディレクトリで使われます。1777 を設定すると、全員がファイルを作成できても、自分のファイルしか削除できません。ls -l では drwxrwxrwt のように t で表示されます（T は実行権限なし）。"
+                            ),
+                            QuizQuestion(
+                                question: "chmod g-w,o-r script.sh を実行した。このコマンドの意味は？",
+                                choices: [
+                                    "グループの書き込み権限を削除し、他のユーザーの読み取り権限を削除する",
+                                    "グループに書き込みを追加し、他に読み取りを追加する",
+                                    "グループのみ全権限を削除する",
+                                    "エラー（カンマで複数指定はできない）"
+                                ],
+                                correctIndex: 0,
+                                explanation: "chmod のシンボリック表記では対象（u/g/o/a）、操作（+/-/=）、権限（r/w/x）を組み合わせます。カンマで複数の変更を一度に指定できます。g-w はグループから書き込みを引く、o-r は他から読み取りを引く、という意味です。"
                             ),
                         ]
                     ))
@@ -825,26 +1090,41 @@ let advancedCourse = Course(
                 Lesson(
                     title: "シェルスクリプト知識クイズ",
                     emoji: "💭",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "#!/bin/bash は何を意味する？",
-                                choices: ["Shebang - このファイルを bash で実行することを指定", "コメント", "bash のバージョン指定", "環境変数設定"],
+                                question: "次のスクリプトに set -e が先頭に書かれている。cp が失敗した場合、スクリプトはどう動くか？\n\nset -e\ncp source.txt /nonexistent/\necho 'コピー成功'",
+                                choices: [
+                                    "cp が失敗した時点でスクリプトが即座に終了し、echo は実行されない",
+                                    "cp が失敗してもスクリプトは続行し、echo が実行される",
+                                    "set -e はエラーメッセージを抑制する",
+                                    "cp はエラーを無視して成功扱いにする"
+                                ],
                                 correctIndex: 0,
-                                explanation: "Shebang（シェバング）。スクリプトの最初の行に書き、どのインタプリタで実行するかを指定。"
+                                explanation: "set -e（errexit）を設定すると、コマンドがゼロ以外の終了コードを返した時点でスクリプト全体が終了します。本番環境のスクリプトでは set -e を入れることがベストプラクティスで、エラーを見落とすリスクを減らします。さらに set -o pipefail と組み合わせると、パイプラインのエラーも補足できます。"
                             ),
                             QuizQuestion(
-                                question: "bash スクリプトを実行するコマンドは？",
-                                choices: ["bash script.sh", "./script.sh", "sh script.sh", "全て可能"],
-                                correctIndex: 3,
-                                explanation: "bash script.sh、./script.sh、sh script.sh どれでも実行可能。シェバング指定時は ./script.sh がベスト。"
+                                question: "スクリプト内で $? が 0 以外の値を示していた。何を意味するか？",
+                                choices: [
+                                    "直前のコマンドが失敗した（終了コードが0でない = エラー）",
+                                    "スクリプトが正常完了した",
+                                    "$? は常に 0 を返す",
+                                    "変数が未定義"
+                                ],
+                                correctIndex: 0,
+                                explanation: "$? は直前のコマンドの終了コードを保持する特殊変数です。0 は成功、1以上は失敗（エラーの種類によって値が異なる）。if [ $? -eq 0 ]; then ... の形で条件分岐に使います。ただし $? は次のコマンドを実行すると上書きされるため、必要なら変数に保存します。"
                             ),
                             QuizQuestion(
-                                question: "スクリプトに変数を渡すには？",
-                                choices: ["./script.sh arg1 arg2", "VAR=value ./script.sh", "export VAR=value", "全て可能"],
-                                correctIndex: 3,
-                                explanation: "位置引数、環境変数、export で変数設定可能。スクリプト内で $1, $2 で参照。"
+                                question: "次の2つの変数展開の違いは？\n\nA: echo \"$HOME/backup\"\nB: echo '$HOME/backup'",
+                                choices: [
+                                    "A は変数展開され /home/user/backup と表示、B はリテラルで $HOME/backup と表示",
+                                    "A と B は同じ結果",
+                                    "B の方が変数展開される",
+                                    "どちらもエラー"
+                                ],
+                                correctIndex: 0,
+                                explanation: "bash では二重引用符（\"\"）の中では変数展開・コマンド置換が行われます。単引用符（''）の中では全てのメタ文字が文字通りに扱われ、変数展開は行われません。パスワードや正規表現を含む文字列に単引用符を使うとトラブルを避けられます。"
                             ),
                         ]
                     ))
@@ -984,26 +1264,41 @@ let advancedCourse = Course(
                 Lesson(
                     title: "ネットワーク・セキュリティクイズ",
                     emoji: "🔒",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "SSH の主な用途は？",
-                                choices: ["安全に遠いサーバーにログイン・操作", "メールプロトコル", "Webページ取得", "パッケージ管理"],
+                                question: "SSH 接続時に「Host key verification failed」エラーが表示された。最も可能性が高い原因は？",
+                                choices: [
+                                    "~/.ssh/known_hosts の記録と実際のサーバーの公開鍵が異なる（OS 再インストールや MITM 攻撃の可能性）",
+                                    "パスワードが間違っている",
+                                    "SSH サーバーが停止している",
+                                    "ネットワークが切断されている"
+                                ],
                                 correctIndex: 0,
-                                explanation: "SSH (Secure Shell) でリモートサーバーに安全に接続。暗号化通信で盗聴・改ざん防止。"
+                                explanation: "SSH は最初の接続時にサーバーの公開鍵を ~/.ssh/known_hosts に保存します。次回以降、保存した鍵と異なる場合に警告が出ます。サーバーの OS 再インストール後によく発生します。ssh-keygen -R hostname でエントリを削除してから再接続できます。一方、予期しない変更は中間者攻撃（MITM）のサインである場合もあります。"
                             ),
                             QuizQuestion(
-                                question: "curl コマンドの主な用途は？",
-                                choices: ["URLからデータを取得、API との通信", "ファイル検索", "テキスト置換", "ディレクトリ移動"],
+                                question: "curl で HTTP POST リクエストを送り、JSON データを含めるコマンドはどれか？",
+                                choices: [
+                                    "curl -X POST -H 'Content-Type: application/json' -d '{\"key\":\"value\"}' https://api.example.com",
+                                    "curl POST https://api.example.com -json '{\"key\":\"value\"}'",
+                                    "curl --post '{\"key\":\"value\"}' https://api.example.com",
+                                    "curl -r https://api.example.com '{\"key\":\"value\"}'"
+                                ],
                                 correctIndex: 0,
-                                explanation: "curl で HTTP/HTTPS 通信。Web API の呼び出し、Webページのダウンロードに使用。"
+                                explanation: "-X POST でメソッドを指定、-H でヘッダーを付加、-d でリクエストボディを指定します。Content-Type: application/json を指定しないとサーバーが JSON と認識しない場合があります。実務での API テストや自動化で頻出のパターンです。"
                             ),
                             QuizQuestion(
-                                question: "SSH キー認証の利点は？",
-                                choices: ["パスワード入力不要で安全、スクリプト自動化が可能", "速度が速い", "パスワードより長い", "全て"],
+                                question: "ssh -L 8080:localhost:3306 user@db-server.example.com の意味は？",
+                                choices: [
+                                    "ローカルの 8080 番ポートを db-server の 3306 番（MySQL）にフォワーディング",
+                                    "リモートサーバーのポート 8080 を開放する",
+                                    "SSH 接続を 8080 番ポートで確立する",
+                                    "ポート 8080 でリモートサーバーを起動する"
+                                ],
                                 correctIndex: 0,
-                                explanation: "SSH 鍵認証でパスワード不要。自動化スクリプトから安全に接続可能。本番環境ではほぼ必須。"
+                                explanation: "ssh -L はローカルポートフォワーディングです。-L 8080:localhost:3306 は「ローカルの 8080 番へのアクセスを、SSHトンネル経由でリモートサーバーの 3306 番に転送」します。ファイアウォールで直接アクセスできないデータベースに安全に接続するために使われます。"
                             ),
                         ]
                     ))
@@ -1113,28 +1408,43 @@ let expertCourse1 = Course(
                     ))
                 ),
                 Lesson(
-                    title: "権限管理クイズ",
+                    title: "ユーザー管理の深掘りテスト",
                     emoji: "🎯",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "useradd -m の -m オプションは何をする？",
-                                choices: ["ホームディレクトリを作成", "ユーザーをマスク", "メイングループを指定", "メールボックスを作成"],
+                                question: "usermod -G sudo alice を実行した（-a なし）。何が起きるか？",
+                                choices: [
+                                    "alice の追加グループが sudo のみに上書きされる（既存の他のグループから外れる）",
+                                    "alice が sudo グループに追加される（既存グループは維持）",
+                                    "エラーになる",
+                                    "sudo グループが削除される"
+                                ],
                                 correctIndex: 0,
-                                explanation: "-m（mkdir）でホームディレクトリを作成。デフォルトは /home/username"
+                                explanation: "-G のみではグループリストが上書きされます。alice が以前 developers や docker グループにも属していた場合、-G sudo だけで実行すると sudo 以外のグループから全て外れます。既存グループを保持しつつ追加するには必ず -a と組み合わせて -aG を使います。これは実務でよくある落とし穴です。"
                             ),
                             QuizQuestion(
-                                question: "usermod -aG の G オプションは？",
-                                choices: ["追加グループを指定（グループにユーザーを追加）", "グループを作成", "グループを削除", "ゲストアクセスを許可"],
+                                question: "/etc/passwd の各フィールドの順序と意味は？\n\nalice:x:1001:1001:Alice Smith:/home/alice:/bin/bash",
+                                choices: [
+                                    "ユーザー名:パスワード(x=シャドウ化):UID:GID:GECOS(コメント):ホームディレクトリ:デフォルトシェル",
+                                    "ユーザー名:実パスワード:GID:UID:ホームディレクトリ:シェル:コメント",
+                                    "UID:GID:ユーザー名:パスワード:シェル:ホームディレクトリ:コメント",
+                                    "ユーザー名:UID:GID:パスワード:ホームディレクトリ:シェル:有効期限"
+                                ],
                                 correctIndex: 0,
-                                explanation: "-G で追加グループ。-a を付けると既存グループに追加（-G のみだと上書き）"
+                                explanation: "/etc/passwd の形式: ユーザー名:パスワード:UID:GID:GECOS:ホームディレクトリ:シェル。パスワードフィールドの x はパスワードが /etc/shadow に分離管理されていることを示します（セキュリティ強化）。/etc/shadow は root のみが読めます。"
                             ),
                             QuizQuestion(
-                                question: "sudo 権限を持つには？",
-                                choices: ["ユーザーを sudo グループに追加", "UID を 0 に変更", "chmod で実行権限を追加", "su で昇格"],
+                                question: "su - alice と su alice の動作の違いは？",
+                                choices: [
+                                    "su - alice はログインシェルを起動し alice の環境変数を完全に引き継ぐ。su alice は現在の環境変数を保持したまま alice に切り替える",
+                                    "どちらも同じ動作",
+                                    "su - alice は root のみ実行可能",
+                                    "su alice はパスワードが不要"
+                                ],
                                 correctIndex: 0,
-                                explanation: "sudo グループのメンバーが sudo コマンドを実行可能。/etc/sudoers で詳細設定も可能"
+                                explanation: "su - はログインシェル（login shell）として切り替えるため、ホームディレクトリへの移動・環境変数の初期化・シェル設定ファイルの読み込みが行われます。su のみは非ログインシェルで、現在の環境変数が引き継がれます。本番環境での作業やデバッグには su - を使う方が環境の差異によるトラブルを防げます。"
                             ),
                         ]
                     ))
@@ -1225,6 +1535,37 @@ let expertCourse2 = Course(
                         finaleMessage: "✅ パッケージ管理のプロ！"
                     ))
                 ),
+                Lesson(
+                    title: "パッケージ管理の深掘りテスト",
+                    emoji: "📦",
+                    estimatedMinutes: 10,
+                    content: .quiz(QuizLesson(questions: [
+                        QuizQuestion(
+                            question: "sudo apt update を実行したのにパッケージがまだ古いバージョンでした。次に実行すべきコマンドは？",
+                            choices: ["sudo apt upgrade", "sudo apt install --refresh", "sudo apt sync", "sudo apt reload"],
+                            correctIndex: 0,
+                            explanation: "apt update はパッケージリスト（利用可能なバージョン情報）を更新するだけで、実際のパッケージはアップグレードしません。インストール済みパッケージを新バージョンに更新するには apt upgrade が必要です。update → upgrade の順序は基本中の基本です。"
+                        ),
+                        QuizQuestion(
+                            question: "apt remove nginx でパッケージを削除したが、/etc/nginx に設定ファイルが残っていた。設定ファイルも含めて完全削除するには？",
+                            choices: ["apt purge nginx", "apt remove --all nginx", "dpkg --delete nginx", "apt clean nginx"],
+                            correctIndex: 0,
+                            explanation: "apt remove はバイナリのみ削除し、設定ファイルは保持します。apt purge はパッケージと設定ファイルを両方削除します。再インストール時に設定を引き継ぎたいなら remove、クリーンな再設定をしたいなら purge を選びます。"
+                        ),
+                        QuizQuestion(
+                            question: "dpkg -l の出力で先頭列が 'rc' と表示されているパッケージの状態は？",
+                            choices: ["パッケージは削除済みだが設定ファイルが残っている", "正常にインストール済み", "インストールに失敗した", "インストール保留中"],
+                            correctIndex: 0,
+                            explanation: "dpkg -l の状態フラグは2文字で表されます。'ii' = 正常インストール済み、'rc' = removed（削除済み）+ config-files（設定ファイル残存）を意味します。apt purge で設定ファイルごと削除するか、apt install で再インストールする判断に使います。"
+                        ),
+                        QuizQuestion(
+                            question: "apt install python3 で「E: Unable to locate package python3」エラーが出た。最初にすべき対処は？",
+                            choices: ["sudo apt update を実行してパッケージリストを更新する", "sudo apt upgrade を実行する", "/etc/apt/sources.list を削除して再作成する", "dpkg --configure -a を実行する"],
+                            correctIndex: 0,
+                            explanation: "「Unable to locate package」はローカルのパッケージリストにそのパッケージが見つからないことを意味します。apt update でリポジトリサーバーから最新リストを取得すれば解決することが多いです。インターネット接続の問題なら apt update 自体が失敗するので次の手順で判別できます。"
+                        ),
+                    ]))
+                ),
             ]
         ),
         Chapter(
@@ -1300,28 +1641,43 @@ let expertCourse2 = Course(
                     ))
                 ),
                 Lesson(
-                    title: "systemctl 管理クイズ",
+                    title: "systemd 深掘りクイズ",
                     emoji: "🎓",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "systemctl enable の役割は？",
-                                choices: ["システム起動時にサービスを自動開始するよう登録", "サービスを即座に開始", "サービスの設定ファイルを編集", "ログを表示"],
+                                question: "systemctl enable nginx を実行したが、nginx は起動していない。なぜか？",
+                                choices: [
+                                    "enable は次回起動時の自動実行を設定するだけ。現時点での起動には systemctl start が別途必要",
+                                    "enable はサービスを開始する",
+                                    "nginx がインストールされていない",
+                                    "enable の後は自動的に起動する"
+                                ],
                                 correctIndex: 0,
-                                explanation: "enable で起動時の自動実行を有効化。disable で無効化。start は即座に開始。"
+                                explanation: "enable は「次回のシステム起動時に自動実行するよう登録」する設定で、即座にサービスを起動しません。現在のセッションでも起動したい場合は systemctl enable --now nginx または systemctl enable nginx && systemctl start nginx のようにします。enable と start の役割の違いは重要な概念です。"
                             ),
                             QuizQuestion(
-                                question: "systemctl reload と restart の違いは？",
-                                choices: ["reload は設定を再読み込み（プロセス継続）、restart はプロセス再起動", "同じ", "reload は設定を削除", "restart は新規インストール"],
+                                question: "nginx の設定ファイルを編集した後、設定を適用するために最も適切なコマンドはどれか？",
+                                choices: [
+                                    "設定検証後 systemctl reload nginx（ダウンタイムなし）、不可能なら systemctl restart",
+                                    "systemctl stop nginx && systemctl start nginx",
+                                    "systemctl status nginx",
+                                    "systemctl daemon-reload"
+                                ],
                                 correctIndex: 0,
-                                explanation: "reload: 設定ファイル再読み込み（ダウンタイムなし）。restart: プロセス再起動（ダウンタイムあり）"
+                                explanation: "本番環境では reload が最善です。nginx -t で設定の文法チェックをしてから reload すると安全です。reload は設定ファイルを再読み込みしつつ既存の接続を維持します（グレースフルリロード）。restart は全接続が一時切断されるためダウンタイムが発生します。daemon-reload は systemd のユニットファイル（.service ファイル）を変更したときに必要です。"
                             ),
                             QuizQuestion(
-                                question: "systemctl list-units --type=service は？",
-                                choices: ["全サービスのリストと状態を表示", "ユーザーのサービスのみ表示", "システムサービスのコピーを作成", "サービスを検索"],
+                                question: "systemctl status nginx の出力で「Active: failed (Result: exit-code)」と表示された。次に何を確認すべきか？",
+                                choices: [
+                                    "journalctl -u nginx -n 50 でサービスのログを確認する",
+                                    "systemctl enable nginx を再実行する",
+                                    "nginx をアンインストールして再インストールする",
+                                    "サーバーを再起動する"
+                                ],
                                 correctIndex: 0,
-                                explanation: "全サービスと状態を表示。--all でロードされていないユニットも表示。"
+                                explanation: "failed 状態はサービスが起動に失敗したことを示します。journalctl -u nginx でサービス固有のログ、-n 50 で直近50行を表示できます。-e オプションで末尾（最新ログ）から確認します。設定ファイルのミス、ポートの競合、依存サービスの問題などが原因として多いです。"
                             ),
                         ]
                     ))
@@ -1429,6 +1785,37 @@ let expertCourse3 = Course(
                         ],
                         finaleMessage: "✅ ネットワーク診断のマスター！"
                     ))
+                ),
+                Lesson(
+                    title: "ネットワーク・トラブルシューティング深掘りテスト",
+                    emoji: "🌐",
+                    estimatedMinutes: 10,
+                    content: .quiz(QuizLesson(questions: [
+                        QuizQuestion(
+                            question: "netstat -tuln の各オプションの意味として正しいのは？",
+                            choices: ["-t: TCP, -u: UDP, -l: LISTEN状態のみ, -n: 数値形式（名前解決しない）", "-t: TCP, -u: UDP, -l: ローカルアドレス, -n: 通常モード", "-t: タイムアウト, -u: UDP, -l: LISTEN, -n: 数値", "-t: TCPのみ, -u: ユーザー空間, -l: ログ出力, -n: 最新順"],
+                            correctIndex: 0,
+                            explanation: "netstat -tuln は最も頻出の組み合わせです。-t(TCP) -u(UDP) でプロトコルを絞り、-l で LISTEN 中のポートのみ表示、-n で名前解決をスキップして数値で高速表示します。サービスが特定ポートで待ち受けているか確認する定番コマンドです。"
+                        ),
+                        QuizQuestion(
+                            question: "ip addr show の出力に 'lo' インターフェース（127.0.0.1/8）が表示されています。このインターフェースの役割は？",
+                            choices: ["ループバック。同一ホスト内のプロセス間通信に使われ、外部ネットワークには出ない", "ローカルエリアネットワーク接続用の物理インターフェース", "VPN接続用の仮想インターフェース", "IPv6専用のインターフェース"],
+                            correctIndex: 0,
+                            explanation: "lo（ループバック）インターフェースは 127.0.0.1 に割り当てられ、パケットがNICを経由せず同一ホスト内で折り返します。データベースサーバーが 127.0.0.1 のみでリッスンしている場合、外部からはアクセスできず、同一サーバー上のアプリケーションのみが接続できます。"
+                        ),
+                        QuizQuestion(
+                            question: "ping 8.8.8.8 は成功するが ping google.com が失敗する。最も考えられる原因は？",
+                            choices: ["DNS解決の失敗（/etc/resolv.conf の設定問題）", "ファイアウォールがICMPをブロックしている", "ネットワークインターフェースが停止している", "デフォルトゲートウェイが設定されていない"],
+                            correctIndex: 0,
+                            explanation: "IPアドレス直打ちは成功してドメイン名が失敗するのは DNS の問題です。/etc/resolv.conf の nameserver 設定、または DNS サーバーへの到達性を確認します。ゲートウェイ問題なら IP アドレス直打ちも失敗します。これはネットワーク障害の切り分けで必須の知識です。"
+                        ),
+                        QuizQuestion(
+                            question: "/etc/hosts ファイルに '192.168.1.100 myserver' と記述されています。この設定の効果は？",
+                            choices: ["myserver という名前を DNS より優先して 192.168.1.100 に解決する", "192.168.1.100 からのアクセスを myserver ユーザーに制限する", "myserver というホスト名のSSH接続設定を行う", "myserver へのルーティングを追加する"],
+                            correctIndex: 0,
+                            explanation: "/etc/hosts は DNS より先に参照されるローカルの名前解決ファイルです。テスト環境でのホスト名解決、DNS が使えない環境での代替、あるいは本番DNSを変更せずに特定のホストの向き先を変えるのに使います。LinuC/LPIC 試験の定番知識です。"
+                        ),
+                    ]))
                 ),
             ]
         ),
@@ -1549,6 +1936,37 @@ let expertCourse3 = Course(
                         finaleMessage: "✅ ログ分析のプロになりました！"
                     ))
                 ),
+                Lesson(
+                    title: "ストレージ・ログ管理の深掘りテスト",
+                    emoji: "💾",
+                    estimatedMinutes: 10,
+                    content: .quiz(QuizLesson(questions: [
+                        QuizQuestion(
+                            question: "df -h と du -sh /home の値が大きく異なります（df は 80% 使用中、du は合計 20GB 程度）。この乖離の最もありえる原因は？",
+                            choices: ["削除されたがプロセスがオープンし続けているファイルがある", "du の計算にバグがある", "df のキャッシュが古い", "/home 以外のファイルシステムを df が含めていない"],
+                            correctIndex: 0,
+                            explanation: "Linux でファイルを削除しても、プロセスがそのファイルのファイルディスクリプタを開いたままにしていると、inode と領域は解放されません。df（ファイルシステム使用量）には現れるが du（ディレクトリツリーの合計）には現れないという乖離が生じます。lsof | grep deleted で確認できます。"
+                        ),
+                        QuizQuestion(
+                            question: "journalctl -p err -S '2024-01-01' -U '2024-01-31' コマンドの説明として正しいのは？",
+                            choices: ["2024年1月中のエラー以上のログのみを表示する", "2024年1月1日からのすべてのログを削除する", "エラーログをファイルにエクスポートする", "2024年1月のログをアーカイブする"],
+                            correctIndex: 0,
+                            explanation: "-p err はプライオリティがerr以上（err, crit, alert, emerg）のログのみ表示、-S(--since) と -U(--until) で期間絞り込みです。journalctl は強力なフィルタリング機能を持ち、LinuC/LPIC のログ管理問題で頻出の組み合わせです。"
+                        ),
+                        QuizQuestion(
+                            question: "ルートパーティションのディスク使用率が 100% になりました。サービスを停止せずに緊急でディスク容量を確保する最善の方法は？",
+                            choices: ["journalctl --vacuum-size=100M でジャーナルを圧縮・削除する", "rm -rf /usr でシステムファイルを削除する", "すべてのプロセスを強制終了する", "再起動してキャッシュをクリアする"],
+                            correctIndex: 0,
+                            explanation: "journalctl --vacuum-size=100M はジャーナルログを指定サイズ以内に圧縮・削除します。安全にディスクを開放できる標準的な手法です。また apt clean（apt キャッシュ削除）、find /tmp -mtime +1 -delete（古い一時ファイル削除）も有効です。/usr 削除はシステム破壊になります。"
+                        ),
+                        QuizQuestion(
+                            question: "logrotate の主な役割として正しいのは？",
+                            choices: ["古いログファイルを自動的に圧縮・削除し、新しいログファイルを作成するローテーション管理", "ログをリアルタイムでリモートサーバーに転送する", "ログの内容を解析してアラートを送信する", "ログファイルの暗号化を行う"],
+                            correctIndex: 0,
+                            explanation: "logrotate は /etc/logrotate.conf と /etc/logrotate.d/ の設定に基づき、ログファイルを定期的にローテーションします。古いファイルを連番で保持（例: syslog.1, syslog.2.gz）し、指定世代以上を削除します。これにより /var/log の肥大化を防ぎます。cron から定期実行されます。"
+                        ),
+                    ]))
+                ),
             ]
         ),
     ]
@@ -1654,28 +2072,43 @@ let expertCourse4 = Course(
                     ))
                 ),
                 Lesson(
-                    title: "プロセス管理クイズ",
+                    title: "プロセス管理の深掘りクイズ",
                     emoji: "💭",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "kill -9 と kill -15 の違いは？",
-                                choices: ["-15 は SIGTERM（正常終了）、-9 は SIGKILL（強制終了）", "同じシグナル", "-9 は アーカイブ作成", "-15 は 削除"],
+                                question: "ps aux で STAT 列が「Z」のプロセスが多数表示されている。これは何を示すか？",
+                                choices: [
+                                    "ゾンビプロセス：プロセス自体は終了しているが、親プロセスが wait() を呼んでいないためプロセステーブルに残っている",
+                                    "一時停止中のプロセス",
+                                    "スリープ中のプロセス",
+                                    "システムクリティカルなプロセス"
+                                ],
                                 correctIndex: 0,
-                                explanation: "kill -15（SIGTERM）は プロセスに正常終了するよう要求。kill -9（SIGKILL）は 強制終了（キャッチ不可）"
+                                explanation: "ゾンビプロセス（defunct）はプロセスが終了した後も、親プロセスが wait() システムコールで終了ステータスを回収するまでプロセステーブルに残ります。ゾンビ自体はリソースをほとんど消費しませんが、PID を占有します。大量のゾンビは親プロセスのバグを示し、解決策は親プロセスを再起動することです（親が終了すると init/systemd がゾンビを回収します）。"
                             ),
                             QuizQuestion(
-                                question: "top コマンドで CPU 使用率でソートするキーは？",
-                                choices: ["P キー", "M キー", "C キー", "S キー"],
+                                question: "プロセスに kill -15（SIGTERM）を送ったが反応がなかった。次の行動として正しい順序は？",
+                                choices: [
+                                    "まず数秒待ち、それでも終了しなければ kill -9（SIGKILL）を送る",
+                                    "即座に kill -9 を送る（-15 が効かない場合は -9 しかない）",
+                                    "プロセスを無視する（自然に終了するまで待つ）",
+                                    "サーバーを再起動する"
+                                ],
                                 correctIndex: 0,
-                                explanation: "top 実行中に P キーで CPU 使用率、M キーでメモリ使用率でソート。"
+                                explanation: "SIGTERM はプロセスに「終了してください」と伝えるシグナルで、プロセスはシグナルをキャッチして後処理（ファイルのクローズ、ロックの解放など）を行えます。ただし無視したりキャッチ不能な状態のプロセスには効きません。SIGKILL はカーネルレベルで強制終了するため必ず効きますが、後処理ができないためファイル破損のリスクがあります。まず SIGTERM、それから SIGKILL が適切な手順です。"
                             ),
                             QuizQuestion(
-                                question: "ps aux の STAT 列で R は何を表す？",
-                                choices: ["Running（実行中）", "Resident（常駐）", "Read-only（読み込み専用）", "Restarting（再起動中）"],
+                                question: "nice -n 10 ./heavy-task.sh を実行した。このコマンドの効果は？",
+                                choices: [
+                                    "heavy-task.sh を優先度を下げて実行（他プロセスにCPU時間を譲りやすくなる）",
+                                    "heavy-task.sh を最高優先度で実行",
+                                    "10 分後に heavy-task.sh を実行",
+                                    "heavy-task.sh を 10 回実行"
+                                ],
                                 correctIndex: 0,
-                                explanation: "R: 実行中, S: スリープ中, Z: ゾンビプロセス, T: 停止中"
+                                explanation: "nice コマンドはプロセスの優先度（nice値）を設定します。nice値の範囲は -20（最高優先度）〜 19（最低優先度）で、デフォルトは 0 です。nice -n 10 は通常より低い優先度で実行するため、システムの他の作業（WebサーバーなどI/O待ちが多いプロセス）へのCPU影響を減らせます。バックグラウンドのバックアップや圧縮処理に有効です。renice コマンドで実行中のプロセスの優先度を変更できます。"
                             ),
                         ]
                     ))
