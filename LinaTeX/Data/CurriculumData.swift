@@ -6,7 +6,130 @@ import SwiftUI
 
 // MARK: - Basics Course
 let basicsCourseLessons: [Lesson] = [
-    // File operation scenario
+    // cp - Copy Files
+    Lesson(
+        title: "cp - ファイルをコピー",
+        emoji: "📋",
+        estimatedMinutes: 8,
+        content: .concept(ConceptLesson(
+            headline: "ファイルを複製する",
+            sections: [
+                ConceptSection(
+                    heading: "cp コマンドの役割",
+                    body: "cp（Copy）は、既存のファイルを複製して、別の名前または別の場所に保存します。\n\n元のファイルは変わらず、新しいコピーが作成されます。バックアップを作成するとき、または複数の用途に分けるときに使用します。",
+                    codeSample: "cp original.txt backup.txt\n# 元のファイルは変わらず、backup.txt が新しく作成される",
+                    tip: "ディレクトリ全体をコピーする場合は cp -r を使用します"
+                ),
+                ConceptSection(
+                    heading: "cp の使い方と注意点",
+                    body: "• cp ファイル名 新しい名前: シンプルなコピー\n• cp ファイル ディレクトリ/: ディレクトリ内にコピー\n• cp -r ディレクトリ ディレクトリ: ディレクトリ全体をコピー（-r は recursive）\n\n⚠️ 既存ファイルと同じ名前でコピーすると上書きされます。cp -i でコマンド実行前に確認できます。",
+                    codeSample: nil,
+                    tip: nil
+                )
+            ]
+        ))
+    ),
+    Lesson(
+        title: "cp - ファイル複製クエスト",
+        emoji: "🎯",
+        estimatedMinutes: 6,
+        content: .quest(QuestLesson(
+            scenario: "プロジェクトの重要な設定ファイルをバックアップする必要があります。",
+            prompt: "config.txt をバックアップ用に config_backup.txt として同じディレクトリにコピーするコマンドは？",
+            hint: "cp config.txt config_backup.txt でコピーできます。",
+            answer: "cp",
+            options: [
+                CommandOption(label: "cp", command: "cp", icon: "doc.on.doc"),
+                CommandOption(label: "mv", command: "mv", icon: "arrow.right"),
+                CommandOption(label: "cat", command: "cat", icon: "doc.text"),
+            ],
+            simulatedOutput: "user@linux:~/project$ cp config.txt config_backup.txt\nuser@linux:~/project$ ls\nconfig.txt  config_backup.txt",
+            successMessage: "✅ ファイルが正常にコピーされました"
+        ))
+    ),
+    // mv - Move/Rename Files
+    Lesson(
+        title: "mv - ファイルを移動・リネーム",
+        emoji: "🚀",
+        estimatedMinutes: 8,
+        content: .concept(ConceptLesson(
+            headline: "ファイルを移動する・名前を変える",
+            sections: [
+                ConceptSection(
+                    heading: "mv コマンドの役割",
+                    body: "mv（Move）は、ファイルを別の場所に移動したり、ファイルの名前を変えたりするコマンドです。\n\n重要な特徴: cp と異なり、元のファイルは残りません。ファイルは移動されます。同じディレクトリ内で使用すると、単なる「リネーム」になります。",
+                    codeSample: "mv old_name.txt new_name.txt\n# 同じディレクトリ内では名前変更\nmv file.txt archive/\n# ディレクトリを指定すると移動",
+                    tip: "cp コマンドとの最大の違いは、元のファイルが「置き換わる」点です"
+                ),
+                ConceptSection(
+                    heading: "mv の使用シーン",
+                    body: "• mv old_name.txt new_name.txt: ファイルをリネーム\n• mv file.txt directory/: ファイルを別のディレクトリに移動\n• mv directory/* archive/: ディレクトリ内の複数ファイルを移動\n• mv old_dir new_dir: ディレクトリ全体をリネーム・移動",
+                    codeSample: nil,
+                    tip: nil
+                )
+            ]
+        ))
+    ),
+    Lesson(
+        title: "mv - ファイル移動クエスト",
+        emoji: "🎯",
+        estimatedMinutes: 6,
+        content: .quest(QuestLesson(
+            scenario: "プロジェクトの一時ログファイル temp.log を、archive フォルダに移動して整理する必要があります。",
+            prompt: "temp.log ファイルを archive/ ディレクトリに移動するコマンドは？",
+            hint: "mv temp.log archive/ で移動できます。スラッシュでディレクトリを指定します。",
+            answer: "mv",
+            options: [
+                CommandOption(label: "mv", command: "mv", icon: "arrow.right"),
+                CommandOption(label: "cp", command: "cp", icon: "doc.on.doc"),
+                CommandOption(label: "rm", command: "rm", icon: "trash"),
+            ],
+            simulatedOutput: "user@linux:~/project$ mv temp.log archive/\nuser@linux:~/project$ ls archive/\ntemp.log",
+            successMessage: "✅ ファイルが archive/ に移動されました"
+        ))
+    ),
+    // rm - Remove Files
+    Lesson(
+        title: "rm - ファイルを削除",
+        emoji: "🗑️",
+        estimatedMinutes: 8,
+        content: .concept(ConceptLesson(
+            headline: "不要なファイルを消す",
+            sections: [
+                ConceptSection(
+                    heading: "rm コマンドの役割",
+                    body: "rm（Remove）は、ファイルを削除するコマンドです。\n\n⚠️ 非常に強力なコマンドです。削除したファイルはゴミ箱に行かず、完全に消えます。そのため、削除前に必ず確認することが重要です。実務では -i オプション（確認を求める）をよく使用します。",
+                    codeSample: "rm old_file.txt\n# ファイルは完全に削除される\nrm -i file.txt\n# 確認を求めてから削除",
+                    tip: "削除する前に ls で対象ファイルを確認する習慣をつけましょう"
+                ),
+                ConceptSection(
+                    heading: "rm の注意点と使い分け",
+                    body: "• rm ファイル: ファイル削除（復旧不可）\n• rm -i ファイル: 確認してから削除\n• rm -r ディレクトリ: ディレクトリ全体を削除\n• rm -f: 強制削除（確認なし）- 危険！\n\n一度削除するとバックアップがない限り復旧できません。重要なファイルは必ず cp でバックアップしてから削除しましょう。",
+                    codeSample: nil,
+                    tip: nil
+                )
+            ]
+        ))
+    ),
+    Lesson(
+        title: "rm - ファイル削除クエスト",
+        emoji: "🎯",
+        estimatedMinutes: 6,
+        content: .quest(QuestLesson(
+            scenario: "古いログファイルが溜まっているので、不要な old_run.log を削除する必要があります。",
+            prompt: "old_run.log ファイルを削除するコマンドは？",
+            hint: "rm old_run.log で削除できます。実務では rm -i で確認しながら削除することをお勧めします。",
+            answer: "rm",
+            options: [
+                CommandOption(label: "rm", command: "rm", icon: "trash"),
+                CommandOption(label: "mv", command: "mv", icon: "arrow.right"),
+                CommandOption(label: "rmdir", command: "rmdir", icon: "trash.fill"),
+            ],
+            simulatedOutput: "user@linux:~/project$ rm old_run.log\nuser@linux:~/project$",
+            successMessage: "✅ ファイルが削除されました（復旧不可）"
+        ))
+    ),
+    // Combined scenario lesson
     Lesson(
         title: "ファイル操作の複合シナリオ",
         emoji: "📋",
@@ -72,10 +195,16 @@ let basicsCourseLessons: [Lesson] = [
                     explanation: "cp で既存ファイルをコピーします。mv は移動（リネーム）です。"
                 ),
                 QuizQuestion(
-                    question: "現在のディレクトリのファイル数を確認するコマンドは？",
-                    choices: ["ls | wc -l", "find . -type f | wc -l", "stat .", "count"],
+                    question: "ファイル important.doc を削除するコマンドは？",
+                    choices: ["rm important.doc", "mv important.doc /trash", "rmdir important.doc", "delete important.doc"],
                     correctIndex: 0,
-                    explanation: "ls をパイプして wc -l で行数カウント。より正確には find を使う方法もあります。"
+                    explanation: "rm でファイルを削除します。削除後は復旧できないため、-i オプションで確認することをお勧めします。"
+                ),
+                QuizQuestion(
+                    question: "ファイルの名前を old_name.txt から new_name.txt に変更するコマンドは？",
+                    choices: ["mv old_name.txt new_name.txt", "cp old_name.txt new_name.txt", "rename old_name.txt new_name.txt", "rn old_name.txt new_name.txt"],
+                    correctIndex: 0,
+                    explanation: "mv でファイルをリネーム（移動）します。同じディレクトリ内での mv は名前変更になります。"
                 ),
             ]
         ))
@@ -143,61 +272,127 @@ let basicsCourse = Course(
         ),
         Chapter(
             number: 2,
-            title: "基本コマンド演習",
-            summary: "pwd, ls, cd コマンドを学ぶ",
+            title: "ファイルシステムナビゲーション",
+            summary: "pwd, ls, cd でファイルシステムを自由に移動する",
             lessons: [
                 Lesson(
-                    title: "pwd - 今ここはどこ？",
+                    title: "pwd - 現在位置の確認",
                     emoji: "📍",
                     estimatedMinutes: 8,
+                    content: .concept(ConceptLesson(
+                        headline: "ファイルシステムはツリー構造",
+                        sections: [
+                            ConceptSection(
+                                heading: "pwd コマンドの役割",
+                                body: "pwd（Print Working Directory）は、現在いるディレクトリの絶対パスを表示します。\n\nLinux のファイルシステムはツリー構造で、常に「どこのフォルダにいるのか」を意識する必要があります。pwd を実行することで、現在位置を確認できます。",
+                                codeSample: "pwd\n# 出力例: /home/user/Documents",
+                                tip: "ディレクトリ移動後は pwd で現在位置を確認する習慣をつけましょう"
+                            ),
+                            ConceptSection(
+                                heading: "絶対パスと相対パス",
+                                body: "• 絶対パス: / から始まるパス（例: /home/user）\n• 相対パス: 現在位置から見たパス（例: Documents）\n\npwd は絶対パスを表示するため、現在の正確な位置を知ることができます。",
+                                codeSample: nil,
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "pwd - 現在位置クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 6,
                     content: .quest(QuestLesson(
-                        scenario: "Linuxのファイルシステムはツリー構造です。あなたは今、どこにいるでしょう？",
-                        prompt: "現在のディレクトリ（フォルダ）の位置を確認するコマンドは？",
-                        hint: "Print Working Directory の略です。pwd と打ってみましょう。",
+                        scenario: "あなたはファイルサーバーの深いディレクトリにいます。現在地を確認する必要があります。",
+                        prompt: "現在のディレクトリパスを表示するコマンドは？",
+                        hint: "Print Working Directory の略。実行すると絶対パスが表示されます。",
                         answer: "pwd",
                         options: [
                             CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
                             CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
-                            CommandOption(label: "cd", command: "cd", icon: "chevron.right"),
+                            CommandOption(label: "cd ..", command: "cd", icon: "chevron.right"),
                         ],
-                        simulatedOutput: "/home/user",
-                        successMessage: "✅ 完璧！あなたは /home/user にいます"
+                        simulatedOutput: "/var/www/html/project/src",
+                        successMessage: "✅ 完璧！現在地が確認できました"
                     ))
                 ),
                 Lesson(
-                    title: "ls - ファイル一覧を見る",
+                    title: "ls - ファイル一覧表示",
                     emoji: "📂",
                     estimatedMinutes: 8,
+                    content: .concept(ConceptLesson(
+                        headline: "フォルダの内容を見る",
+                        sections: [
+                            ConceptSection(
+                                heading: "ls コマンドの目的",
+                                body: "ls（List）は、現在のディレクトリに含まれるファイルとフォルダの一覧を表示します。\n\nGUI では、フォルダをダブルクリックして中身を見ますが、CLI では ls コマンドで中身を確認します。",
+                                codeSample: "ls\n# 出力例:\n# Desktop  Documents  Downloads  Music",
+                                tip: "ls -l で詳細情報（権限、サイズ、更新日時など）を表示できます"
+                            ),
+                            ConceptSection(
+                                heading: "よく使う ls のオプション",
+                                body: "• ls: 基本的なファイル一覧\n• ls -l: 詳細情報付き（権限、所有者、サイズ、更新日）\n• ls -a: 隠しファイル（. で始まるファイル）も表示\n• ls -h: ファイルサイズを人間が読みやすい形式で表示",
+                                codeSample: "ls -lh",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "ls - ファイル一覧クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 6,
                     content: .quest(QuestLesson(
-                        scenario: "現在のフォルダに何が入っているか見たい。",
-                        prompt: "ファイルやフォルダの一覧を表示するコマンドは？",
-                        hint: "List の略です。ls と打つだけ。",
+                        scenario: "プロジェクトフォルダに移動しました。フォルダの内容を確認して、どんなファイルがあるかを把握する必要があります。",
+                        prompt: "フォルダ内のファイルとサブフォルダを詳細情報付きで表示するコマンドは？",
+                        hint: "ls -l で詳細情報（権限、サイズ、更新日時）が表示されます。",
                         answer: "ls",
                         options: [
-                            CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                            CommandOption(label: "ls -l", command: "ls", icon: "list.bullet"),
                             CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
                             CommandOption(label: "cat", command: "cat", icon: "doc.text"),
                         ],
-                        simulatedOutput: "Desktop  Documents  Downloads  Pictures  Videos",
-                        successMessage: "✅ いいね！フォルダの中身が見えました"
+                        simulatedOutput: "drwxr-xr-x  src\n-rw-r--r--  README.md\ndrwxr-xr-x  tests",
+                        successMessage: "✅ ファイル一覧が表示されました"
                     ))
                 ),
                 Lesson(
-                    title: "cd - ディレクトリを移動する",
+                    title: "cd - ディレクトリ移動",
                     emoji: "🚀",
                     estimatedMinutes: 8,
+                    content: .concept(ConceptLesson(
+                        headline: "ファイルシステムを移動する",
+                        sections: [
+                            ConceptSection(
+                                heading: "cd コマンドの役割",
+                                body: "cd（Change Directory）は、現在のディレクトリを別のディレクトリに変更します。\n\nGUI では、フォルダをダブルクリックして開きますが、CLI では cd コマンドで移動します。移動後、pwd で現在位置を確認できます。",
+                                codeSample: "cd Documents\n# 移動後\npwd\n# /home/user/Documents",
+                                tip: "cd ~ でホームディレクトリに移動、cd .. で親ディレクトリに移動できます"
+                            ),
+                            ConceptSection(
+                                heading: "cd の使い方と特殊パス",
+                                body: "• cd フォルダ名: 指定フォルダに移動（相対パス）\n• cd /絶対パス: 絶対パスで移動\n• cd ~: ホームディレクトリに移動\n• cd ..: 親ディレクトリに移動\n• cd: ホームディレクトリに移動（引数なし）",
+                                codeSample: nil,
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "cd - ナビゲーションクエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 6,
                     content: .quest(QuestLesson(
-                        scenario: "Desktop フォルダに移動したい。",
-                        prompt: "ディレクトリを移動するコマンドは？",
-                        hint: "Change Directory の略。cd Desktop で Desktop に移動します。",
+                        scenario: "あなたは /var/www/html にいます。src サブフォルダに移動して、そこのファイルを確認する必要があります。",
+                        prompt: "現在位置から src フォルダに移動するコマンドは？",
+                        hint: "cd src で移動できます。相対パスを使用します。",
                         answer: "cd",
                         options: [
-                            CommandOption(label: "cd", command: "cd", icon: "chevron.right"),
-                            CommandOption(label: "mv", command: "mv", icon: "arrow.right.doc.fill"),
-                            CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
+                            CommandOption(label: "cd src", command: "cd", icon: "chevron.right"),
+                            CommandOption(label: "ls src", command: "ls", icon: "list.bullet"),
+                            CommandOption(label: "pwd src", command: "pwd", icon: "mappin.circle.fill"),
                         ],
                         simulatedOutput: "",
-                        successMessage: "✅ 移動完了！Desktop に到着しました"
+                        successMessage: "✅ src フォルダに移動しました。pwd で確認してみてください！"
                     ))
                 ),
             ]
@@ -225,6 +420,86 @@ let standardCourse = Course(
             title: "テキストを検索・操作する",
             summary: "grep, sed で強力なテキスト処理",
             lessons: [
+                Lesson(
+                    title: "grep - テキストを検索する",
+                    emoji: "🔍",
+                    estimatedMinutes: 8,
+                    content: .concept(ConceptLesson(
+                        headline: "ファイル内から特定の行を見つける",
+                        sections: [
+                            ConceptSection(
+                                heading: "grep コマンドの役割",
+                                body: "grep（Global Regular Expression Print）は、ファイルやパイプからテキストを検索し、マッチした行を表示するコマンドです。\n\nログファイルからエラーだけを抽出したり、ファイルから特定の単語を含む行を見つけたりするとき、grep は必須ツールです。",
+                                codeSample: "grep ERROR application.log\n# 出力: ERROR を含む行だけが表示される\ngrep \"connection\" *.txt\n# 複数ファイルから検索",
+                                tip: "grep は大文字小文字を区別します。区別したくない場合は -i オプション"
+                            ),
+                            ConceptSection(
+                                heading: "よく使う grep のオプション",
+                                body: "• grep パターン ファイル: パターンを含む行を表示\n• grep -i: 大文字小文字を区別しない\n• grep -r: ディレクトリ内を再帰的に検索\n• grep -n: マッチした行の行番号も表示\n• grep -v: パターンに「マッチしない」行を表示（逆マッチ）\n• grep -c: マッチした行の件数だけを表示",
+                                codeSample: "grep -r \"TODO\" .\n# 現在のディレクトリ以下から \"TODO\" を含むファイル行を全て探す",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "grep - テキスト検索クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 6,
+                    content: .quest(QuestLesson(
+                        scenario: "サーバーのエラーログから問題を診断する必要があります。多くの行がある中から ERROR ログだけ抽出します。",
+                        prompt: "ログファイル app.log から ERROR を含む行だけを表示するコマンドは？",
+                        hint: "grep ERROR app.log で ERROR を含む行を抽出できます。",
+                        answer: "grep",
+                        options: [
+                            CommandOption(label: "grep", command: "grep", icon: "magnifyingglass"),
+                            CommandOption(label: "sed", command: "sed", icon: "pencil.and.outline"),
+                            CommandOption(label: "awk", command: "awk", icon: "square.and.pencil"),
+                        ],
+                        simulatedOutput: "[10:25] ERROR: Database connection failed\n[10:26] ERROR: Timeout on query",
+                        successMessage: "✅ エラーログのみが抽出されました"
+                    ))
+                ),
+                Lesson(
+                    title: "sed - テキストを置換する",
+                    emoji: "✏️",
+                    estimatedMinutes: 8,
+                    content: .concept(ConceptLesson(
+                        headline: "テキストを一括置換する",
+                        sections: [
+                            ConceptSection(
+                                heading: "sed コマンドの役割",
+                                body: "sed（Stream Editor）は、ファイルのテキストを検索して置換（または削除）するコマンドです。\n\nグローバル置換や条件付き置換、複数行の削除など、高度なテキスト処理ができます。ログファイルの機密情報を隠したり、設定ファイルの値を一括変更したりするときに使用します。",
+                                codeSample: "sed 's/old/new/g' file.txt\n# file.txt 内の「old」を「new」に全て置換\nsed -i 's/old/new/g' file.txt\n# ファイルを直接編集(-i オプション)",
+                                tip: "g フラグなしの場合、1行につき最初にマッチした1つだけが置換されます"
+                            ),
+                            ConceptSection(
+                                heading: "sed の基本構文と g フラグ",
+                                body: "• s/old/new/: 最初の1つだけを置換\n• s/old/new/g: 1行内の「全て」を置換（global）\n• sed '5s/old/new/': 5行目だけを置換\n• sed '1,10s/old/new/g': 1〜10行目を置換\n• sed 's/^/prefix-/': 行の先頭に追加\n• sed 's/$/-suffix/': 行の末尾に追加",
+                                codeSample: nil,
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "sed - テキスト置換クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 6,
+                    content: .quest(QuestLesson(
+                        scenario: "設定ファイル config.txt 内の database_host 値を新しいサーバーに変更する必要があります。",
+                        prompt: "config.txt 内の「localhost」を全て「192.168.1.10」に置換するコマンドは？",
+                        hint: "sed 's/localhost/192.168.1.10/g' config.txt で全て置換できます。g フラグを忘れずに。",
+                        answer: "sed",
+                        options: [
+                            CommandOption(label: "sed", command: "sed", icon: "pencil.and.outline"),
+                            CommandOption(label: "grep", command: "grep", icon: "magnifyingglass"),
+                            CommandOption(label: "awk", command: "awk", icon: "square.and.pencil"),
+                        ],
+                        simulatedOutput: "database_host=192.168.1.10\ncache_host=192.168.1.10",
+                        successMessage: "✅ 全ての localhost が新しいホストに置換されました"
+                    ))
+                ),
                 Lesson(
                     title: "grep 実践クイズ",
                     emoji: "🧪",
@@ -332,6 +607,46 @@ let standardCourse = Course(
             summary: "chmod で権限設定をマスター",
             lessons: [
                 Lesson(
+                    title: "chmod - ファイル権限の基本",
+                    emoji: "🔑",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "ファイルアクセス権限を設定する",
+                        sections: [
+                            ConceptSection(
+                                heading: "chmod コマンドの役割",
+                                body: "chmod（Change Mode）は、ファイルやディレクトリのアクセス権限を変更するコマンドです。\n\nLinux では全てのファイルに「所有者」「グループ」「その他」の3つの対象に対して「読み（r）」「書き（w）」「実行（x）」の3つの権限があります。chmod でこれらを制御します。",
+                                codeSample: "chmod 755 script.sh\n# 出力: -rwxr-xr-x\n# 所有者: 読み書き実行、グループ: 読み実行、他: 読み実行",
+                                tip: "デフォルト（644）はテキストファイル向け。実行ファイルは755を使用します"
+                            ),
+                            ConceptSection(
+                                heading: "権限の数値表記（8進数）",
+                                body: "権限は8進数（0〜7）で表されます。各桁は3つの権限（読み4 + 書き2 + 実行1）の合計です：\n\n• 7 = 4+2+1 = 読み書き実行（rwx）\n• 6 = 4+2   = 読み書き（rw-）\n• 5 = 4   +1 = 読み実行（r-x）\n• 4 = 4       = 読みのみ（r--）\n• 0           = 権限なし（---）\n\n例: 755 = 所有者7（rwx）, グループ5（r-x）, 他5（r-x）",
+                                codeSample: "chmod 644 file.txt   # 読み書き、読み、読み\nchmod 755 script.sh  # 読み書き実行、読み実行、読み実行",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "chmod - 権限設定クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "あなたが deploy.sh という自動デプロイスクリプトを作成しました。所有者は実行可能にし、グループと他のユーザーには読み実行権限を与える必要があります。",
+                        prompt: "deploy.sh に 755 権限を設定して、全員が実行可能にするコマンドは？",
+                        hint: "chmod 755 deploy.sh で権限を設定します。755 = 所有者rwx, グループr-x, 他r-x",
+                        answer: "chmod",
+                        options: [
+                            CommandOption(label: "chmod", command: "chmod", icon: "lock.open"),
+                            CommandOption(label: "chown", command: "chown", icon: "person.fill"),
+                            CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                        ],
+                        simulatedOutput: "user@linux:~$ chmod 755 deploy.sh\nuser@linux:~$ ls -l deploy.sh\n-rwxr-xr-x  1 user group  1234 Jan 15 10:00 deploy.sh",
+                        successMessage: "✅ スクリプトが実行可能な状態になりました"
+                    ))
+                ),
+                Lesson(
                     title: "chmod 実践シナリオ",
                     emoji: "🔐",
                     estimatedMinutes: 12,
@@ -423,6 +738,46 @@ let advancedCourse = Course(
             summary: "bash で効率的な自動化スクリプト",
             lessons: [
                 Lesson(
+                    title: "bash スクリプトの基礎",
+                    emoji: "📚",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "シェルスクリプトで自動化を実現",
+                        sections: [
+                            ConceptSection(
+                                heading: "bash スクリプトとは",
+                                body: "bash スクリプトは、Linux コマンドを複数組み合わせて、一度に実行するファイルです。\n\nターミナルで1行ずつ入力する代わりに、スクリプトファイルに書いた複数のコマンドが順番に実行されます。バックアップ、ログ処理、定期メンテナンスなど、日常の繰り返し作業を自動化できます。",
+                                codeSample: "#!/bin/bash\necho \"バックアップを開始します\"\ncp -r /home/user/documents /backup/\necho \"バックアップが完了しました\"",
+                                tip: "スクリプトの最初の行 #!/bin/bash（shebang）は必須。これがないと実行時にどのインタプリタを使うか判断できません"
+                            ),
+                            ConceptSection(
+                                heading: "スクリプト実行の流れ",
+                                body: "1. スクリプトファイルを作成（例: backup.sh）\n2. chmod +x で実行可能にする\n3. ./backup.sh で実行\n\n• ./backup.sh: シェバング指定で自動的に bash を選択\n• bash backup.sh: bash コマンドで明示的に実行\n• sh backup.sh: 標準シェルで実行\n\n実行権限がない場合、「Permission denied」エラーが出ます。",
+                                codeSample: "chmod +x script.sh  # 実行可能にする\n./script.sh          # 実行",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "bash スクリプト作成クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "毎日データをバックアップするスクリプトが必要です。新しいスクリプトファイルを作成し、実行可能にしましょう。",
+                        prompt: "新しいスクリプトファイル backup.sh を作成するコマンドは？",
+                        hint: "touch backup.sh でスクリプトファイルを作成します。",
+                        answer: "touch",
+                        options: [
+                            CommandOption(label: "touch", command: "touch", icon: "doc.badge.plus"),
+                            CommandOption(label: "nano", command: "nano", icon: "square.and.pencil"),
+                            CommandOption(label: "vi", command: "vi", icon: "pencil.and.outline"),
+                        ],
+                        simulatedOutput: "user@linux:~$ touch backup.sh\nuser@linux:~$ ls backup.sh\nbackup.sh",
+                        successMessage: "✅ スクリプトファイルが作成されました"
+                    ))
+                ),
+                Lesson(
                     title: "スクリプト作成の実践",
                     emoji: "📝",
                     estimatedMinutes: 15,
@@ -501,6 +856,86 @@ let advancedCourse = Course(
             title: "ネットワークと遠隔操作",
             summary: "SSH、curl で外部システムと連携",
             lessons: [
+                Lesson(
+                    title: "SSH - リモートサーバーに接続",
+                    emoji: "🔒",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "安全にリモートサーバーを操作する",
+                        sections: [
+                            ConceptSection(
+                                heading: "SSH の役割",
+                                body: "SSH（Secure Shell）は、インターネット経由でリモートサーバーに安全に接続して、コマンドを実行するプロトコルです。\n\nネットワーク通信が暗号化されるため、盗聴や改ざんから保護されます。Telnet のような古いプロトコルとは異なり、SSH は本番環境やセキュリティが必要な場面で標準的に使われます。",
+                                codeSample: "ssh user@example.com\n# example.com に user でログイン\nssh -i ~/.ssh/id_rsa user@example.com\n# SSH鍵を使用して接続",
+                                tip: "SSH キー認証を設定すると、パスワード入力が不要になり、自動化スクリプトから安全に接続できます"
+                            ),
+                            ConceptSection(
+                                heading: "SSH の接続方法",
+                                body: "• ssh user@host: パスワード認証で接続\n• ssh -i keyfile user@host: SSH鍵で接続\n• ssh -p 2222 user@host: 非標準ポート（22以外）で接続\n• ssh -X user@host: X11 フォワーディング（GUI アプリ実行）\n\nSSH 鍵認証は以下の利点があります：\n• パスワード不要（スクリプト自動化が容易）\n• パスワード盗聴の心配がない\n• ブルートフォース攻撃に強い",
+                                codeSample: nil,
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "SSH - リモート接続クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "本番サーバー example.com にログインして、システムメンテナンスを行う必要があります。",
+                        prompt: "example.com のリモートサーバーに user でログインするコマンドは？",
+                        hint: "ssh user@example.com でログインできます。",
+                        answer: "ssh",
+                        options: [
+                            CommandOption(label: "ssh", command: "ssh", icon: "network"),
+                            CommandOption(label: "telnet", command: "telnet", icon: "square.connected.to.square"),
+                            CommandOption(label: "ftp", command: "ftp", icon: "arrow.up.arrow.down"),
+                        ],
+                        simulatedOutput: "user@example.com:~$ ",
+                        successMessage: "✅ リモートサーバーに接続されました"
+                    ))
+                ),
+                Lesson(
+                    title: "curl - Web API データ取得",
+                    emoji: "📡",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "インターネットからデータを取得・送信",
+                        sections: [
+                            ConceptSection(
+                                heading: "curl コマンドの役割",
+                                body: "curl は、HTTP/HTTPS 通信でインターネットからデータを取得・送信するコマンドです。\n\nWeb ページのダウンロード、REST API との通信、ファイルのアップロード、ヘッダー情報の確認など、Web 関連の様々な操作ができます。API 統合やデータ取得の自動化に必須のツールです。",
+                                codeSample: "curl https://api.example.com/users\n# JSON 形式のレスポンスを取得\ncurl -X POST -d '{\"name\":\"John\"}' https://api.example.com/users\n# POST リクエストを送信",
+                                tip: "curl の出力を jq でパースすると、JSON データを見やすく整形・抽出できます"
+                            ),
+                            ConceptSection(
+                                heading: "curl の基本的な使用方法",
+                                body: "• curl URL: GET リクエストでページを取得\n• curl -X POST URL: POST リクエストを送信\n• curl -d 'data' URL: ボディデータを送信\n• curl -H 'Header: value' URL: ヘッダーを指定\n• curl -o file.txt URL: ファイルに保存\n• curl -i URL: レスポンスヘッダーも表示\n\n出力をパイプして jq に渡すことで、JSON の整形・フィルタリングができます。",
+                                codeSample: "curl https://api.example.com/data | jq '.users[]'",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "curl - API データ取得クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "外部 API からユーザー情報を取得する必要があります。",
+                        prompt: "https://api.example.com/users から JSON データを取得するコマンドは？",
+                        hint: "curl https://api.example.com/users でデータを取得できます。",
+                        answer: "curl",
+                        options: [
+                            CommandOption(label: "curl", command: "curl", icon: "arrow.down.doc"),
+                            CommandOption(label: "wget", command: "wget", icon: "arrow.down.circle"),
+                            CommandOption(label: "ssh", command: "ssh", icon: "network"),
+                        ],
+                        simulatedOutput: "{\"users\":[{\"id\":1,\"name\":\"Alice\"},{\"id\":2,\"name\":\"Bob\"}]}",
+                        successMessage: "✅ API からデータが取得されました"
+                    ))
+                ),
                 Lesson(
                     title: "ネットワークコマンド実践",
                     emoji: "🌐",
@@ -592,6 +1027,28 @@ let expertCourse1 = Course(
             title: "ユーザーとグループの基礎",
             summary: "useradd, groupadd, id, su, sudo の実践",
             lessons: [
+                Lesson(
+                    title: "ユーザーとグループの概念",
+                    emoji: "👥",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "Linux のマルチユーザー構造を理解",
+                        sections: [
+                            ConceptSection(
+                                heading: "ユーザーとグループの役割",
+                                body: "Linux はマルチユーザー・マルチタスク OS です。複数のユーザーが同時にシステムを利用できます。\n\n各ユーザーには：\n• UID（ユーザーID）: ユーザーを一意に識別する数値\n• GID（グループID）: ユーザーが属するグループの識別番号\n• ホームディレクトリ: ユーザー専用のファイル保存領域\n\nグループにより、複数ユーザーでのファイル共有や権限管理が容易になります。",
+                                codeSample: "id\n# uid=1000(user) gid=1000(user) groups=1000(user),4(adm)",
+                                tip: "UID 0 は root（スーパーユーザー）で、管理者権限を持ちます"
+                            ),
+                            ConceptSection(
+                                heading: "ユーザー・グループ管理コマンド",
+                                body: "• useradd: ユーザー作成\n• usermod: ユーザー情報修正\n• userdel: ユーザー削除\n• groupadd: グループ作成\n• groupdel: グループ削除\n• id: 現在のユーザーID・グループID確認\n• whoami: 現在のユーザー名確認\n• su: ユーザー切り替え\n• sudo: 管理者権限でコマンド実行",
+                                codeSample: "sudo useradd -m newuser\n# -m: ホームディレクトリを作成\nsudo usermod -aG sudo newuser\n# -a: 既存グループに追加\n# -G: グループを指定",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
                 Lesson(
                     title: "ユーザー情報の確認",
                     emoji: "🔍",
@@ -776,6 +1233,28 @@ let expertCourse2 = Course(
             summary: "systemctl でサービスを制御",
             lessons: [
                 Lesson(
+                    title: "systemd とサービスの基本",
+                    emoji: "⚙️",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "Linux サービスの生命サイクル管理",
+                        sections: [
+                            ConceptSection(
+                                heading: "systemd とは",
+                                body: "systemd はモダンな Linux 初期化システムで、システム起動時にサービスを管理し、実行時にもサービス制御を行います。\n\n従来の SysVinit に代わり、並列起動による高速ブート、サービス間の依存関係管理、自動再起動などの機能を提供します。ほぼ全ての現代的な Linux ディストリビューションで標準採用されています。",
+                                codeSample: "systemctl status nginx\n# サービスの状態確認\nsystemctl start nginx\n# サービス開始",
+                                tip: "systemctl は /etc/systemd/system/ のユニットファイルを読み込んでサービスを管理します"
+                            ),
+                            ConceptSection(
+                                heading: "主要な systemctl コマンド",
+                                body: "• systemctl start サービス名: サービスを開始\n• systemctl stop サービス名: サービスを停止\n• systemctl restart サービス名: サービスを再起動\n• systemctl reload サービス名: 設定を再読み込み\n• systemctl status サービス名: サービスの状態確認\n• systemctl enable サービス名: 起動時に自動実行\n• systemctl disable サービス名: 自動実行を無効化\n• systemctl list-units --type=service: 全サービスリスト",
+                                codeSample: "sudo systemctl enable nginx\n# 起動時に nginx を自動実行\nsudo systemctl reload nginx\n# 設定変更後に再読み込み",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
                     title: "systemctl コマンドの実践",
                     emoji: "🔧",
                     estimatedMinutes: 12,
@@ -867,6 +1346,28 @@ let expertCourse3 = Course(
             summary: "ip, ifconfig, ping, hostname などを使いこなす",
             lessons: [
                 Lesson(
+                    title: "ネットワークの基本概念",
+                    emoji: "🌐",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "Linux ネットワーク設定を理解する",
+                        sections: [
+                            ConceptSection(
+                                heading: "ネットワークインターフェース",
+                                body: "Linux では、各ネットワークインターフェース（NIC）に IP アドレス、サブネットマスク、ゲートウェイなどの設定が必要です。\n\n• eth0, eth1: 有線ネットワークインターフェース（Ethernet）\n• lo: ループバックインターフェース（localhost, 127.0.0.1）\n• IPv4: 従来のインターネットプロトコル（例: 192.168.1.100）\n• IPv6: 次世代プロトコル（例: fe80::1）\n\nネットワーク診断では、IP アドレス、ルーティング情報、開放ポートなどを確認します。",
+                                codeSample: "ip addr show\n# 全ネットワークインターフェースと IP アドレス確認\nip route show\n# ルーティング情報確認",
+                                tip: "ip コマンドが最新の推奨方式。ifconfig は古いコマンドで、いくつかのディストリビューションでは非推奨"
+                            ),
+                            ConceptSection(
+                                heading: "ネットワーク診断コマンド",
+                                body: "• ping: ホストの疎通確認（ICMP エコー）\n• traceroute: ネットワーク経路の可視化\n• netstat/ss: ネットワークソケットの接続状態確認\n• nslookup/dig: DNS 名前解決確認\n• curl/wget: HTTP 通信テスト\n• iptables/ufw: ファイアウォール設定\n\n自サーバーに SSH で接続できない場合：\n1. ping でネットワーク接続確認\n2. netstat で SSH ポート確認\n3. ファイアウォール設定確認",
+                                codeSample: "ping -c 4 8.8.8.8\ntraceroute example.com\nnetstat -tuln | grep LISTEN",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
                     title: "ネットワークインターフェース確認",
                     emoji: "🖧",
                     estimatedMinutes: 10,
@@ -936,6 +1437,28 @@ let expertCourse3 = Course(
             title: "ストレージとログ管理",
             summary: "df, du, mount, journalctl を使いこなす",
             lessons: [
+                Lesson(
+                    title: "ディスクとログ管理の基礎",
+                    emoji: "📝",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "ストレージとログでシステムを監視管理する",
+                        sections: [
+                            ConceptSection(
+                                heading: "ディスク使用量の管理",
+                                body: "Linux システムでは、ディスク容量が満杯になるとシステム停止につながる深刻な障害になります。定期的な監視と不要なファイルの削除が重要です。\n\n• df: ファイルシステムの容量表示（全体的な状況）\n• du: ディレクトリのサイズ表示（詳細な容量確認）\n• mount: ファイルシステムのマウント状態確認\n\nディスクを圧迫している要因：\n• ログファイルの肥大化\n• キャッシュの蓄積\n• 古いバックアップファイル\n• テンポラリファイル",
+                                codeSample: "df -h\n# 全ファイルシステムの容量確認（人間が読みやすいフォーマット）\ndu -sh /var/log\n# /var/log ディレクトリのサイズ確認",
+                                tip: "-h オプションは \"human-readable\" の意で、容量を GB、MB で表示します"
+                            ),
+                            ConceptSection(
+                                heading: "ログ管理とシステム監視",
+                                body: "• journalctl: systemd ジャーナルの確認（最新のディストリビューション）\n• tail -f: ログファイルのリアルタイム監視\n• logrotate: ログファイルの自動ローテーション（古いログを圧縮・削除）\n• /var/log: システムログの標準保存場所\n\nログ分析の例：\n• エラーログ: アプリケーションの問題検出\n• アクセスログ: セキュリティ監視\n• システムログ: 起動シーケンス、デバイス情報\n\nLogrotate により、ログファイルが自動的に古い順に削除され、容量爆発を防ぎます。",
+                                codeSample: "journalctl -u nginx\n# nginx サービスのジャーナル確認\ntail -f /var/log/syslog\n# システムログをリアルタイム監視",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
                 Lesson(
                     title: "ディスク容量の管理",
                     emoji: "💾",
@@ -1045,6 +1568,28 @@ let expertCourse4 = Course(
             title: "プロセスの確認と制御",
             summary: "ps, top, kill でプロセスを管理",
             lessons: [
+                Lesson(
+                    title: "プロセス管理の基礎",
+                    emoji: "⚙️",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "Linux のプロセスと実行管理",
+                        sections: [
+                            ConceptSection(
+                                heading: "プロセスとは",
+                                body: "プロセスは、実行中のプログラムのインスタンスです。各プロセスには：\n\n• PID（プロセスID）: プロセスを一意に識別する数値\n• PPID（親プロセスID）: プロセスを起動した親プロセスの ID\n• UID/GID: プロセスを実行しているユーザーとグループ\n• 状態: Running（実行中）、Sleeping（待機中）、Zombie（終了待ち）など\n\nシステム上では多数のプロセスが同時実行され、CPU がタイムスライスで各プロセスに機会を提供（マルチタスキング）します。",
+                                codeSample: "ps aux\n# 全プロセスをリスト表示\ntop\n# CPU、メモリ使用率でリアルタイム監視",
+                                tip: "初期化プロセス（PID 1）がシステムの最初のプロセスで、他の全プロセスの祖先です"
+                            ),
+                            ConceptSection(
+                                heading: "プロセス管理コマンド",
+                                body: "• ps: プロセスのスナップショット表示\n• top: リアルタイムプロセス監視\n• kill: プロセスにシグナルを送信\n• bg/fg: バックグラウンド/フォアグラウンドで実行\n• jobs: シェルのジョブリスト表示\n\nシグナルの種類：\n• SIGTERM（-15）: 正常終了要求（プロセスがキャッチ可能）\n• SIGKILL（-9）: 強制終了（プロセスがキャッチ不可）\n• SIGSTOP（-19）: 一時停止\n• SIGCONT（-18）: 再開\n\n手順：まず SIGTERM で正常終了を試み、応答なければ SIGKILL で強制終了します。",
+                                codeSample: "kill -15 1234\n# PID 1234 に終了シグナル\nkillall java\n# プロセス名を指定して全インスタンス終了",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
                 Lesson(
                     title: "実行中のプロセス確認",
                     emoji: "🏃",
