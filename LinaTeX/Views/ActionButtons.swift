@@ -283,7 +283,7 @@ struct CommandButton: View {
                         .font(ModernFont.codeSmall)
                         .foregroundColor(ModernTheme.textPrimary)
                         .lineLimit(1)
-                    if let systemImage = option.icon, systemImage != "circle" {
+                    if option.icon != "circle" {
                         HStack(spacing: 4) {
                             Image(systemName: option.icon)
                                 .font(.system(size: 9, weight: .semibold))

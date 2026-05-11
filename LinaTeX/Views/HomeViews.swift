@@ -74,18 +74,6 @@ struct HomeView: View {
                     .shadow(color: ModernTheme.secondary.opacity(0.2), radius: 12, x: 0, y: 4)
                     .padding(.horizontal, 16)
 
-                    // MARK: - AI Recommendation
-                    PersonalizedRecommendationView(vm: vm) { lesson in
-                        if let course = vm.courses.first(where: { course in
-                            course.chapters.contains { chapter in
-                                chapter.lessons.contains { $0.id == lesson.id }
-                            }
-                        }) {
-                            vm.navigateToLesson(lesson, in: course)
-                        }
-                    }
-                    .padding(.horizontal, 16)
-
                     // MARK: - Courses Section
                     VStack(alignment: .leading, spacing: 10) {
                         HStack {
