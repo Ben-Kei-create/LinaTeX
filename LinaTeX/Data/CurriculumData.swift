@@ -1535,6 +1535,37 @@ let expertCourse2 = Course(
                         finaleMessage: "✅ パッケージ管理のプロ！"
                     ))
                 ),
+                Lesson(
+                    title: "パッケージ管理の深掘りテスト",
+                    emoji: "📦",
+                    estimatedMinutes: 10,
+                    content: .quiz(QuizLesson(questions: [
+                        QuizQuestion(
+                            question: "sudo apt update を実行したのにパッケージがまだ古いバージョンでした。次に実行すべきコマンドは？",
+                            choices: ["sudo apt upgrade", "sudo apt install --refresh", "sudo apt sync", "sudo apt reload"],
+                            correctIndex: 0,
+                            explanation: "apt update はパッケージリスト（利用可能なバージョン情報）を更新するだけで、実際のパッケージはアップグレードしません。インストール済みパッケージを新バージョンに更新するには apt upgrade が必要です。update → upgrade の順序は基本中の基本です。"
+                        ),
+                        QuizQuestion(
+                            question: "apt remove nginx でパッケージを削除したが、/etc/nginx に設定ファイルが残っていた。設定ファイルも含めて完全削除するには？",
+                            choices: ["apt purge nginx", "apt remove --all nginx", "dpkg --delete nginx", "apt clean nginx"],
+                            correctIndex: 0,
+                            explanation: "apt remove はバイナリのみ削除し、設定ファイルは保持します。apt purge はパッケージと設定ファイルを両方削除します。再インストール時に設定を引き継ぎたいなら remove、クリーンな再設定をしたいなら purge を選びます。"
+                        ),
+                        QuizQuestion(
+                            question: "dpkg -l の出力で先頭列が 'rc' と表示されているパッケージの状態は？",
+                            choices: ["パッケージは削除済みだが設定ファイルが残っている", "正常にインストール済み", "インストールに失敗した", "インストール保留中"],
+                            correctIndex: 0,
+                            explanation: "dpkg -l の状態フラグは2文字で表されます。'ii' = 正常インストール済み、'rc' = removed（削除済み）+ config-files（設定ファイル残存）を意味します。apt purge で設定ファイルごと削除するか、apt install で再インストールする判断に使います。"
+                        ),
+                        QuizQuestion(
+                            question: "apt install python3 で「E: Unable to locate package python3」エラーが出た。最初にすべき対処は？",
+                            choices: ["sudo apt update を実行してパッケージリストを更新する", "sudo apt upgrade を実行する", "/etc/apt/sources.list を削除して再作成する", "dpkg --configure -a を実行する"],
+                            correctIndex: 0,
+                            explanation: "「Unable to locate package」はローカルのパッケージリストにそのパッケージが見つからないことを意味します。apt update でリポジトリサーバーから最新リストを取得すれば解決することが多いです。インターネット接続の問題なら apt update 自体が失敗するので次の手順で判別できます。"
+                        ),
+                    ]))
+                ),
             ]
         ),
         Chapter(
@@ -1755,6 +1786,37 @@ let expertCourse3 = Course(
                         finaleMessage: "✅ ネットワーク診断のマスター！"
                     ))
                 ),
+                Lesson(
+                    title: "ネットワーク・トラブルシューティング深掘りテスト",
+                    emoji: "🌐",
+                    estimatedMinutes: 10,
+                    content: .quiz(QuizLesson(questions: [
+                        QuizQuestion(
+                            question: "netstat -tuln の各オプションの意味として正しいのは？",
+                            choices: ["-t: TCP, -u: UDP, -l: LISTEN状態のみ, -n: 数値形式（名前解決しない）", "-t: TCP, -u: UDP, -l: ローカルアドレス, -n: 通常モード", "-t: タイムアウト, -u: UDP, -l: LISTEN, -n: 数値", "-t: TCPのみ, -u: ユーザー空間, -l: ログ出力, -n: 最新順"],
+                            correctIndex: 0,
+                            explanation: "netstat -tuln は最も頻出の組み合わせです。-t(TCP) -u(UDP) でプロトコルを絞り、-l で LISTEN 中のポートのみ表示、-n で名前解決をスキップして数値で高速表示します。サービスが特定ポートで待ち受けているか確認する定番コマンドです。"
+                        ),
+                        QuizQuestion(
+                            question: "ip addr show の出力に 'lo' インターフェース（127.0.0.1/8）が表示されています。このインターフェースの役割は？",
+                            choices: ["ループバック。同一ホスト内のプロセス間通信に使われ、外部ネットワークには出ない", "ローカルエリアネットワーク接続用の物理インターフェース", "VPN接続用の仮想インターフェース", "IPv6専用のインターフェース"],
+                            correctIndex: 0,
+                            explanation: "lo（ループバック）インターフェースは 127.0.0.1 に割り当てられ、パケットがNICを経由せず同一ホスト内で折り返します。データベースサーバーが 127.0.0.1 のみでリッスンしている場合、外部からはアクセスできず、同一サーバー上のアプリケーションのみが接続できます。"
+                        ),
+                        QuizQuestion(
+                            question: "ping 8.8.8.8 は成功するが ping google.com が失敗する。最も考えられる原因は？",
+                            choices: ["DNS解決の失敗（/etc/resolv.conf の設定問題）", "ファイアウォールがICMPをブロックしている", "ネットワークインターフェースが停止している", "デフォルトゲートウェイが設定されていない"],
+                            correctIndex: 0,
+                            explanation: "IPアドレス直打ちは成功してドメイン名が失敗するのは DNS の問題です。/etc/resolv.conf の nameserver 設定、または DNS サーバーへの到達性を確認します。ゲートウェイ問題なら IP アドレス直打ちも失敗します。これはネットワーク障害の切り分けで必須の知識です。"
+                        ),
+                        QuizQuestion(
+                            question: "/etc/hosts ファイルに '192.168.1.100 myserver' と記述されています。この設定の効果は？",
+                            choices: ["myserver という名前を DNS より優先して 192.168.1.100 に解決する", "192.168.1.100 からのアクセスを myserver ユーザーに制限する", "myserver というホスト名のSSH接続設定を行う", "myserver へのルーティングを追加する"],
+                            correctIndex: 0,
+                            explanation: "/etc/hosts は DNS より先に参照されるローカルの名前解決ファイルです。テスト環境でのホスト名解決、DNS が使えない環境での代替、あるいは本番DNSを変更せずに特定のホストの向き先を変えるのに使います。LinuC/LPIC 試験の定番知識です。"
+                        ),
+                    ]))
+                ),
             ]
         ),
         Chapter(
@@ -1873,6 +1935,37 @@ let expertCourse3 = Course(
                         ],
                         finaleMessage: "✅ ログ分析のプロになりました！"
                     ))
+                ),
+                Lesson(
+                    title: "ストレージ・ログ管理の深掘りテスト",
+                    emoji: "💾",
+                    estimatedMinutes: 10,
+                    content: .quiz(QuizLesson(questions: [
+                        QuizQuestion(
+                            question: "df -h と du -sh /home の値が大きく異なります（df は 80% 使用中、du は合計 20GB 程度）。この乖離の最もありえる原因は？",
+                            choices: ["削除されたがプロセスがオープンし続けているファイルがある", "du の計算にバグがある", "df のキャッシュが古い", "/home 以外のファイルシステムを df が含めていない"],
+                            correctIndex: 0,
+                            explanation: "Linux でファイルを削除しても、プロセスがそのファイルのファイルディスクリプタを開いたままにしていると、inode と領域は解放されません。df（ファイルシステム使用量）には現れるが du（ディレクトリツリーの合計）には現れないという乖離が生じます。lsof | grep deleted で確認できます。"
+                        ),
+                        QuizQuestion(
+                            question: "journalctl -p err -S '2024-01-01' -U '2024-01-31' コマンドの説明として正しいのは？",
+                            choices: ["2024年1月中のエラー以上のログのみを表示する", "2024年1月1日からのすべてのログを削除する", "エラーログをファイルにエクスポートする", "2024年1月のログをアーカイブする"],
+                            correctIndex: 0,
+                            explanation: "-p err はプライオリティがerr以上（err, crit, alert, emerg）のログのみ表示、-S(--since) と -U(--until) で期間絞り込みです。journalctl は強力なフィルタリング機能を持ち、LinuC/LPIC のログ管理問題で頻出の組み合わせです。"
+                        ),
+                        QuizQuestion(
+                            question: "ルートパーティションのディスク使用率が 100% になりました。サービスを停止せずに緊急でディスク容量を確保する最善の方法は？",
+                            choices: ["journalctl --vacuum-size=100M でジャーナルを圧縮・削除する", "rm -rf /usr でシステムファイルを削除する", "すべてのプロセスを強制終了する", "再起動してキャッシュをクリアする"],
+                            correctIndex: 0,
+                            explanation: "journalctl --vacuum-size=100M はジャーナルログを指定サイズ以内に圧縮・削除します。安全にディスクを開放できる標準的な手法です。また apt clean（apt キャッシュ削除）、find /tmp -mtime +1 -delete（古い一時ファイル削除）も有効です。/usr 削除はシステム破壊になります。"
+                        ),
+                        QuizQuestion(
+                            question: "logrotate の主な役割として正しいのは？",
+                            choices: ["古いログファイルを自動的に圧縮・削除し、新しいログファイルを作成するローテーション管理", "ログをリアルタイムでリモートサーバーに転送する", "ログの内容を解析してアラートを送信する", "ログファイルの暗号化を行う"],
+                            correctIndex: 0,
+                            explanation: "logrotate は /etc/logrotate.conf と /etc/logrotate.d/ の設定に基づき、ログファイルを定期的にローテーションします。古いファイルを連番で保持（例: syslog.1, syslog.2.gz）し、指定世代以上を削除します。これにより /var/log の肥大化を防ぎます。cron から定期実行されます。"
+                        ),
+                    ]))
                 ),
             ]
         ),
