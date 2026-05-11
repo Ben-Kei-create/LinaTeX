@@ -276,11 +276,10 @@ class RecommendationEngine {
 
         // 弱点トピックがある場合、優先的に推奨
         if !profile.weakTopics.isEmpty {
-            let weakTopic = profile.weakTopics.first ?? "基本"
             let lessons = AdaptivePathGenerator.generateNextLessons(vm, count: 1)
 
             return PersonalizedRecommendation(
-                title: "REVIEW \(weakTopic)",
+                title: "復習おすすめ",
                 reason: "成功率が低い分野です。今が習得のチャンス！",
                 lessons: lessons,
                 priority: 1
