@@ -109,6 +109,10 @@ struct HomeView: View {
                         }
                     }
 
+                    LinaTeXProAdBanner()
+                        .padding(.horizontal, 16)
+                        .padding(.top, 2)
+
                     Spacer(minLength: 24)
                 }
             }

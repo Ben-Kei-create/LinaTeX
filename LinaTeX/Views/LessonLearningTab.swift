@@ -36,46 +36,25 @@ struct LessonLearningTabView: View {
             case .scenario(let scenario):
                 VStack(alignment: .leading, spacing: 14) {
                     LearningSectionCard(
-                        title: "シナリオ",
-                        icon: "doc.text.fill",
+                        title: "学習ポイント",
+                        icon: "book.closed.fill",
                         color: course.level.modernColor
                     ) {
-                        Text(scenario.setup)
+                        Text("このレッスンでは、状況を読み取り、目的に合うコマンドを段階的に選ぶ練習をします。問題では具体的なファイル名や対象が出るため、ここではコマンドの役割を先に確認します。")
                             .font(ModernFont.bodyMedium)
                             .foregroundColor(ModernTheme.textPrimary)
                             .lineSpacing(6)
                     }
 
                     LearningSectionCard(
-                        title: "目標",
-                        icon: "target",
+                        title: "使うコマンド",
+                        icon: "terminal.fill",
                         color: ModernTheme.success
                     ) {
-                        Text(scenario.goal)
-                            .font(ModernFont.bodyMedium)
-                            .foregroundColor(ModernTheme.textPrimary)
-                            .lineSpacing(6)
-                    }
-
-                    LearningSectionCard(
-                        title: "ステップ概要",
-                        icon: "list.number",
-                        color: ModernTheme.secondary
-                    ) {
-                        VStack(alignment: .leading, spacing: 10) {
-                            ForEach(Array(scenario.steps.enumerated()), id: \.offset) { index, step in
-                                HStack(alignment: .top, spacing: 10) {
-                                    Text("\(index + 1)")
-                                        .font(ModernFont.labelLarge)
-                                        .foregroundColor(.white)
-                                        .frame(width: 24, height: 24)
-                                        .background(Circle().fill(course.level.modernColor))
-                                    Text(step.prompt)
-                                        .font(ModernFont.bodyMedium)
-                                        .foregroundColor(ModernTheme.textPrimary)
-                                }
-                            }
-                        }
+                        CommandReferenceList(
+                            commands: uniqueLearningCommands(scenario.steps.map(\.answer)),
+                            color: course.level.modernColor
+                        )
                     }
                 }
                 .padding(.horizontal, 20)
@@ -83,25 +62,25 @@ struct LessonLearningTabView: View {
             case .quest(let quest):
                 VStack(alignment: .leading, spacing: 14) {
                     LearningSectionCard(
-                        title: "状況",
-                        icon: "doc.text.fill",
+                        title: "学習ポイント",
+                        icon: "book.closed.fill",
                         color: course.level.modernColor
                     ) {
-                        Text(quest.scenario)
+                        Text("問題では、目的に合うコマンドを選んでターミナルに送ります。学習では先にコマンドの意味を押さえ、問題側では具体的な問いだけに集中します。")
                             .font(ModernFont.bodyMedium)
                             .foregroundColor(ModernTheme.textPrimary)
                             .lineSpacing(6)
                     }
 
                     LearningSectionCard(
-                        title: "あなたの任務",
-                        icon: "flag.fill",
+                        title: "今回のコマンド",
+                        icon: "terminal.fill",
                         color: ModernTheme.success
                     ) {
-                        Text(quest.prompt)
-                            .font(ModernFont.bodyMedium)
-                            .foregroundColor(ModernTheme.textPrimary)
-                            .lineSpacing(6)
+                        CommandReferenceList(
+                            commands: uniqueLearningCommands([quest.answer]),
+                            color: course.level.modernColor
+                        )
                     }
                 }
                 .padding(.horizontal, 20)
@@ -173,5 +152,115 @@ struct LearningSectionCard<Content: View>: View {
                 .stroke(ModernTheme.border, lineWidth: 1)
         )
         .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
+    }
+}
+
+// MARK: - Command Learning References
+
+private struct CommandLearningPoint {
+    let command: String
+    let title: String
+    let description: String
+}
+
+private func uniqueLearningCommands(_ commands: [String]) -> [String] {
+    var seen: Set<String> = []
+    var result: [String] = []
+
+    for command in commands.map(commandLearningKey) where !command.isEmpty {
+        if !seen.contains(command) {
+            seen.insert(command)
+            result.append(command)
+        }
+    }
+
+    return result
+}
+
+private func commandLearningKey(_ rawCommand: String) -> String {
+    let normalized = normalizedCommandLine(rawCommand)
+    if normalized.hasPrefix("./") {
+        return "./script"
+    }
+    return normalized.split(separator: " ").first.map(String.init) ?? normalized
+}
+
+private func commandLearningPoint(for command: String) -> CommandLearningPoint {
+    switch command {
+    case "pwd":
+        return CommandLearningPoint(command: command, title: "現在地を確認", description: "いま作業しているディレクトリのパスを表示します。")
+    case "ls":
+        return CommandLearningPoint(command: command, title: "一覧を表示", description: "ファイルやフォルダの名前を確認します。")
+    case "cd":
+        return CommandLearningPoint(command: command, title: "場所を移動", description: "作業するディレクトリを切り替えます。")
+    case "cp":
+        return CommandLearningPoint(command: command, title: "コピー", description: "元のファイルを残したまま、別名や別の場所へ複製します。")
+    case "mv":
+        return CommandLearningPoint(command: command, title: "移動・名前変更", description: "ファイルを別の場所へ移す、または名前を変えるときに使います。")
+    case "rm":
+        return CommandLearningPoint(command: command, title: "削除", description: "不要になったファイルを消します。対象を慎重に確認してから使います。")
+    case "cat":
+        return CommandLearningPoint(command: command, title: "内容を表示", description: "短いテキストファイルの中身をターミナルへ出力します。")
+    case "grep":
+        return CommandLearningPoint(command: command, title: "検索", description: "テキストの中から条件に合う行を探します。")
+    case "wc":
+        return CommandLearningPoint(command: command, title: "数える", description: "行数、単語数、バイト数などを集計します。")
+    case "chmod":
+        return CommandLearningPoint(command: command, title: "権限を変更", description: "ファイルを読める人、書ける人、実行できる人を設定します。")
+    case "touch":
+        return CommandLearningPoint(command: command, title: "ファイルを作成", description: "空のファイルを作る、または更新時刻を変更します。")
+    case "./script":
+        return CommandLearningPoint(command: "./script", title: "スクリプトを実行", description: "実行権限のあるスクリプトを現在の場所から起動します。")
+    case "ssh":
+        return CommandLearningPoint(command: command, title: "遠隔接続", description: "リモートサーバーへ安全にログインして操作します。")
+    case "curl":
+        return CommandLearningPoint(command: command, title: "データ取得", description: "URLやAPIからデータを取得します。")
+    case "jq":
+        return CommandLearningPoint(command: command, title: "JSON整形", description: "JSONデータを読みやすく整形したり、必要な値を取り出したりします。")
+    default:
+        return CommandLearningPoint(command: command, title: "コマンドの役割", description: "問題の目的に合わせて、入力するコマンドを選びます。")
+    }
+}
+
+private struct CommandReferenceList: View {
+    let commands: [String]
+    let color: Color
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ForEach(commands, id: \.self) { command in
+                CommandReferenceRow(point: commandLearningPoint(for: command), color: color)
+            }
+        }
+    }
+}
+
+private struct CommandReferenceRow: View {
+    let point: CommandLearningPoint
+    let color: Color
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Text(point.command)
+                .font(ModernFont.codeMedium)
+                .foregroundColor(color)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(color.opacity(0.10))
+                )
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(point.title)
+                    .font(ModernFont.bodyEmphasizedSmall)
+                    .foregroundColor(ModernTheme.textPrimary)
+                Text(point.description)
+                    .font(ModernFont.bodySmall)
+                    .foregroundColor(ModernTheme.textSecondary)
+                    .lineSpacing(3)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

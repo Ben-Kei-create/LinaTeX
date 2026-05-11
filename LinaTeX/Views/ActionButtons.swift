@@ -68,58 +68,188 @@ struct PrimaryActionButton: View {
     }
 }
 
-// MARK: - Hint Block
+// MARK: - Shared Ad Banner
 
-struct HintBlock: View {
-    let text: String
-    let isShown: Bool
-    let toggle: () -> Void
+struct LinaTeXProAdBanner: View {
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(ModernTheme.warning)
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text("LinaTeX Pro")
+                    .font(ModernFont.labelSmall)
+                    .foregroundColor(ModernTheme.textPrimary)
+                Text("広告")
+                    .font(ModernFont.captionSmall)
+                    .foregroundColor(ModernTheme.textTertiary)
+            }
+
+            Spacer()
+
+            Image(systemName: "xmark")
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundColor(ModernTheme.textTertiary)
+        }
+        .padding(.horizontal, 11)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(ModernTheme.warningSoft.opacity(0.3))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(ModernTheme.warning.opacity(0.15), lineWidth: 0.5)
+        )
+    }
+}
+
+// MARK: - Problem Presentation
+
+struct ProblemInstructionCard<Content: View>: View {
+    let title: String
+    let icon: String
+    let color: Color
+    var badge: String?
+    @ViewBuilder let content: () -> Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Button(action: toggle) {
-                HStack(spacing: 6) {
-                    Image(systemName: isShown ? "lightbulb.fill" : "lightbulb")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(ModernTheme.warning)
-                    Text(isShown ? "隠す" : "ヒント")
-                        .font(ModernFont.labelMedium)
-                        .foregroundColor(ModernTheme.textPrimary)
-                    Spacer()
-                    Image(systemName: isShown ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundColor(ModernTheme.textTertiary)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 9)
+                        .fill(color.opacity(0.12))
+                        .frame(width: 34, height: 34)
+                    Image(systemName: icon)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(color)
                 }
-                .padding(10)
+
+                Text(title)
+                    .font(ModernFont.headlineSmall)
+                    .foregroundColor(ModernTheme.textPrimary)
+
+                Spacer()
+
+                if let badge {
+                    Text(badge)
+                        .font(ModernFont.labelSmall)
+                        .foregroundColor(color)
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 4)
+                        .background(Capsule().fill(color.opacity(0.12)))
+                }
             }
 
-            if isShown {
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "info.circle.fill")
-                        .foregroundColor(ModernTheme.warning)
-                        .font(.system(size: 12))
-                    Text(text)
-                        .font(ModernFont.bodySmall)
-                        .foregroundColor(ModernTheme.textPrimary)
-                        .lineSpacing(2)
-                }
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    Rectangle().fill(ModernTheme.warningSoft.opacity(0.3))
-                )
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
+            content()
         }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: 16)
                 .fill(ModernTheme.bgCard)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(ModernTheme.warning.opacity(0.2), lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(ModernTheme.border, lineWidth: 1)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            Rectangle()
+                .fill(color)
+                .frame(width: 4),
+            alignment: .leading
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
+    }
+}
+
+struct CommandChoiceSection: View {
+    let title: String
+    var subtitle: String?
+    let options: [CommandOption]
+    let selectedCommand: String
+    let accentColor: Color
+    let isDisabled: Bool
+    let action: (CommandOption) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(ModernFont.labelMedium)
+                    .foregroundColor(ModernTheme.textSecondary)
+                if let subtitle {
+                    Text(subtitle)
+                        .font(ModernFont.captionSmall)
+                        .foregroundColor(ModernTheme.textTertiary)
+                }
+            }
+
+            VStack(spacing: 8) {
+                ForEach(options) { option in
+                    CommandButton(
+                        option: option,
+                        accentColor: accentColor,
+                        isSelected: selectedCommand == option.command,
+                        isDisabled: isDisabled
+                    ) {
+                        action(option)
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct ArgumentChoiceSection: View {
+    let title: String
+    let arguments: [String]
+    let selectedArgument: String?
+    let accentColor: Color
+    let isDisabled: Bool
+    let action: (String) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title)
+                .font(ModernFont.labelMedium)
+                .foregroundColor(ModernTheme.textSecondary)
+
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 112), spacing: 8)], alignment: .leading, spacing: 8) {
+                ForEach(arguments, id: \.self) { argument in
+                    Button {
+                        action(argument)
+                    } label: {
+                        HStack(spacing: 7) {
+                            Image(systemName: selectedArgument == argument ? "checkmark.circle.fill" : "circle")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(selectedArgument == argument ? accentColor : ModernTheme.textTertiary)
+                            Text(argument)
+                                .font(ModernFont.codeSmall)
+                                .foregroundColor(ModernTheme.textPrimary)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.82)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 11)
+                    .padding(.vertical, 9)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(selectedArgument == argument ? accentColor.opacity(0.06) : ModernTheme.bgSubtle)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(selectedArgument == argument ? accentColor : ModernTheme.border, lineWidth: selectedArgument == argument ? 1.2 : 0.5)
+                    )
+                    .disabled(isDisabled)
+                    .opacity(isDisabled ? 0.5 : 1.0)
+                }
+            }
+        }
     }
 }
 
@@ -170,5 +300,117 @@ struct CommandButton: View {
         .buttonStyle(.plain)
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.5 : 1.0)
+    }
+}
+
+// MARK: - Quiz Choice Button
+
+struct QuizChoiceButton: View {
+    let prefix: String
+    let text: String
+    let accentColor: Color
+    let isSelected: Bool
+    let isCorrectAnswer: Bool
+    let isAnswered: Bool
+    let isDisabled: Bool
+    let action: () -> Void
+
+    private var borderColor: Color {
+        if isAnswered && isCorrectAnswer { return ModernTheme.success }
+        if isAnswered && isSelected { return ModernTheme.danger }
+        if isSelected { return accentColor }
+        return ModernTheme.border
+    }
+
+    private var fillColor: Color {
+        if isAnswered && isCorrectAnswer { return ModernTheme.successSoft.opacity(0.55) }
+        if isAnswered && isSelected { return ModernTheme.dangerSoft.opacity(0.55) }
+        if isSelected { return accentColor.opacity(0.06) }
+        return ModernTheme.bgSubtle
+    }
+
+    private var prefixColor: Color {
+        if isAnswered && isCorrectAnswer { return ModernTheme.success }
+        if isAnswered && isSelected { return ModernTheme.danger }
+        if isSelected { return accentColor }
+        return ModernTheme.textTertiary
+    }
+
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .center, spacing: 10) {
+                Text(prefix)
+                    .font(ModernFont.labelMedium)
+                    .foregroundColor(prefixColor)
+                    .frame(width: 28, height: 28)
+                    .background(Circle().fill(prefixColor.opacity(0.12)))
+
+                Text(text)
+                    .font(ModernFont.bodyMedium)
+                    .foregroundColor(ModernTheme.textPrimary)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(3)
+                    .minimumScaleFactor(0.86)
+
+                Spacer(minLength: 8)
+
+                if isAnswered {
+                    Image(systemName: isCorrectAnswer ? "checkmark.circle.fill" : (isSelected ? "xmark.circle.fill" : "circle"))
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(isCorrectAnswer ? ModernTheme.success : (isSelected ? ModernTheme.danger : ModernTheme.textMuted))
+                } else {
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(isSelected ? accentColor : ModernTheme.textTertiary)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 11)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(fillColor)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(borderColor, lineWidth: isSelected || (isAnswered && isCorrectAnswer) ? 1.2 : 0.5)
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
+        .opacity(isDisabled && !isAnswered ? 0.55 : 1)
+    }
+}
+
+struct QuizExplanationCard: View {
+    let isCorrect: Bool
+    let explanation: String
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: isCorrect ? "checkmark.seal.fill" : "book.closed.fill")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(isCorrect ? ModernTheme.success : ModernTheme.secondary)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(isCorrect ? "正解です" : "解説")
+                    .font(ModernFont.labelLarge)
+                    .foregroundColor(ModernTheme.textPrimary)
+                Text(explanation)
+                    .font(ModernFont.bodySmall)
+                    .foregroundColor(ModernTheme.textSecondary)
+                    .lineSpacing(3)
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(isCorrect ? ModernTheme.successSoft.opacity(0.45) : ModernTheme.secondarySoft.opacity(0.45))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(isCorrect ? ModernTheme.success.opacity(0.22) : ModernTheme.secondary.opacity(0.18), lineWidth: 0.8)
+        )
     }
 }

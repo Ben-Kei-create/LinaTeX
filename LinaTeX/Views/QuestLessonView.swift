@@ -11,9 +11,8 @@ struct QuestLessonView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            // Scenario card
-            LearningSectionCard(
-                title: "シナリオ",
+            ProblemInstructionCard(
+                title: "状況",
                 icon: "quote.bubble.fill",
                 color: course.level.modernColor
             ) {
@@ -23,8 +22,7 @@ struct QuestLessonView: View {
                     .lineSpacing(5)
             }
 
-            // Prompt card
-            LearningSectionCard(
+            ProblemInstructionCard(
                 title: "問題",
                 icon: "questionmark.circle.fill",
                 color: ModernTheme.secondary
@@ -35,14 +33,6 @@ struct QuestLessonView: View {
                     .lineSpacing(5)
             }
 
-            // Hint
-            HintBlock(text: quest.hint, isShown: vm.showHint) {
-                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                    vm.showHint.toggle()
-                }
-            }
-
-            // Terminal Panel
             TerminalPanel(
                 input: vm.userInput,
                 output: vm.terminalOutput,
@@ -50,30 +40,35 @@ struct QuestLessonView: View {
                 successMessage: quest.successMessage
             )
 
-            // Command options
-            VStack(spacing: 10) {
-                Text("コマンドを選択")
-                    .font(ModernFont.labelMedium)
-                    .foregroundColor(ModernTheme.textSecondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                VStack(spacing: 8) {
-                    ForEach(quest.options) { option in
-                        CommandButton(
-                            option: option,
-                            accentColor: course.level.modernColor,
-                            isSelected: vm.userInput == option.command,
-                            isDisabled: vm.currentLessonState != .waiting
-                        ) {
-                            let impact = UIImpactFeedbackGenerator(style: .medium)
-                            impact.impactOccurred()
-                            vm.selectCommand(option)
-                        }
-                    }
-                }
+            CommandChoiceSection(
+                title: "選択肢",
+                subtitle: "答えだと思うコマンドを選んでから実行します",
+                options: quest.options,
+                selectedCommand: vm.userInput,
+                accentColor: course.level.modernColor,
+                isDisabled: vm.currentLessonState != .waiting
+            ) { option in
+                let impact = UIImpactFeedbackGenerator(style: .medium)
+                impact.impactOccurred()
+                vm.selectCommand(option)
             }
 
-            // Execute / Retry / Complete buttons
+            if vm.currentLessonState == .wrong {
+                QuizExplanationCard(
+                    isCorrect: false,
+                    explanation: "学習で確認したコマンドの役割と、今回の問題で求められている操作を照らし合わせて選び直してください。"
+                )
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+
+            if vm.currentLessonState == .correct {
+                QuizExplanationCard(
+                    isCorrect: true,
+                    explanation: quest.successMessage
+                )
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+
             HStack(spacing: 10) {
                 if vm.currentLessonState == .wrong {
                     PrimaryActionButton(

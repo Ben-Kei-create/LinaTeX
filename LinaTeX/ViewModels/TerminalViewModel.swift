@@ -35,7 +35,6 @@ class AppViewModel: ObservableObject {
     @Published var currentLessonState: LessonState = .waiting
     @Published var userInput: String = ""
     @Published var terminalOutput: String = ""
-    @Published var showHint: Bool = false
     @Published var isTyping: Bool = false
     private var typingSessionID = UUID()
     private var isNavigationLocked = false
@@ -129,7 +128,7 @@ class AppViewModel: ObservableObject {
             addXP(50)
         } else {
             currentLessonState = .wrong
-            terminalOutput = "bash: command not found: \(trimmed)"
+            terminalOutput = "この問題の答えとは違います: \(trimmed)"
         }
     }
 
@@ -147,7 +146,7 @@ class AppViewModel: ObservableObject {
             addXP(30)
         } else {
             currentLessonState = .wrong
-            terminalOutput = "bash: command not found: \(trimmed)"
+            terminalOutput = "この手順の答えとは違います: \(trimmed)"
         }
     }
 
@@ -196,7 +195,6 @@ class AppViewModel: ObservableObject {
         currentLessonState = .waiting
         userInput = ""
         terminalOutput = ""
-        showHint = false
         isTyping = false
     }
 

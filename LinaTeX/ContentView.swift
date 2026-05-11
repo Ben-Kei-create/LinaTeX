@@ -164,36 +164,9 @@ struct LessonView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
 
-                    // Ad banner - compact
-                    HStack(spacing: 8) {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(ModernTheme.warning)
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text("LinaTeX Pro")
-                                .font(ModernFont.labelSmall)
-                                .foregroundColor(ModernTheme.textPrimary)
-                            Text("広告")
-                                .font(ModernFont.captionSmall)
-                                .foregroundColor(ModernTheme.textTertiary)
-                        }
-                        Spacer()
-                        Image(systemName: "xmark")
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundColor(ModernTheme.textTertiary)
-                    }
-                    .padding(.horizontal, 11)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(ModernTheme.warningSoft.opacity(0.3))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(ModernTheme.warning.opacity(0.15), lineWidth: 0.5)
-                    )
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 8)
+                    LinaTeXProAdBanner()
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 8)
                 }
                 .background(
                     ModernTheme.bgCard
