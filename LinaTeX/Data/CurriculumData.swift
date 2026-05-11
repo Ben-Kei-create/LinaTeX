@@ -578,7 +578,569 @@ let advancedCourse = Course(
     ]
 )
 
+// MARK: - Expert/Professional Course 1 - User and Group Management
+let expertCourse1 = Course(
+    level: .expert,
+    title: "ユーザー・グループ管理と権限制御",
+    subtitle: "複雑な権限体系をマスター",
+    description: "ユーザー・グループの作成・管理、sudo 権限、高度な権限設定を学ぶ",
+    emoji: "👥",
+    estimatedMinutes: 150,
+    chapters: [
+        Chapter(
+            number: 8,
+            title: "ユーザーとグループの基礎",
+            summary: "useradd, groupadd, id, su, sudo の実践",
+            lessons: [
+                Lesson(
+                    title: "ユーザー情報の確認",
+                    emoji: "🔍",
+                    estimatedMinutes: 10,
+                    content: .quest(QuestLesson(
+                        scenario: "現在のユーザー情報を確認する必要があります。",
+                        prompt: "現在のユーザーID、グループID、所属グループを確認するコマンドは？",
+                        hint: "id コマンドを使用します",
+                        answer: "id",
+                        options: [
+                            CommandOption(label: "id", command: "id", icon: "person.crop.circle"),
+                            CommandOption(label: "whoami", command: "whoami", icon: "person.fill"),
+                            CommandOption(label: "groups", command: "groups", icon: "person.2.fill"),
+                        ],
+                        simulatedOutput: "uid=1000(user) gid=1000(user) groups=1000(user),4(adm),27(sudo)",
+                        successMessage: "✅ ユーザー情報が確認できました"
+                    ))
+                ),
+                Lesson(
+                    title: "ユーザー作成のシナリオ",
+                    emoji: "➕",
+                    estimatedMinutes: 15,
+                    content: .scenario(ScenarioLesson(
+                        setup: "新しいシステムユーザーを作成します。",
+                        goal: "useradd で段階的にユーザーを管理",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "新しいユーザー appuser を作成します（ホームディレクトリ付き）",
+                                hint: "sudo useradd -m appuser",
+                                answer: "useradd",
+                                options: [
+                                    CommandOption(label: "useradd", command: "useradd", icon: "person.badge.plus"),
+                                    CommandOption(label: "adduser", command: "adduser", icon: "person.badge.plus"),
+                                    CommandOption(label: "usermod", command: "usermod", icon: "person.fill"),
+                                ],
+                                simulatedOutput: "root@linux:~# useradd -m appuser\nroot@linux:~#"
+                            ),
+                            ScenarioStep(
+                                prompt: "appuser のパスワードを設定します。",
+                                hint: "sudo passwd appuser",
+                                answer: "passwd",
+                                options: [
+                                    CommandOption(label: "passwd", command: "passwd", icon: "lock"),
+                                    CommandOption(label: "usermod", command: "usermod", icon: "person.fill"),
+                                    CommandOption(label: "chpasswd", command: "chpasswd", icon: "key"),
+                                ],
+                                simulatedOutput: "root@linux:~# passwd appuser\nNew password: \nRetype password:"
+                            ),
+                            ScenarioStep(
+                                prompt: "appuser を sudo グループに追加します。",
+                                hint: "sudo usermod -aG sudo appuser",
+                                answer: "usermod",
+                                options: [
+                                    CommandOption(label: "usermod", command: "usermod", icon: "person.fill"),
+                                    CommandOption(label: "addgroup", command: "addgroup", icon: "person.2.plus"),
+                                    CommandOption(label: "gpasswd", command: "gpasswd", icon: "lock.open"),
+                                ],
+                                simulatedOutput: "root@linux:~# usermod -aG sudo appuser"
+                            ),
+                        ],
+                        finaleMessage: "✅ ユーザー管理のマスター！"
+                    ))
+                ),
+                Lesson(
+                    title: "権限管理クイズ",
+                    emoji: "🎯",
+                    estimatedMinutes: 8,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "useradd -m の -m オプションは何をする？",
+                                choices: ["ホームディレクトリを作成", "ユーザーをマスク", "メイングループを指定", "メールボックスを作成"],
+                                correctIndex: 0,
+                                explanation: "-m（mkdir）でホームディレクトリを作成。デフォルトは /home/username"
+                            ),
+                            QuizQuestion(
+                                question: "usermod -aG の G オプションは？",
+                                choices: ["追加グループを指定（グループにユーザーを追加）", "グループを作成", "グループを削除", "ゲストアクセスを許可"],
+                                correctIndex: 0,
+                                explanation: "-G で追加グループ。-a を付けると既存グループに追加（-G のみだと上書き）"
+                            ),
+                            QuizQuestion(
+                                question: "sudo 権限を持つには？",
+                                choices: ["ユーザーを sudo グループに追加", "UID を 0 に変更", "chmod で実行権限を追加", "su で昇格"],
+                                correctIndex: 0,
+                                explanation: "sudo グループのメンバーが sudo コマンドを実行可能。/etc/sudoers で詳細設定も可能"
+                            ),
+                        ]
+                    ))
+                ),
+            ]
+        ),
+    ]
+)
+
+// MARK: - Expert/Professional Course 2 - Package Management & System Administration
+let expertCourse2 = Course(
+    level: .expert,
+    title: "パッケージ管理とシステム管理",
+    subtitle: "ソフトウェア管理とサービス制御",
+    description: "apt/yum によるパッケージ管理、systemctl によるサービス制御を学ぶ",
+    emoji: "📦",
+    estimatedMinutes: 150,
+    chapters: [
+        Chapter(
+            number: 9,
+            title: "パッケージ管理システム",
+            summary: "apt, yum, dpkg, rpm を使いこなす",
+            lessons: [
+                Lesson(
+                    title: "パッケージ管理コマンド入門",
+                    emoji: "📥",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "Linux のパッケージ管理",
+                        sections: [
+                            ConceptSection(
+                                heading: "主要なパッケージマネージャー",
+                                body: "Debian/Ubuntu: apt, dpkg\nRed Hat/CentOS: yum, rpm\n\n• apt: 高レベルのパッケージマネージャー（依存関係自動解決）\n• dpkg: 低レベルのパッケージマネージャー（Debian パッケージ）\n• yum: Red Hat 系のパッケージマネージャー\n• rpm: Red Hat パッケージ形式",
+                                codeSample: nil,
+                                tip: "apt は yum と異なり、Ubuntu/Debian 系で使用。yum は CentOS/RHEL で使用"
+                            ),
+                            ConceptSection(
+                                heading: "apt の基本コマンド",
+                                body: "apt update: パッケージリスト更新\napt upgrade: インストール済みパッケージを更新\napt install パッケージ名: パッケージをインストール\napt remove パッケージ名: パッケージを削除\napt search キーワード: パッケージを検索",
+                                codeSample: "apt update && apt upgrade -y",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "apt による実務パッケージ管理",
+                    emoji: "⚙️",
+                    estimatedMinutes: 15,
+                    content: .scenario(ScenarioLesson(
+                        setup: "Linux システムを最新に保ち、必要なパッケージをインストールします。",
+                        goal: "apt で段階的にパッケージを管理",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "パッケージリストを最新に更新します。",
+                                hint: "sudo apt update",
+                                answer: "update",
+                                options: [
+                                    CommandOption(label: "update", command: "update", icon: "arrow.clockwise"),
+                                    CommandOption(label: "upgrade", command: "upgrade", icon: "arrow.up"),
+                                    CommandOption(label: "install", command: "install", icon: "plus.circle"),
+                                ],
+                                simulatedOutput: "Reading package lists... Done\nBuilding dependency tree... Done\n0 upgraded, 0 newly installed"
+                            ),
+                            ScenarioStep(
+                                prompt: "curl コマンドをインストールします（まだインストールされていない場合）",
+                                hint: "sudo apt install curl -y",
+                                answer: "install",
+                                options: [
+                                    CommandOption(label: "install", command: "install", icon: "plus.circle"),
+                                    CommandOption(label: "update", command: "update", icon: "arrow.clockwise"),
+                                    CommandOption(label: "search", command: "search", icon: "magnifyingglass"),
+                                ],
+                                simulatedOutput: "Reading package lists... Done\nSetting up curl (7.68.0-1) ...\nProcessing triggers"
+                            ),
+                            ScenarioStep(
+                                prompt: "インストール済みパッケージを確認します。",
+                                hint: "apt list --installed | grep curl",
+                                answer: "apt list",
+                                options: [
+                                    CommandOption(label: "apt list", command: "apt list", icon: "list.bullet"),
+                                    CommandOption(label: "dpkg", command: "dpkg", icon: "list.dash"),
+                                    CommandOption(label: "which", command: "which", icon: "magnifyingglass"),
+                                ],
+                                simulatedOutput: "curl/focal,now 7.68.0-1ubuntu1.14 amd64 [installed]"
+                            ),
+                        ],
+                        finaleMessage: "✅ パッケージ管理のプロ！"
+                    ))
+                ),
+            ]
+        ),
+        Chapter(
+            number: 10,
+            title: "systemd とサービス管理",
+            summary: "systemctl でサービスを制御",
+            lessons: [
+                Lesson(
+                    title: "systemctl コマンドの実践",
+                    emoji: "🔧",
+                    estimatedMinutes: 12,
+                    content: .scenario(ScenarioLesson(
+                        setup: "Web サーバーなどのサービスをシステムレベルで管理します。",
+                        goal: "systemctl で段階的にサービスを制御",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "nginx サービスが実行中か確認します。",
+                                hint: "sudo systemctl status nginx",
+                                answer: "status",
+                                options: [
+                                    CommandOption(label: "status", command: "status", icon: "checkmark.circle"),
+                                    CommandOption(label: "start", command: "start", icon: "play.fill"),
+                                    CommandOption(label: "stop", command: "stop", icon: "stop.fill"),
+                                ],
+                                simulatedOutput: "● nginx.service - A high performance web server\n   Loaded: loaded (/lib/systemd/system/nginx.service)\n   Active: active (running)"
+                            ),
+                            ScenarioStep(
+                                prompt: "nginx を再起動します。",
+                                hint: "sudo systemctl restart nginx",
+                                answer: "restart",
+                                options: [
+                                    CommandOption(label: "restart", command: "restart", icon: "arrow.clockwise"),
+                                    CommandOption(label: "reload", command: "reload", icon: "goforward"),
+                                    CommandOption(label: "start", command: "start", icon: "play.fill"),
+                                ],
+                                simulatedOutput: "root@linux:~# systemctl restart nginx"
+                            ),
+                            ScenarioStep(
+                                prompt: "nginx をシステム起動時に自動開始するよう設定します。",
+                                hint: "sudo systemctl enable nginx",
+                                answer: "enable",
+                                options: [
+                                    CommandOption(label: "enable", command: "enable", icon: "checkmark.square"),
+                                    CommandOption(label: "disable", command: "disable", icon: "xmark.square"),
+                                    CommandOption(label: "start", command: "start", icon: "play.fill"),
+                                ],
+                                simulatedOutput: "Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service"
+                            ),
+                        ],
+                        finaleMessage: "✅ サービス管理のエキスパート！"
+                    ))
+                ),
+                Lesson(
+                    title: "systemctl 管理クイズ",
+                    emoji: "🎓",
+                    estimatedMinutes: 8,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "systemctl enable の役割は？",
+                                choices: ["システム起動時にサービスを自動開始するよう登録", "サービスを即座に開始", "サービスの設定ファイルを編集", "ログを表示"],
+                                correctIndex: 0,
+                                explanation: "enable で起動時の自動実行を有効化。disable で無効化。start は即座に開始。"
+                            ),
+                            QuizQuestion(
+                                question: "systemctl reload と restart の違いは？",
+                                choices: ["reload は設定を再読み込み（プロセス継続）、restart はプロセス再起動", "同じ", "reload は設定を削除", "restart は新規インストール"],
+                                correctIndex: 0,
+                                explanation: "reload: 設定ファイル再読み込み（ダウンタイムなし）。restart: プロセス再起動（ダウンタイムあり）"
+                            ),
+                            QuizQuestion(
+                                question: "systemctl list-units --type=service は？",
+                                choices: ["全サービスのリストと状態を表示", "ユーザーのサービスのみ表示", "システムサービスのコピーを作成", "サービスを検索"],
+                                correctIndex: 0,
+                                explanation: "全サービスと状態を表示。--all でロードされていないユニットも表示。"
+                            ),
+                        ]
+                    ))
+                ),
+            ]
+        ),
+    ]
+)
+
+// MARK: - Expert/Professional Course 3 - Advanced Networking and Filesystem
+let expertCourse3 = Course(
+    level: .expert,
+    title: "ネットワーク設定とファイルシステム管理",
+    subtitle: "ネットワークとストレージの実務管理",
+    description: "ネットワーク設定、パーティション管理、ログ管理を学ぶ",
+    emoji: "🌐",
+    estimatedMinutes: 150,
+    chapters: [
+        Chapter(
+            number: 11,
+            title: "ネットワーク設定とトラブルシューティング",
+            summary: "ip, ifconfig, ping, hostname などを使いこなす",
+            lessons: [
+                Lesson(
+                    title: "ネットワークインターフェース確認",
+                    emoji: "🖧",
+                    estimatedMinutes: 10,
+                    content: .quest(QuestLesson(
+                        scenario: "サーバーのネットワーク設定を確認する必要があります。",
+                        prompt: "システムのネットワークインターフェースと IP アドレスを確認するコマンドは？",
+                        hint: "ip addr show または ip a",
+                        answer: "ip",
+                        options: [
+                            CommandOption(label: "ip addr show", command: "ip", icon: "globe"),
+                            CommandOption(label: "ifconfig", command: "ifconfig", icon: "network"),
+                            CommandOption(label: "hostname", command: "hostname", icon: "host.rectangle"),
+                        ],
+                        simulatedOutput: "1: lo: <LOOPBACK> mtu 65536\n2: eth0: <BROADCAST,MULTICAST,UP> mtu 1500\n    inet 192.168.1.100/24",
+                        successMessage: "✅ ネットワーク設定が確認できました"
+                    ))
+                ),
+                Lesson(
+                    title: "ネットワークトラブルシューティング",
+                    emoji: "🔌",
+                    estimatedMinutes: 15,
+                    content: .scenario(ScenarioLesson(
+                        setup: "リモートサーバーのネットワーク接続を診断します。",
+                        goal: "ping, traceroute, netstat でネットワーク診断",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "8.8.8.8（Google DNS）への通信を確認します。",
+                                hint: "ping -c 4 8.8.8.8",
+                                answer: "ping",
+                                options: [
+                                    CommandOption(label: "ping", command: "ping", icon: "radio.fill"),
+                                    CommandOption(label: "traceroute", command: "traceroute", icon: "arrow.uturn.right"),
+                                    CommandOption(label: "nc", command: "nc", icon: "network"),
+                                ],
+                                simulatedOutput: "PING 8.8.8.8 (8.8.8.8) 56(84) bytes\nfrom 8.8.8.8: icmp_seq=1 ttl=119 time=20.5 ms\n4 packets received, 0% packet loss"
+                            ),
+                            ScenarioStep(
+                                prompt: "特定のホストへのルート経路を確認します。",
+                                hint: "traceroute example.com",
+                                answer: "traceroute",
+                                options: [
+                                    CommandOption(label: "traceroute", command: "traceroute", icon: "arrow.uturn.right"),
+                                    CommandOption(label: "ping", command: "ping", icon: "radio.fill"),
+                                    CommandOption(label: "route", command: "route", icon: "arrow.left.arrow.right"),
+                                ],
+                                simulatedOutput: "traceroute to example.com (93.184.216.34)\n 1  gateway.local (192.168.1.1)  1.23 ms\n 2  isp-router (203.0.113.1)  5.45 ms"
+                            ),
+                            ScenarioStep(
+                                prompt: "ネットワークソケットの接続状態を確認します。",
+                                hint: "netstat -tuln",
+                                answer: "netstat",
+                                options: [
+                                    CommandOption(label: "netstat", command: "netstat", icon: "chart.bar"),
+                                    CommandOption(label: "ss", command: "ss", icon: "square.grid.2x2"),
+                                    CommandOption(label: "lsof", command: "lsof", icon: "list.bullet"),
+                                ],
+                                simulatedOutput: "LISTEN 0 128 0.0.0.0:22 0.0.0.0:*\nLISTEN 0 511 0.0.0.0:80 0.0.0.0:*"
+                            ),
+                        ],
+                        finaleMessage: "✅ ネットワーク診断のマスター！"
+                    ))
+                ),
+            ]
+        ),
+        Chapter(
+            number: 12,
+            title: "ストレージとログ管理",
+            summary: "df, du, mount, journalctl を使いこなす",
+            lessons: [
+                Lesson(
+                    title: "ディスク容量の管理",
+                    emoji: "💾",
+                    estimatedMinutes: 12,
+                    content: .scenario(ScenarioLesson(
+                        setup: "ディスク容量を監視し、不要なファイルを削除します。",
+                        goal: "df, du で段階的にディスク使用量を分析",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "すべてのファイルシステムのディスク使用率を確認します。",
+                                hint: "df -h",
+                                answer: "df",
+                                options: [
+                                    CommandOption(label: "df", command: "df", icon: "harddrive"),
+                                    CommandOption(label: "du", command: "du", icon: "chart.pie"),
+                                    CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                                ],
+                                simulatedOutput: "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda1       100G   50G   50G  50% /"
+                            ),
+                            ScenarioStep(
+                                prompt: "ホームディレクトリの中で最も容量を使っているディレクトリを探します。",
+                                hint: "du -sh ~/*",
+                                answer: "du",
+                                options: [
+                                    CommandOption(label: "du", command: "du", icon: "chart.pie"),
+                                    CommandOption(label: "find", command: "find", icon: "magnifyingglass"),
+                                    CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                                ],
+                                simulatedOutput: "20G\t./Downloads\n5.2G\t./Documents\n1.5G\t./Pictures"
+                            ),
+                            ScenarioStep(
+                                prompt: "古いログファイルを確認し、削除対象を特定します。",
+                                hint: "find /var/log -type f -mtime +30",
+                                answer: "find",
+                                options: [
+                                    CommandOption(label: "find", command: "find", icon: "magnifyingglass"),
+                                    CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                                    CommandOption(label: "tail", command: "tail", icon: "text.alignleft"),
+                                ],
+                                simulatedOutput: "/var/log/auth.log.1\n/var/log/syslog.1\n/var/log/nginx/access.log.2"
+                            ),
+                        ],
+                        finaleMessage: "✅ ディスク管理のエキスパート！"
+                    ))
+                ),
+                Lesson(
+                    title: "ログ管理とシステムログ",
+                    emoji: "📝",
+                    estimatedMinutes: 12,
+                    content: .scenario(ScenarioLesson(
+                        setup: "システムログを監視し、エラーを特定します。",
+                        goal: "journalctl, tail でログを分析",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "システムジャーナルの最新エントリを表示します。",
+                                hint: "journalctl -n 20",
+                                answer: "journalctl",
+                                options: [
+                                    CommandOption(label: "journalctl", command: "journalctl", icon: "doc.text.magnifyingglass"),
+                                    CommandOption(label: "tail", command: "tail", icon: "text.alignleft"),
+                                    CommandOption(label: "dmesg", command: "dmesg", icon: "speaker.wave.2"),
+                                ],
+                                simulatedOutput: "May 11 10:23:45 server kernel: [1234.567] CPU0: Package temperature WARNING\nMay 11 10:24:01 server systemd[1]: Started Session c1"
+                            ),
+                            ScenarioStep(
+                                prompt: "特定のサービス（nginx）のログのみを表示します。",
+                                hint: "journalctl -u nginx -n 10",
+                                answer: "journalctl",
+                                options: [
+                                    CommandOption(label: "journalctl", command: "journalctl", icon: "doc.text.magnifyingglass"),
+                                    CommandOption(label: "grep", command: "grep", icon: "magnifyingglass"),
+                                    CommandOption(label: "tail", command: "tail", icon: "text.alignleft"),
+                                ],
+                                simulatedOutput: "May 11 10:25:30 server nginx[1234]: Connection from 192.168.1.50 port 54321\nMay 11 10:25:35 server nginx[1234]: HTTP/1.1 200 OK"
+                            ),
+                            ScenarioStep(
+                                prompt: "今日のエラーレベルのログのみを表示します。",
+                                hint: "journalctl -p err -S today",
+                                answer: "journalctl",
+                                options: [
+                                    CommandOption(label: "journalctl", command: "journalctl", icon: "doc.text.magnifyingglass"),
+                                    CommandOption(label: "grep", command: "grep", icon: "magnifyingglass"),
+                                    CommandOption(label: "tail", command: "tail", icon: "text.alignleft"),
+                                ],
+                                simulatedOutput: "May 11 11:45:23 server sshd[5678]: Invalid user admin from 192.168.1.100\nMay 11 12:10:11 server kernel: Out of memory"
+                            ),
+                        ],
+                        finaleMessage: "✅ ログ分析のプロになりました！"
+                    ))
+                ),
+            ]
+        ),
+    ]
+)
+
+// MARK: - Expert/Professional Course 4 - Process Management and Performance
+let expertCourse4 = Course(
+    level: .expert,
+    title: "プロセス管理とシステムパフォーマンス",
+    subtitle: "プロセス制御と監視を極める",
+    description: "ps, top, kill, bg, fg によるプロセス管理とパフォーマンス監視を学ぶ",
+    emoji: "⚡",
+    estimatedMinutes: 120,
+    chapters: [
+        Chapter(
+            number: 13,
+            title: "プロセスの確認と制御",
+            summary: "ps, top, kill でプロセスを管理",
+            lessons: [
+                Lesson(
+                    title: "実行中のプロセス確認",
+                    emoji: "🏃",
+                    estimatedMinutes: 10,
+                    content: .quest(QuestLesson(
+                        scenario: "システムで実行中のプロセスを確認する必要があります。",
+                        prompt: "全プロセスを詳細表示するコマンドは？",
+                        hint: "ps aux で全プロセスをリスト表示",
+                        answer: "ps",
+                        options: [
+                            CommandOption(label: "ps aux", command: "ps", icon: "rectangle.stack"),
+                            CommandOption(label: "top", command: "top", icon: "chart.bar.fill"),
+                            CommandOption(label: "jobs", command: "jobs", icon: "briefcase.fill"),
+                        ],
+                        simulatedOutput: "USER  PID %CPU %MEM VSZ RSS COMMAND\nroot  1   0.0  0.1 225504 9616 /sbin/init\nuser 1234 0.5  2.3 1234567 89012 python script.py",
+                        successMessage: "✅ プロセス一覧が確認できました"
+                    ))
+                ),
+                Lesson(
+                    title: "プロセス管理の実務シナリオ",
+                    emoji: "🛑",
+                    estimatedMinutes: 14,
+                    content: .scenario(ScenarioLesson(
+                        setup: "暴走したプロセスを特定し、適切に終了します。",
+                        goal: "ps, kill で段階的にプロセスを制御",
+                        steps: [
+                            ScenarioStep(
+                                prompt: "特定のユーザーが実行しているプロセスをリスト表示します。",
+                                hint: "ps -u username",
+                                answer: "ps",
+                                options: [
+                                    CommandOption(label: "ps", command: "ps", icon: "rectangle.stack"),
+                                    CommandOption(label: "top", command: "top", icon: "chart.bar.fill"),
+                                    CommandOption(label: "pgrep", command: "pgrep", icon: "magnifyingglass"),
+                                ],
+                                simulatedOutput: "PID TTY STAT TIME COMMAND\n1234 ? S 0:05 /usr/bin/python script.py\n1235 ? R 5:23 stress-test-app"
+                            ),
+                            ScenarioStep(
+                                prompt: "stress-test-app（PID 1235）を検索します。",
+                                hint: "pgrep -f stress-test-app",
+                                answer: "pgrep",
+                                options: [
+                                    CommandOption(label: "pgrep", command: "pgrep", icon: "magnifyingglass"),
+                                    CommandOption(label: "grep", command: "grep", icon: "magnifyingglass"),
+                                    CommandOption(label: "pidof", command: "pidof", icon: "number"),
+                                ],
+                                simulatedOutput: "1235"
+                            ),
+                            ScenarioStep(
+                                prompt: "プロセス 1235 に終了シグナルを送ります。",
+                                hint: "kill -15 1235",
+                                answer: "kill",
+                                options: [
+                                    CommandOption(label: "kill", command: "kill", icon: "xmark.circle"),
+                                    CommandOption(label: "killall", command: "killall", icon: "xmark.circle.fill"),
+                                    CommandOption(label: "pkill", command: "pkill", icon: "xmark"),
+                                ],
+                                simulatedOutput: "user@linux:~$ kill -15 1235"
+                            ),
+                        ],
+                        finaleMessage: "✅ プロセス制御のエキスパート！"
+                    ))
+                ),
+                Lesson(
+                    title: "プロセス管理クイズ",
+                    emoji: "💭",
+                    estimatedMinutes: 8,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "kill -9 と kill -15 の違いは？",
+                                choices: ["-15 は SIGTERM（正常終了）、-9 は SIGKILL（強制終了）", "同じシグナル", "-9 は アーカイブ作成", "-15 は 削除"],
+                                correctIndex: 0,
+                                explanation: "kill -15（SIGTERM）は プロセスに正常終了するよう要求。kill -9（SIGKILL）は 強制終了（キャッチ不可）"
+                            ),
+                            QuizQuestion(
+                                question: "top コマンドで CPU 使用率でソートするキーは？",
+                                choices: ["P キー", "M キー", "C キー", "S キー"],
+                                correctIndex: 0,
+                                explanation: "top 実行中に P キーで CPU 使用率、M キーでメモリ使用率でソート。"
+                            ),
+                            QuizQuestion(
+                                question: "ps aux の STAT 列で R は何を表す？",
+                                choices: ["Running（実行中）", "Resident（常駐）", "Read-only（読み込み専用）", "Restarting（再起動中）"],
+                                correctIndex: 0,
+                                explanation: "R: 実行中, S: スリープ中, Z: ゾンビプロセス, T: 停止中"
+                            ),
+                        ]
+                    ))
+                ),
+            ]
+        ),
+    ]
+)
+
 // MARK: - Public Curriculum Array
 var comprehensiveAllCourses: [Course] {
-    [basicsCourse, standardCourse, advancedCourse]
+    [basicsCourse, standardCourse, advancedCourse, expertCourse1, expertCourse2, expertCourse3, expertCourse4]
 }
