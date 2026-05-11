@@ -1610,28 +1610,43 @@ let expertCourse2 = Course(
                     ))
                 ),
                 Lesson(
-                    title: "systemctl 管理クイズ",
+                    title: "systemd 深掘りクイズ",
                     emoji: "🎓",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "systemctl enable の役割は？",
-                                choices: ["システム起動時にサービスを自動開始するよう登録", "サービスを即座に開始", "サービスの設定ファイルを編集", "ログを表示"],
+                                question: "systemctl enable nginx を実行したが、nginx は起動していない。なぜか？",
+                                choices: [
+                                    "enable は次回起動時の自動実行を設定するだけ。現時点での起動には systemctl start が別途必要",
+                                    "enable はサービスを開始する",
+                                    "nginx がインストールされていない",
+                                    "enable の後は自動的に起動する"
+                                ],
                                 correctIndex: 0,
-                                explanation: "enable で起動時の自動実行を有効化。disable で無効化。start は即座に開始。"
+                                explanation: "enable は「次回のシステム起動時に自動実行するよう登録」する設定で、即座にサービスを起動しません。現在のセッションでも起動したい場合は systemctl enable --now nginx または systemctl enable nginx && systemctl start nginx のようにします。enable と start の役割の違いは重要な概念です。"
                             ),
                             QuizQuestion(
-                                question: "systemctl reload と restart の違いは？",
-                                choices: ["reload は設定を再読み込み（プロセス継続）、restart はプロセス再起動", "同じ", "reload は設定を削除", "restart は新規インストール"],
+                                question: "nginx の設定ファイルを編集した後、設定を適用するために最も適切なコマンドはどれか？",
+                                choices: [
+                                    "設定検証後 systemctl reload nginx（ダウンタイムなし）、不可能なら systemctl restart",
+                                    "systemctl stop nginx && systemctl start nginx",
+                                    "systemctl status nginx",
+                                    "systemctl daemon-reload"
+                                ],
                                 correctIndex: 0,
-                                explanation: "reload: 設定ファイル再読み込み（ダウンタイムなし）。restart: プロセス再起動（ダウンタイムあり）"
+                                explanation: "本番環境では reload が最善です。nginx -t で設定の文法チェックをしてから reload すると安全です。reload は設定ファイルを再読み込みしつつ既存の接続を維持します（グレースフルリロード）。restart は全接続が一時切断されるためダウンタイムが発生します。daemon-reload は systemd のユニットファイル（.service ファイル）を変更したときに必要です。"
                             ),
                             QuizQuestion(
-                                question: "systemctl list-units --type=service は？",
-                                choices: ["全サービスのリストと状態を表示", "ユーザーのサービスのみ表示", "システムサービスのコピーを作成", "サービスを検索"],
+                                question: "systemctl status nginx の出力で「Active: failed (Result: exit-code)」と表示された。次に何を確認すべきか？",
+                                choices: [
+                                    "journalctl -u nginx -n 50 でサービスのログを確認する",
+                                    "systemctl enable nginx を再実行する",
+                                    "nginx をアンインストールして再インストールする",
+                                    "サーバーを再起動する"
+                                ],
                                 correctIndex: 0,
-                                explanation: "全サービスと状態を表示。--all でロードされていないユニットも表示。"
+                                explanation: "failed 状態はサービスが起動に失敗したことを示します。journalctl -u nginx でサービス固有のログ、-n 50 で直近50行を表示できます。-e オプションで末尾（最新ログ）から確認します。設定ファイルのミス、ポートの競合、依存サービスの問題などが原因として多いです。"
                             ),
                         ]
                     ))
@@ -1964,28 +1979,43 @@ let expertCourse4 = Course(
                     ))
                 ),
                 Lesson(
-                    title: "プロセス管理クイズ",
+                    title: "プロセス管理の深掘りクイズ",
                     emoji: "💭",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "kill -9 と kill -15 の違いは？",
-                                choices: ["-15 は SIGTERM（正常終了）、-9 は SIGKILL（強制終了）", "同じシグナル", "-9 は アーカイブ作成", "-15 は 削除"],
+                                question: "ps aux で STAT 列が「Z」のプロセスが多数表示されている。これは何を示すか？",
+                                choices: [
+                                    "ゾンビプロセス：プロセス自体は終了しているが、親プロセスが wait() を呼んでいないためプロセステーブルに残っている",
+                                    "一時停止中のプロセス",
+                                    "スリープ中のプロセス",
+                                    "システムクリティカルなプロセス"
+                                ],
                                 correctIndex: 0,
-                                explanation: "kill -15（SIGTERM）は プロセスに正常終了するよう要求。kill -9（SIGKILL）は 強制終了（キャッチ不可）"
+                                explanation: "ゾンビプロセス（defunct）はプロセスが終了した後も、親プロセスが wait() システムコールで終了ステータスを回収するまでプロセステーブルに残ります。ゾンビ自体はリソースをほとんど消費しませんが、PID を占有します。大量のゾンビは親プロセスのバグを示し、解決策は親プロセスを再起動することです（親が終了すると init/systemd がゾンビを回収します）。"
                             ),
                             QuizQuestion(
-                                question: "top コマンドで CPU 使用率でソートするキーは？",
-                                choices: ["P キー", "M キー", "C キー", "S キー"],
+                                question: "プロセスに kill -15（SIGTERM）を送ったが反応がなかった。次の行動として正しい順序は？",
+                                choices: [
+                                    "まず数秒待ち、それでも終了しなければ kill -9（SIGKILL）を送る",
+                                    "即座に kill -9 を送る（-15 が効かない場合は -9 しかない）",
+                                    "プロセスを無視する（自然に終了するまで待つ）",
+                                    "サーバーを再起動する"
+                                ],
                                 correctIndex: 0,
-                                explanation: "top 実行中に P キーで CPU 使用率、M キーでメモリ使用率でソート。"
+                                explanation: "SIGTERM はプロセスに「終了してください」と伝えるシグナルで、プロセスはシグナルをキャッチして後処理（ファイルのクローズ、ロックの解放など）を行えます。ただし無視したりキャッチ不能な状態のプロセスには効きません。SIGKILL はカーネルレベルで強制終了するため必ず効きますが、後処理ができないためファイル破損のリスクがあります。まず SIGTERM、それから SIGKILL が適切な手順です。"
                             ),
                             QuizQuestion(
-                                question: "ps aux の STAT 列で R は何を表す？",
-                                choices: ["Running（実行中）", "Resident（常駐）", "Read-only（読み込み専用）", "Restarting（再起動中）"],
+                                question: "nice -n 10 ./heavy-task.sh を実行した。このコマンドの効果は？",
+                                choices: [
+                                    "heavy-task.sh を優先度を下げて実行（他プロセスにCPU時間を譲りやすくなる）",
+                                    "heavy-task.sh を最高優先度で実行",
+                                    "10 分後に heavy-task.sh を実行",
+                                    "heavy-task.sh を 10 回実行"
+                                ],
                                 correctIndex: 0,
-                                explanation: "R: 実行中, S: スリープ中, Z: ゾンビプロセス, T: 停止中"
+                                explanation: "nice コマンドはプロセスの優先度（nice値）を設定します。nice値の範囲は -20（最高優先度）〜 19（最低優先度）で、デフォルトは 0 です。nice -n 10 は通常より低い優先度で実行するため、システムの他の作業（WebサーバーなどI/O待ちが多いプロセス）へのCPU影響を減らせます。バックグラウンドのバックアップや圧縮処理に有効です。renice コマンドで実行中のプロセスの優先度を変更できます。"
                             ),
                         ]
                     ))
