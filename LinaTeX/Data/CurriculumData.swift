@@ -143,61 +143,127 @@ let basicsCourse = Course(
         ),
         Chapter(
             number: 2,
-            title: "基本コマンド演習",
-            summary: "pwd, ls, cd コマンドを学ぶ",
+            title: "ファイルシステムナビゲーション",
+            summary: "pwd, ls, cd でファイルシステムを自由に移動する",
             lessons: [
                 Lesson(
-                    title: "pwd - 今ここはどこ？",
+                    title: "pwd - 現在位置の確認",
                     emoji: "📍",
                     estimatedMinutes: 8,
+                    content: .concept(ConceptLesson(
+                        headline: "ファイルシステムはツリー構造",
+                        sections: [
+                            ConceptSection(
+                                heading: "pwd コマンドの役割",
+                                body: "pwd（Print Working Directory）は、現在いるディレクトリの絶対パスを表示します。\n\nLinux のファイルシステムはツリー構造で、常に「どこのフォルダにいるのか」を意識する必要があります。pwd を実行することで、現在位置を確認できます。",
+                                codeSample: "pwd\n# 出力例: /home/user/Documents",
+                                tip: "ディレクトリ移動後は pwd で現在位置を確認する習慣をつけましょう"
+                            ),
+                            ConceptSection(
+                                heading: "絶対パスと相対パス",
+                                body: "• 絶対パス: / から始まるパス（例: /home/user）\n• 相対パス: 現在位置から見たパス（例: Documents）\n\npwd は絶対パスを表示するため、現在の正確な位置を知ることができます。",
+                                codeSample: nil,
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "pwd - 現在位置クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 6,
                     content: .quest(QuestLesson(
-                        scenario: "Linuxのファイルシステムはツリー構造です。あなたは今、どこにいるでしょう？",
-                        prompt: "現在のディレクトリ（フォルダ）の位置を確認するコマンドは？",
-                        hint: "Print Working Directory の略です。pwd と打ってみましょう。",
+                        scenario: "あなたはファイルサーバーの深いディレクトリにいます。現在地を確認する必要があります。",
+                        prompt: "現在のディレクトリパスを表示するコマンドは？",
+                        hint: "Print Working Directory の略。実行すると絶対パスが表示されます。",
                         answer: "pwd",
                         options: [
                             CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
                             CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
-                            CommandOption(label: "cd", command: "cd", icon: "chevron.right"),
+                            CommandOption(label: "cd ..", command: "cd", icon: "chevron.right"),
                         ],
-                        simulatedOutput: "/home/user",
-                        successMessage: "✅ 完璧！あなたは /home/user にいます"
+                        simulatedOutput: "/var/www/html/project/src",
+                        successMessage: "✅ 完璧！現在地が確認できました"
                     ))
                 ),
                 Lesson(
-                    title: "ls - ファイル一覧を見る",
+                    title: "ls - ファイル一覧表示",
                     emoji: "📂",
                     estimatedMinutes: 8,
+                    content: .concept(ConceptLesson(
+                        headline: "フォルダの内容を見る",
+                        sections: [
+                            ConceptSection(
+                                heading: "ls コマンドの目的",
+                                body: "ls（List）は、現在のディレクトリに含まれるファイルとフォルダの一覧を表示します。\n\nGUI では、フォルダをダブルクリックして中身を見ますが、CLI では ls コマンドで中身を確認します。",
+                                codeSample: "ls\n# 出力例:\n# Desktop  Documents  Downloads  Music",
+                                tip: "ls -l で詳細情報（権限、サイズ、更新日時など）を表示できます"
+                            ),
+                            ConceptSection(
+                                heading: "よく使う ls のオプション",
+                                body: "• ls: 基本的なファイル一覧\n• ls -l: 詳細情報付き（権限、所有者、サイズ、更新日）\n• ls -a: 隠しファイル（. で始まるファイル）も表示\n• ls -h: ファイルサイズを人間が読みやすい形式で表示",
+                                codeSample: "ls -lh",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "ls - ファイル一覧クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 6,
                     content: .quest(QuestLesson(
-                        scenario: "現在のフォルダに何が入っているか見たい。",
-                        prompt: "ファイルやフォルダの一覧を表示するコマンドは？",
-                        hint: "List の略です。ls と打つだけ。",
+                        scenario: "プロジェクトフォルダに移動しました。フォルダの内容を確認して、どんなファイルがあるかを把握する必要があります。",
+                        prompt: "フォルダ内のファイルとサブフォルダを詳細情報付きで表示するコマンドは？",
+                        hint: "ls -l で詳細情報（権限、サイズ、更新日時）が表示されます。",
                         answer: "ls",
                         options: [
-                            CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                            CommandOption(label: "ls -l", command: "ls", icon: "list.bullet"),
                             CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
                             CommandOption(label: "cat", command: "cat", icon: "doc.text"),
                         ],
-                        simulatedOutput: "Desktop  Documents  Downloads  Pictures  Videos",
-                        successMessage: "✅ いいね！フォルダの中身が見えました"
+                        simulatedOutput: "drwxr-xr-x  src\n-rw-r--r--  README.md\ndrwxr-xr-x  tests",
+                        successMessage: "✅ ファイル一覧が表示されました"
                     ))
                 ),
                 Lesson(
-                    title: "cd - ディレクトリを移動する",
+                    title: "cd - ディレクトリ移動",
                     emoji: "🚀",
                     estimatedMinutes: 8,
+                    content: .concept(ConceptLesson(
+                        headline: "ファイルシステムを移動する",
+                        sections: [
+                            ConceptSection(
+                                heading: "cd コマンドの役割",
+                                body: "cd（Change Directory）は、現在のディレクトリを別のディレクトリに変更します。\n\nGUI では、フォルダをダブルクリックして開きますが、CLI では cd コマンドで移動します。移動後、pwd で現在位置を確認できます。",
+                                codeSample: "cd Documents\n# 移動後\npwd\n# /home/user/Documents",
+                                tip: "cd ~ でホームディレクトリに移動、cd .. で親ディレクトリに移動できます"
+                            ),
+                            ConceptSection(
+                                heading: "cd の使い方と特殊パス",
+                                body: "• cd フォルダ名: 指定フォルダに移動（相対パス）\n• cd /絶対パス: 絶対パスで移動\n• cd ~: ホームディレクトリに移動\n• cd ..: 親ディレクトリに移動\n• cd: ホームディレクトリに移動（引数なし）",
+                                codeSample: nil,
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "cd - ナビゲーションクエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 6,
                     content: .quest(QuestLesson(
-                        scenario: "Desktop フォルダに移動したい。",
-                        prompt: "ディレクトリを移動するコマンドは？",
-                        hint: "Change Directory の略。cd Desktop で Desktop に移動します。",
+                        scenario: "あなたは /var/www/html にいます。src サブフォルダに移動して、そこのファイルを確認する必要があります。",
+                        prompt: "現在位置から src フォルダに移動するコマンドは？",
+                        hint: "cd src で移動できます。相対パスを使用します。",
                         answer: "cd",
                         options: [
-                            CommandOption(label: "cd", command: "cd", icon: "chevron.right"),
-                            CommandOption(label: "mv", command: "mv", icon: "arrow.right.doc.fill"),
-                            CommandOption(label: "pwd", command: "pwd", icon: "mappin.circle.fill"),
+                            CommandOption(label: "cd src", command: "cd", icon: "chevron.right"),
+                            CommandOption(label: "ls src", command: "ls", icon: "list.bullet"),
+                            CommandOption(label: "pwd src", command: "pwd", icon: "mappin.circle.fill"),
                         ],
                         simulatedOutput: "",
-                        successMessage: "✅ 移動完了！Desktop に到着しました"
+                        successMessage: "✅ src フォルダに移動しました。pwd で確認してみてください！"
                     ))
                 ),
             ]
