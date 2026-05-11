@@ -6,6 +6,7 @@ enum CourseLevel: String, CaseIterable, Identifiable {
     case basics = "BASICS"
     case standard = "STANDARD"
     case advanced = "ADVANCED"
+    case expert = "EXPERT"
 
     var id: String { rawValue }
 
@@ -14,6 +15,7 @@ enum CourseLevel: String, CaseIterable, Identifiable {
         case .basics: return "基礎"
         case .standard: return "標準"
         case .advanced: return "実務応用"
+        case .expert: return "専門級"
         }
     }
 
@@ -22,6 +24,7 @@ enum CourseLevel: String, CaseIterable, Identifiable {
         case .basics:   return [Color(hex: 0x00FF41), Color(hex: 0x00AA33)]
         case .standard: return [Color(hex: 0x00DD33), Color(hex: 0x00AA22)]
         case .advanced: return [Color(hex: 0x00FF99), Color(hex: 0x00CC55)]
+        case .expert:   return [Color(hex: 0xFF00FF), Color(hex: 0xCC00AA)]
         }
     }
 
@@ -30,6 +33,7 @@ enum CourseLevel: String, CaseIterable, Identifiable {
         case .basics:   return Color(hex: 0x00FF41)
         case .standard: return Color(hex: 0x00DD33)
         case .advanced: return Color(hex: 0x00FF99)
+        case .expert:   return Color(hex: 0xFF00FF)
         }
     }
 }

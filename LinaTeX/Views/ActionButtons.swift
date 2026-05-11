@@ -262,6 +262,8 @@ struct CommandButton: View {
     let isDisabled: Bool
     let action: () -> Void
 
+    @State private var isPressed = false
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
@@ -276,30 +278,48 @@ struct CommandButton: View {
                     }
                 }
 
-                Text(option.label)
-                    .font(ModernFont.codeSmall)
-                    .foregroundColor(ModernTheme.textPrimary)
-                    .multilineTextAlignment(.leading)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(option.label)
+                        .font(ModernFont.codeSmall)
+                        .foregroundColor(ModernTheme.textPrimary)
+                        .lineLimit(1)
+                    if let systemImage = option.icon, systemImage != "circle" {
+                        HStack(spacing: 4) {
+                            Image(systemName: option.icon)
+                                .font(.system(size: 9, weight: .semibold))
+                            Text(option.command)
+                                .font(ModernFont.captionSmall)
+                        }
+                        .foregroundColor(ModernTheme.textTertiary)
+                    }
+                }
 
                 Spacer()
             }
-            .padding(.horizontal, 11)
-            .padding(.vertical, 9)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(isSelected ? accentColor.opacity(0.06) : ModernTheme.bgSubtle)
+                    .fill(isSelected ? accentColor.opacity(0.08) : ModernTheme.bgSubtle)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(
                         isSelected ? accentColor : ModernTheme.border,
-                        lineWidth: isSelected ? 1.2 : 0.5
+                        lineWidth: isSelected ? 1.5 : 0.8
                     )
             )
+            .scaleEffect(isPressed ? 0.97 : 1.0)
+            .brightness(isPressed ? 0.05 : 0)
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
         .opacity(isDisabled ? 0.5 : 1.0)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isPressed = true }
+                .onEnded { _ in isPressed = false }
+        )
     }
 }
 
@@ -387,30 +407,39 @@ struct QuizExplanationCard: View {
     let explanation: String
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(systemName: isCorrect ? "checkmark.seal.fill" : "book.closed.fill")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(isCorrect ? ModernTheme.success : ModernTheme.secondary)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 9)
+                        .fill((isCorrect ? ModernTheme.success : ModernTheme.secondary).opacity(0.12))
+                        .frame(width: 34, height: 34)
+                    Image(systemName: isCorrect ? "checkmark.seal.fill" : "exclamationmark.circle.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(isCorrect ? ModernTheme.success : ModernTheme.secondary)
+                }
 
-            VStack(alignment: .leading, spacing: 4) {
                 Text(isCorrect ? "正解です" : "解説")
-                    .font(ModernFont.labelLarge)
+                    .font(ModernFont.headlineSmall)
                     .foregroundColor(ModernTheme.textPrimary)
-                Text(explanation)
-                    .font(ModernFont.bodySmall)
-                    .foregroundColor(ModernTheme.textSecondary)
-                    .lineSpacing(3)
+
+                Spacer()
             }
+
+            Text(explanation)
+                .font(ModernFont.bodySmall)
+                .foregroundColor(ModernTheme.textSecondary)
+                .lineSpacing(4)
         }
-        .padding(14)
+        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(isCorrect ? ModernTheme.successSoft.opacity(0.45) : ModernTheme.secondarySoft.opacity(0.45))
+            RoundedRectangle(cornerRadius: 16)
+                .fill(isCorrect ? ModernTheme.successSoft.opacity(0.08) : ModernTheme.secondarySoft.opacity(0.08))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(isCorrect ? ModernTheme.success.opacity(0.22) : ModernTheme.secondary.opacity(0.18), lineWidth: 0.8)
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(isCorrect ? ModernTheme.success.opacity(0.2) : ModernTheme.secondary.opacity(0.2), lineWidth: 1)
         )
+        .shadow(color: ModernTheme.shadowColor, radius: 6, x: 0, y: 1)
     }
 }

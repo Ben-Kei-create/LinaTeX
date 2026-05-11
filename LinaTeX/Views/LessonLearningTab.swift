@@ -130,18 +130,26 @@ struct LearningSectionCard<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(color)
+            HStack(spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 9)
+                        .fill(color.opacity(0.12))
+                        .frame(width: 34, height: 34)
+                    Image(systemName: icon)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(color)
+                }
+
                 Text(title)
                     .font(ModernFont.headlineSmall)
                     .foregroundColor(ModernTheme.textPrimary)
+
+                Spacer()
             }
 
             content()
         }
-        .padding(18)
+        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16)
@@ -149,7 +157,7 @@ struct LearningSectionCard<Content: View>: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(ModernTheme.border, lineWidth: 1)
+                .stroke(ModernTheme.border, lineWidth: 0.8)
         )
         .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
     }
