@@ -738,6 +738,46 @@ let advancedCourse = Course(
             summary: "bash で効率的な自動化スクリプト",
             lessons: [
                 Lesson(
+                    title: "bash スクリプトの基礎",
+                    emoji: "📚",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "シェルスクリプトで自動化を実現",
+                        sections: [
+                            ConceptSection(
+                                heading: "bash スクリプトとは",
+                                body: "bash スクリプトは、Linux コマンドを複数組み合わせて、一度に実行するファイルです。\n\nターミナルで1行ずつ入力する代わりに、スクリプトファイルに書いた複数のコマンドが順番に実行されます。バックアップ、ログ処理、定期メンテナンスなど、日常の繰り返し作業を自動化できます。",
+                                codeSample: "#!/bin/bash\necho \"バックアップを開始します\"\ncp -r /home/user/documents /backup/\necho \"バックアップが完了しました\"",
+                                tip: "スクリプトの最初の行 #!/bin/bash（shebang）は必須。これがないと実行時にどのインタプリタを使うか判断できません"
+                            ),
+                            ConceptSection(
+                                heading: "スクリプト実行の流れ",
+                                body: "1. スクリプトファイルを作成（例: backup.sh）\n2. chmod +x で実行可能にする\n3. ./backup.sh で実行\n\n• ./backup.sh: シェバング指定で自動的に bash を選択\n• bash backup.sh: bash コマンドで明示的に実行\n• sh backup.sh: 標準シェルで実行\n\n実行権限がない場合、「Permission denied」エラーが出ます。",
+                                codeSample: "chmod +x script.sh  # 実行可能にする\n./script.sh          # 実行",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "bash スクリプト作成クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "毎日データをバックアップするスクリプトが必要です。新しいスクリプトファイルを作成し、実行可能にしましょう。",
+                        prompt: "新しいスクリプトファイル backup.sh を作成するコマンドは？",
+                        hint: "touch backup.sh でスクリプトファイルを作成します。",
+                        answer: "touch",
+                        options: [
+                            CommandOption(label: "touch", command: "touch", icon: "doc.badge.plus"),
+                            CommandOption(label: "nano", command: "nano", icon: "square.and.pencil"),
+                            CommandOption(label: "vi", command: "vi", icon: "pencil.and.outline"),
+                        ],
+                        simulatedOutput: "user@linux:~$ touch backup.sh\nuser@linux:~$ ls backup.sh\nbackup.sh",
+                        successMessage: "✅ スクリプトファイルが作成されました"
+                    ))
+                ),
+                Lesson(
                     title: "スクリプト作成の実践",
                     emoji: "📝",
                     estimatedMinutes: 15,
@@ -816,6 +856,86 @@ let advancedCourse = Course(
             title: "ネットワークと遠隔操作",
             summary: "SSH、curl で外部システムと連携",
             lessons: [
+                Lesson(
+                    title: "SSH - リモートサーバーに接続",
+                    emoji: "🔒",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "安全にリモートサーバーを操作する",
+                        sections: [
+                            ConceptSection(
+                                heading: "SSH の役割",
+                                body: "SSH（Secure Shell）は、インターネット経由でリモートサーバーに安全に接続して、コマンドを実行するプロトコルです。\n\nネットワーク通信が暗号化されるため、盗聴や改ざんから保護されます。Telnet のような古いプロトコルとは異なり、SSH は本番環境やセキュリティが必要な場面で標準的に使われます。",
+                                codeSample: "ssh user@example.com\n# example.com に user でログイン\nssh -i ~/.ssh/id_rsa user@example.com\n# SSH鍵を使用して接続",
+                                tip: "SSH キー認証を設定すると、パスワード入力が不要になり、自動化スクリプトから安全に接続できます"
+                            ),
+                            ConceptSection(
+                                heading: "SSH の接続方法",
+                                body: "• ssh user@host: パスワード認証で接続\n• ssh -i keyfile user@host: SSH鍵で接続\n• ssh -p 2222 user@host: 非標準ポート（22以外）で接続\n• ssh -X user@host: X11 フォワーディング（GUI アプリ実行）\n\nSSH 鍵認証は以下の利点があります：\n• パスワード不要（スクリプト自動化が容易）\n• パスワード盗聴の心配がない\n• ブルートフォース攻撃に強い",
+                                codeSample: nil,
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "SSH - リモート接続クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "本番サーバー example.com にログインして、システムメンテナンスを行う必要があります。",
+                        prompt: "example.com のリモートサーバーに user でログインするコマンドは？",
+                        hint: "ssh user@example.com でログインできます。",
+                        answer: "ssh",
+                        options: [
+                            CommandOption(label: "ssh", command: "ssh", icon: "network"),
+                            CommandOption(label: "telnet", command: "telnet", icon: "square.connected.to.square"),
+                            CommandOption(label: "ftp", command: "ftp", icon: "arrow.up.arrow.down"),
+                        ],
+                        simulatedOutput: "user@example.com:~$ ",
+                        successMessage: "✅ リモートサーバーに接続されました"
+                    ))
+                ),
+                Lesson(
+                    title: "curl - Web API データ取得",
+                    emoji: "📡",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "インターネットからデータを取得・送信",
+                        sections: [
+                            ConceptSection(
+                                heading: "curl コマンドの役割",
+                                body: "curl は、HTTP/HTTPS 通信でインターネットからデータを取得・送信するコマンドです。\n\nWeb ページのダウンロード、REST API との通信、ファイルのアップロード、ヘッダー情報の確認など、Web 関連の様々な操作ができます。API 統合やデータ取得の自動化に必須のツールです。",
+                                codeSample: "curl https://api.example.com/users\n# JSON 形式のレスポンスを取得\ncurl -X POST -d '{\"name\":\"John\"}' https://api.example.com/users\n# POST リクエストを送信",
+                                tip: "curl の出力を jq でパースすると、JSON データを見やすく整形・抽出できます"
+                            ),
+                            ConceptSection(
+                                heading: "curl の基本的な使用方法",
+                                body: "• curl URL: GET リクエストでページを取得\n• curl -X POST URL: POST リクエストを送信\n• curl -d 'data' URL: ボディデータを送信\n• curl -H 'Header: value' URL: ヘッダーを指定\n• curl -o file.txt URL: ファイルに保存\n• curl -i URL: レスポンスヘッダーも表示\n\n出力をパイプして jq に渡すことで、JSON の整形・フィルタリングができます。",
+                                codeSample: "curl https://api.example.com/data | jq '.users[]'",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "curl - API データ取得クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "外部 API からユーザー情報を取得する必要があります。",
+                        prompt: "https://api.example.com/users から JSON データを取得するコマンドは？",
+                        hint: "curl https://api.example.com/users でデータを取得できます。",
+                        answer: "curl",
+                        options: [
+                            CommandOption(label: "curl", command: "curl", icon: "arrow.down.doc"),
+                            CommandOption(label: "wget", command: "wget", icon: "arrow.down.circle"),
+                            CommandOption(label: "ssh", command: "ssh", icon: "network"),
+                        ],
+                        simulatedOutput: "{\"users\":[{\"id\":1,\"name\":\"Alice\"},{\"id\":2,\"name\":\"Bob\"}]}",
+                        successMessage: "✅ API からデータが取得されました"
+                    ))
+                ),
                 Lesson(
                     title: "ネットワークコマンド実践",
                     emoji: "🌐",
