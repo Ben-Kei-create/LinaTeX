@@ -175,36 +175,67 @@ let basicsCourseLessons: [Lesson] = [
             finaleMessage: "✅ プロジェクトファイルの整理完了！"
         ))
     ),
-    // Basics quiz
+    // Basics quiz (Chapter 3)
     Lesson(
-        title: "基本コマンド確認テスト",
+        title: "ファイル操作の深掘りテスト",
         emoji: "✅",
-        estimatedMinutes: 10,
+        estimatedMinutes: 12,
         content: .quiz(QuizLesson(
             questions: [
                 QuizQuestion(
-                    question: "ホームディレクトリに移動するコマンドは？",
-                    choices: ["cd ~", "ls ~", "pwd", "mkdir ~"],
+                    question: "cp -r src/ dst/ を実行した。src ディレクトリが存在して dst が存在しない場合、結果は？",
+                    choices: [
+                        "dst/ という名前のディレクトリが新規作成され、src の内容がコピーされる",
+                        "エラーになる（dst がないため）",
+                        "src が dst にリネームされる",
+                        "src の内容が /tmp/dst に保存される"
+                    ],
                     correctIndex: 0,
-                    explanation: "cd ~ でホームディレクトリに移動します。cd だけでもOK。"
+                    explanation: "cp -r は宛先が存在しない場合、宛先ディレクトリを新規作成してコピーします。一方、dst/ が既に存在する場合は dst/src/ というサブディレクトリが作られます。この挙動の違いは実務でよく混乱の原因になります。"
                 ),
                 QuizQuestion(
-                    question: "ファイル data.txt を data_copy.txt にコピーするコマンドは？",
-                    choices: ["cp data.txt data_copy.txt", "mv data.txt data_copy.txt", "cat data.txt > data_copy.txt", "ln data.txt data_copy.txt"],
+                    question: "mv a.txt b.txt を実行したとき、b.txt が既に存在していた場合どうなる？",
+                    choices: [
+                        "確認なしで b.txt は上書きされ、a.txt は削除される",
+                        "エラーになりどちらも変わらない",
+                        "a.txt と b.txt が両方残る",
+                        "a.txt_bak という名前で保存される"
+                    ],
                     correctIndex: 0,
-                    explanation: "cp で既存ファイルをコピーします。mv は移動（リネーム）です。"
+                    explanation: "mv はデフォルトで確認なく上書きします。既存ファイルを誤って消す事故を防ぐには mv -i（interactive）オプションを使います。-i を付けると上書き前に確認を求めます。cp も同様です。"
                 ),
                 QuizQuestion(
-                    question: "ファイル important.doc を削除するコマンドは？",
-                    choices: ["rm important.doc", "mv important.doc /trash", "rmdir important.doc", "delete important.doc"],
+                    question: "rm -rf / を実行しようとしたところ「Operation not permitted」となった。この保護機能の名前は？",
+                    choices: [
+                        "--preserve-root（ルートディレクトリへの再帰削除を防ぐデフォルト保護）",
+                        "SELinux のポリシー",
+                        "ファイルのイミュータブルフラグ",
+                        "sudo が必要なため"
+                    ],
                     correctIndex: 0,
-                    explanation: "rm でファイルを削除します。削除後は復旧できないため、-i オプションで確認することをお勧めします。"
+                    explanation: "GNU coreutils の rm にはデフォルトで --preserve-root オプションが有効で、/ を rm -r の対象にすることを防ぎます。--no-preserve-root で無効にできますが、実行すると取り返しがつかないため絶対に行わないでください。"
                 ),
                 QuizQuestion(
-                    question: "ファイルの名前を old_name.txt から new_name.txt に変更するコマンドは？",
-                    choices: ["mv old_name.txt new_name.txt", "cp old_name.txt new_name.txt", "rename old_name.txt new_name.txt", "rn old_name.txt new_name.txt"],
+                    question: "cp コマンドでファイルのタイムスタンプ・権限・オーナー情報も含めてコピーするオプションは？",
+                    choices: [
+                        "cp -p（preserve: 属性を保持）",
+                        "cp -a（archive、-p -r -d の組み合わせ）",
+                        "どちらも正しい（-p は単体属性保持、-a はより完全なバックアップ用）",
+                        "cp -x"
+                    ],
+                    correctIndex: 2,
+                    explanation: "cp -p はタイムスタンプ・モード・オーナーを保持します。cp -a はさらにシンボリックリンクも保持する「アーカイブモード」で、バックアップ目的では -a が完全です。両方正しいですが目的によって使い分けます。"
+                ),
+                QuizQuestion(
+                    question: "rm でファイルを削除した後、同じ容量のファイルで回復を試みたが失敗した。なぜか？",
+                    choices: [
+                        "rm は inode とデータブロックへの参照を削除するため、データは残っていても通常手段では復旧不可",
+                        "rm はファイルを暗号化して削除するため",
+                        "削除後は即座にディスクから消去されるため",
+                        "ゴミ箱に移動されるが容量が足りないため"
+                    ],
                     correctIndex: 0,
-                    explanation: "mv でファイルをリネーム（移動）します。同じディレクトリ内での mv は名前変更になります。"
+                    explanation: "rm はディレクトリエントリ（ファイル名→inode のマッピング）と inode を削除しますが、データブロック自体は即座には消えません。ただし他のファイルで上書きされる前なら forensics ツール（testdisk, extundelete）で復旧できる場合があります。重要ファイルはバックアップが必須です。"
                 ),
             ]
         ))
@@ -504,8 +535,73 @@ let basicsCourse = Course(
                             CommandOption(label: "ls src", command: "ls", icon: "list.bullet"),
                             CommandOption(label: "pwd src", command: "pwd", icon: "mappin.circle.fill"),
                         ],
-                        simulatedOutput: "",
-                        successMessage: "✅ src フォルダに移動しました。pwd で確認してみてください！"
+                        simulatedOutput: "user@server:/var/www/html$ cd src\nuser@server:/var/www/html/src$",
+                        successMessage: "✅ src に移動！プロンプトのパスが変わったことに注目。pwd で確認できます。"
+                    ))
+                ),
+                // ─── 問題（クイズ）────────────────────────────────────────
+                Lesson(
+                    title: "ナビゲーション 理解テスト",
+                    emoji: "🗺️",
+                    estimatedMinutes: 10,
+                    content: .quiz(QuizLesson(
+                        questions: [
+                            QuizQuestion(
+                                question: "ls -l の出力を見てください。\n\n-rw-r--r-- 2 alice web 4096 Jan 15 report.txt\n\n「2」は何を意味するか？",
+                                choices: [
+                                    "ハードリンク数（この inode を指すリンクが2つある）",
+                                    "ファイルのバージョン番号",
+                                    "グループに属するユーザー数",
+                                    "書き込み権限のビット値"
+                                ],
+                                correctIndex: 0,
+                                explanation: "ls -l の3列目はハードリンク数です。同じ inode（ファイルの実体）を指すファイル名が何個あるかを示します。通常のファイルは 1 ですが、ハードリンクを作ると増えます。ディレクトリの場合はサブディレクトリ数 + 2（. と ..）になります。"
+                            ),
+                            QuizQuestion(
+                                question: "現在 /var/www/html/project にいる。\ncd ../../ を実行後、pwd が返す値は？",
+                                choices: [
+                                    "/var/www",
+                                    "/var",
+                                    "/var/www/html",
+                                    "/"
+                                ],
+                                correctIndex: 0,
+                                explanation: "cd .. は1段上の親ディレクトリへ移動します。cd ../../ は2段上なので、/var/www/html/project → /var/www/html → /var/www となります。パスを手で追って確認する習慣をつけましょう。"
+                            ),
+                            QuizQuestion(
+                                question: "ls -l の出力の先頭文字が d で始まるエントリ（例: drwxr-xr-x）は何を示すか？",
+                                choices: [
+                                    "ディレクトリ",
+                                    "ダイナミックリンクライブラリ",
+                                    "削除済みファイル",
+                                    "デバイスファイル"
+                                ],
+                                correctIndex: 0,
+                                explanation: "ls -l の先頭文字はファイルタイプを示します。d=ディレクトリ、-=通常ファイル、l=シンボリックリンク、c=キャラクタデバイス、b=ブロックデバイス、p=パイプ、s=ソケット。実務で頻出の区別です。"
+                            ),
+                            QuizQuestion(
+                                question: "ホームディレクトリ /home/alice にいるとき cd を引数なしで実行し、その後 pwd を実行した。結果は？",
+                                choices: [
+                                    "/home/alice（引数なし cd はホームへ戻る）",
+                                    "/ （ルートへ移動）",
+                                    "何も起きない（引数なしは無効）",
+                                    "エラーになる"
+                                ],
+                                correctIndex: 0,
+                                explanation: "cd を引数なしで実行すると、環境変数 HOME に設定されたディレクトリ（通常は /home/ユーザー名）へ移動します。cd ~ も同じ動作です。深いディレクトリにいて素早くホームへ戻りたい場合に使います。"
+                            ),
+                            QuizQuestion(
+                                question: "ls を実行すると .bashrc が表示されなかった。原因は？",
+                                choices: [
+                                    ".（ドット）で始まるファイルは ls のデフォルト出力で非表示になる",
+                                    ".bashrc はシステムファイルで通常ユーザーには見えない",
+                                    "ファイルが存在しない",
+                                    "ls は txt ファイルしか表示しない"
+                                ],
+                                correctIndex: 0,
+                                explanation: "Linux では . で始まるファイル・ディレクトリは「隠しファイル」として扱われ、ls のデフォルト出力には含まれません。ls -a（または ls -la で詳細付き）で表示できます。.bashrc .gitignore .env などの設定ファイルに多く使われます。"
+                            ),
+                        ]
                     ))
                 ),
             ]
