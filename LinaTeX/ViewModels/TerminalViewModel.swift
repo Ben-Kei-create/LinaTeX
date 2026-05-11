@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import UIKit
 
 // MARK: - Navigation States
 
@@ -21,13 +22,15 @@ enum LessonState {
 // MARK: - App ViewModel
 
 class AppViewModel: ObservableObject {
+    private let store = ProgressStore.shared
+
     @Published var navigationPath: [AppScreen] = []
     @Published var completedLessons: Set<UUID> = []
     @Published var totalXP: Int = 0
     @Published var streak: Int = 0
     @Published var totalLessonAttempts: Int = 0
     @Published var correctAnswers: Int = 0
-    @Published var unlockedAchievements: Set<String> = [] // IDs of unlocked achievements
+    @Published var unlockedAchievements: Set<String> = []
     @Published var learningProfile: LearningProfile?
     @Published var personalizedRecommendation: PersonalizedRecommendation?
 
@@ -39,7 +42,6 @@ class AppViewModel: ObservableObject {
     private var typingSessionID = UUID()
     private var isNavigationLocked = false
 
-    // Theme preference
     @Published var isDarkMode: Bool = false
 
     var courses: [Course] { comprehensiveAllCourses }
@@ -50,6 +52,31 @@ class AppViewModel: ObservableObject {
 
     var estimatedLearningTime: Int {
         completedLessons.count * 10
+    }
+
+    // MARK: - Init
+
+    init() {
+        completedLessons = Set(store.completedLessonIDs.compactMap { UUID(uuidString: $0) })
+        totalXP = store.totalXP
+        streak = store.streak
+        totalLessonAttempts = store.totalLessonAttempts
+        correctAnswers = store.correctAnswers
+        unlockedAchievements = store.unlockedAchievementIDs
+        checkStreakOnLaunch()
+    }
+
+    // Reset streak if the user skipped more than one day since last study.
+    private func checkStreakOnLaunch() {
+        guard let lastDate = store.lastStudyDate else { return }
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let last  = calendar.startOfDay(for: lastDate)
+        let daysDiff = calendar.dateComponents([.day], from: last, to: today).day ?? 0
+        if daysDiff > 1 {
+            streak = 0
+            store.streak = 0
+        }
     }
 
     // MARK: - Navigation
@@ -76,17 +103,13 @@ class AppViewModel: ObservableObject {
 
     func goBack() {
         guard lockNavigation() else { return }
-        if !navigationPath.isEmpty {
-            navigationPath.removeLast()
-        }
+        if !navigationPath.isEmpty { navigationPath.removeLast() }
     }
 
     private func lockNavigation(duration: Double = 0.35) -> Bool {
         guard !isNavigationLocked else { return false }
         isNavigationLocked = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-            self.isNavigationLocked = false
-        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) { self.isNavigationLocked = false }
         return true
     }
 
@@ -107,9 +130,7 @@ class AppViewModel: ObservableObject {
             DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.06) {
                 guard self.typingSessionID == sessionID else { return }
                 self.userInput.append(char)
-                if i == command.count - 1 {
-                    self.isTyping = false
-                }
+                if i == command.count - 1 { self.isTyping = false }
             }
         }
     }
@@ -126,9 +147,11 @@ class AppViewModel: ObservableObject {
             currentLessonState = .correct
             terminalOutput = quest.simulatedOutput
             addXP(50)
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         } else {
             currentLessonState = .wrong
             terminalOutput = "この問題の答えとは違います: \(trimmed)"
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
     }
 
@@ -144,9 +167,11 @@ class AppViewModel: ObservableObject {
             currentLessonState = .correct
             terminalOutput = step.simulatedOutput
             addXP(30)
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         } else {
             currentLessonState = .wrong
             terminalOutput = "この手順の答えとは違います: \(trimmed)"
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
         }
     }
 
@@ -157,12 +182,41 @@ class AppViewModel: ObservableObject {
         }
 
         completedLessons.insert(lesson.id)
+        store.completedLessonIDs.insert(lesson.id.uuidString)
+
         addXP(100)
-        streak += 1
+        updateStreak()
         totalLessonAttempts += 1
+        store.totalLessonAttempts = totalLessonAttempts
         correctAnswers += 1
+        store.correctAnswers = correctAnswers
         currentLessonState = .completed
         checkAndUnlockAchievements()
+
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+    }
+
+    // Streak = consecutive calendar days with at least one lesson completed.
+    private func updateStreak() {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
+        if let lastDate = store.lastStudyDate {
+            let last = calendar.startOfDay(for: lastDate)
+            let daysDiff = calendar.dateComponents([.day], from: last, to: today).day ?? 0
+            if daysDiff == 0 {
+                // Already studied today — streak unchanged
+            } else if daysDiff == 1 {
+                streak += 1
+            } else {
+                streak = 1
+            }
+        } else {
+            streak = 1
+        }
+
+        store.streak = streak
+        store.lastStudyDate = Date()
     }
 
     func nextStep() {
@@ -220,41 +274,46 @@ class AppViewModel: ObservableObject {
     func addXP(_ amount: Int) {
         withAnimation(.easeInOut(duration: 0.5)) {
             totalXP += amount
+            store.totalXP = totalXP
         }
     }
+
+    // MARK: - Next Uncompleted Lesson (for Continue card on Home)
+
+    func nextUncompletedLesson() -> (lesson: Lesson, course: Course)? {
+        for course in courses {
+            for chapter in course.chapters {
+                for lesson in chapter.lessons {
+                    if !isLessonCompleted(lesson) { return (lesson, course) }
+                }
+            }
+        }
+        return nil
+    }
+
+    // MARK: - Achievements
 
     func checkAndUnlockAchievements() {
         for achievement in allAchievements {
             guard !unlockedAchievements.contains(achievement.id) else { continue }
-
-            let isUnlocked = checkAchievementRequirement(achievement.requirement)
-            if isUnlocked {
+            if checkAchievementRequirement(achievement.requirement) {
                 unlockedAchievements.insert(achievement.id)
+                store.unlockedAchievementIDs.insert(achievement.id)
             }
         }
     }
 
     private func checkAchievementRequirement(_ requirement: AchievementRequirement) -> Bool {
         switch requirement {
-        case .lessonsCompleted(let count):
-            return completedLessons.count >= count
-        case .xpReached(let amount):
-            return totalXP >= amount
-        case .streakDays(let days):
-            return streak >= days
-        case .successRate(let target):
-            return successRate >= target
-        case .courseCompleted:
-            // TODO: Implement course completion check
-            return false
-        case .firstLesson:
-            return !completedLessons.isEmpty
-        case .allConceptLessons:
-            return checkAllLessonsOfType(.concept)
-        case .allQuestLessons:
-            return checkAllLessonsOfType(.quest)
-        case .allScenarioLessons:
-            return checkAllLessonsOfType(.scenario)
+        case .lessonsCompleted(let count):  return completedLessons.count >= count
+        case .xpReached(let amount):        return totalXP >= amount
+        case .streakDays(let days):         return streak >= days
+        case .successRate(let target):      return successRate >= target
+        case .courseCompleted:              return false // TODO: implement per-course check
+        case .firstLesson:                  return !completedLessons.isEmpty
+        case .allConceptLessons:            return checkAllLessonsOfType(.concept)
+        case .allQuestLessons:              return checkAllLessonsOfType(.quest)
+        case .allScenarioLessons:           return checkAllLessonsOfType(.scenario)
         }
     }
 
@@ -264,15 +323,14 @@ class AppViewModel: ObservableObject {
                 chapter.lessons.filter { lesson in
                     switch (lesson.content, type) {
                     case (.concept, .concept): return true
-                    case (.quest, .quest): return true
+                    case (.quest, .quest):     return true
                     case (.scenario, .scenario): return true
-                    case (.quiz, .quiz): return true
-                    default: return false
+                    case (.quiz, .quiz):       return true
+                    default:                   return false
                     }
                 }
             }
         }
-
         guard !allLessonsOfType.isEmpty else { return false }
         return allLessonsOfType.allSatisfy { completedLessons.contains($0.id) }
     }
@@ -297,18 +355,12 @@ class AppViewModel: ObservableObject {
 
     func getLearningStyleDescription() -> String {
         guard let profile = learningProfile else { return "分析中..." }
-
         switch profile.learningStyle {
-        case .conceptPreferred:
-            return "理論的学習型 - コンセプトから理解するのが得意"
-        case .questPreferred:
-            return "シンプルタスク型 - 単純なコマンド実行で理解"
-        case .scenarioPreferred:
-            return "実践シナリオ型 - 複雑なタスク解決が得意"
-        case .quizPreferred:
-            return "知識確認型 - クイズで知識を定着させるタイプ"
-        case .balanced:
-            return "バランス型 - すべての学習形式をバランスよく活用"
+        case .conceptPreferred:  return "理論的学習型 - コンセプトから理解するのが得意"
+        case .questPreferred:    return "シンプルタスク型 - 単純なコマンド実行で理解"
+        case .scenarioPreferred: return "実践シナリオ型 - 複雑なタスク解決が得意"
+        case .quizPreferred:     return "知識確認型 - クイズで知識を定着させるタイプ"
+        case .balanced:          return "バランス型 - すべての学習形式をバランスよく活用"
         }
     }
 
