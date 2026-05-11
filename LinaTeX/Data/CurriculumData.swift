@@ -712,26 +712,41 @@ let standardCourse = Course(
                 Lesson(
                     title: "grep 実践クイズ",
                     emoji: "🧪",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 10,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "ファイルから大文字小文字を区別せず検索するオプションは？",
-                                choices: ["-i", "-r", "-n", "-v"],
+                                question: "次の2つのコマンドで出力が異なるのはどんな場合か？\n\nA: grep 'error' app.log\nB: grep -i 'error' app.log",
+                                choices: [
+                                    "ログに「Error」や「ERROR」が含まれる行がある場合（A は一致しないが B は一致する）",
+                                    "常に同じ結果になる",
+                                    "A の方がより多くの行を返す",
+                                    "B はファイルを変更してしまう"
+                                ],
                                 correctIndex: 0,
-                                explanation: "grep -i で大文字小文字を区別しません。case-insensitive の i です。"
+                                explanation: "grep はデフォルトで大文字小文字を区別します。-i を付けると区別しなくなります。実務のログは ERROR、Error、error など表記が混在することがあるため、ログ解析では -i を使うことが多いです。"
                             ),
                             QuizQuestion(
-                                question: "grep -r は何を意味する？",
-                                choices: ["Recursive - 再帰的に検索", "Reverse - 逆順", "Replace - 置換", "Remove - 削除"],
+                                question: "cat app.log | grep CRITICAL | wc -l を実行したら「0」と表示された。正確に何を意味するか？",
+                                choices: [
+                                    "app.log 内に「CRITICAL」という文字列を含む行が0行だった",
+                                    "app.log が空ファイルだった",
+                                    "grep が実行に失敗した",
+                                    "wc -l は0を表示しない（最低1）"
+                                ],
                                 correctIndex: 0,
-                                explanation: "grep -r でディレクトリ内を再帰的に検索します。複数ファイルから一度に検索可能。"
+                                explanation: "wc -l は標準入力の行数を表示します。grep に一致する行が0件なら、wc -l への入力も0行なので「0」と表示されます。CRITICAL ログが一件もないということで、これは正常な状態です。"
                             ),
                             QuizQuestion(
-                                question: "パターンにマッチしない行を表示するオプションは？",
-                                choices: ["-v", "-i", "-r", "-n"],
+                                question: "grep -l 'pattern' /var/log/*.log の出力は何か？",
+                                choices: [
+                                    "pattern を含む行ではなく、pattern を含むファイル名の一覧",
+                                    "pattern を含む行と行番号",
+                                    "pattern を含まないファイルの一覧",
+                                    "pattern が何行あるかを各ファイルごとに表示"
+                                ],
                                 correctIndex: 0,
-                                explanation: "grep -v で逆マッチ（invert）します。マッチしない行を表示。"
+                                explanation: "-l（lowercase L）は list の意。マッチした行の内容ではなく、マッチが見つかったファイル名だけを表示します。複数のログファイルから「このパターンを含むログはどれか」を調べるときに便利です。-c はマッチ件数を、-n は行番号を表示します。"
                             ),
                         ]
                     ))
@@ -784,26 +799,41 @@ let standardCourse = Course(
                 Lesson(
                     title: "テキスト処理総合クイズ",
                     emoji: "🎯",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "パイプ（|）の役割は？",
-                                choices: ["前のコマンドの出力を次のコマンドの入力に", "コマンドを複数実行", "条件分岐", "別ファイルにリダイレクト"],
+                                question: "1行に「apple」が3回現れるテキストに対して、以下2つの sed コマンドの出力の違いは？\n\nA: sed 's/apple/orange/' data.txt\nB: sed 's/apple/orange/g' data.txt",
+                                choices: [
+                                    "A は1行につき最初の1個だけ置換、B は全ての apple を置換する",
+                                    "A と B は同じ結果になる",
+                                    "A は全部、B は最後の1個だけ置換",
+                                    "A は行を削除、B は置換"
+                                ],
                                 correctIndex: 0,
-                                explanation: "パイプは前のコマンドの標準出力を次のコマンドの標準入力に繋ぎます。コマンド連携の基本。"
+                                explanation: "g フラグ（global）なしの sed は1行につき最初にマッチした1箇所だけを置換します。3回 apple が出現する行でも A では最初の1個だけ orange に変わります。設定ファイルの一括置換では g フラグを忘れると一部だけが変わり、見つかりにくいバグの原因になります。"
                             ),
                             QuizQuestion(
-                                question: "sed 's/old/new/g' file.txt の g フラグは何？",
-                                choices: ["Global - 1行内の全て置換", "Group - グループ化", "Generate - 生成", "Grep - 検索"],
+                                question: "sed -i 's/DEBUG/INFO/g' app.log を実行した。元のファイルはどうなるか？",
+                                choices: [
+                                    "ファイルそのものが書き換えられる（-i はファイルをインプレースで編集）",
+                                    "app.log は変更されず、結果が標準出力に表示される",
+                                    "app.log.bak というバックアップが自動作成される",
+                                    "エラーになる（-i は危険なため使用不可）"
+                                ],
                                 correctIndex: 0,
-                                explanation: "g フラグは global。1行内の全てのマッチを置換します。g なしは1行につき1回だけ。"
+                                explanation: "-i（in-place）オプションはファイルを直接書き換えます。バックアップなしで上書きされるため元に戻せません。安全のため sed -i.bak 's/DEBUG/INFO/g' app.log のようにバックアップ拡張子を指定するとよいです（app.log.bak が作成されます）。"
                             ),
                             QuizQuestion(
-                                question: "grep コマンドでファイルの行番号も表示するオプションは？",
-                                choices: ["-n", "-l", "-c", "-h"],
+                                question: "パイプで繋いだコマンド A | B | C がある。コマンド B がエラー終了した場合、デフォルトで C は実行されるか？",
+                                choices: [
+                                    "される（デフォルトでパイプはエラーを伝播しない。C は B の出力を受け取り実行される）",
+                                    "されない（エラーで即時中断）",
+                                    "A だけ再実行される",
+                                    "C はエラーコードを受け取って実行される"
+                                ],
                                 correctIndex: 0,
-                                explanation: "grep -n で行番号を表示します。-l はファイル名のみ、-c は件数のみ表示。"
+                                explanation: "bash のデフォルト動作では、パイプライン中のコマンドがエラー終了しても次のコマンドは実行されます。パイプライン全体の終了コードは最後のコマンド（C）のものになります。B のエラーに気づかず処理を続けるため、set -o pipefail を設定するか、各ステップで終了コードをチェックする習慣が重要です。"
                             ),
                         ]
                     ))
@@ -901,28 +931,54 @@ let standardCourse = Course(
                     ))
                 ),
                 Lesson(
-                    title: "権限管理クイズ",
+                    title: "権限管理の深掘りテスト",
                     emoji: "🔑",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "755 という権限の意味は？",
-                                choices: ["所有者:読み書き実行、グループ:読み実行、他:読み実行", "所有者:読み書き、グループ:読み、他:読み実行", "所有者:読み、グループ:読み実行、他:読み", "所有者:読み実行、グループ:読み、他:読み実行"],
+                                question: "umask 022 の場合、新規作成したファイルのデフォルト権限は？",
+                                choices: [
+                                    "644（rw-r--r--）",
+                                    "755（rwxr-xr-x）",
+                                    "777（rwxrwxrwx）",
+                                    "022（--------w-w）"
+                                ],
                                 correctIndex: 0,
-                                explanation: "755 = rwxr-xr-x。所有者が全権、グループと他が読み実行。実行可能ファイル向け。"
+                                explanation: "umask は新規ファイル作成時に「引く」ビットマスクです。ファイルのデフォルト最大権限は 666（実行なし）で、そこから umask 022 を引くと 644 になります。ディレクトリの最大権限は 777 で umask 022 を引くと 755。umask はセキュリティの観点で重要な設定です。"
                             ),
                             QuizQuestion(
-                                question: "644 という権限の意味は？",
-                                choices: ["所有者:読み書き、グループ:読み、他:読み", "所有者:読み写き実行、グループ:読み実行、他:実行", "所有者:読み、グループ:読み書き、他:読み", "所有者:読み書き、グループ:読み実行、他:読み実行"],
+                                question: "ls -l の出力が '-rwsr-xr-x' となっているファイルがあった。's' が示すのは？",
+                                choices: [
+                                    "Set UID ビット：このファイルを実行すると、所有者の権限でプロセスが動く",
+                                    "Sticky ビット：ファイルが常にメモリに残る",
+                                    "シンボリックリンクを示す",
+                                    "書き込み専用ファイル"
+                                ],
                                 correctIndex: 0,
-                                explanation: "644 = rw-r--r--。所有者が読み書き、グループと他が読み専用。テキストファイル向け。"
+                                explanation: "Set UID（SUID）ビットが設定されたコマンドは、実行者ではなくファイル所有者の権限で動作します。代表例は /usr/bin/passwd：一般ユーザーが実行しても /etc/shadow を書き換えられるのは SUID で root 権限で動くためです。SUID ファイルは攻撃者に悪用されることもあるため、不用意な設定は危険です。"
                             ),
                             QuizQuestion(
-                                question: "chmod u+x file.txt は何をする？",
-                                choices: ["所有者に実行権限を追加", "全員に実行権限を追加", "所有者から実行権限を削除", "実行権限を644に設定"],
+                                question: "ディレクトリに chmod 1777 を設定した。最初の '1' は何を意味するか？",
+                                choices: [
+                                    "スティッキービット：そのディレクトリ内のファイルは所有者か root しか削除できない",
+                                    "Set UID：ディレクトリ内のファイルの所有者を固定",
+                                    "読み専用フラグ",
+                                    "バージョン番号"
+                                ],
                                 correctIndex: 0,
-                                explanation: "u は所有者（user）。+x で実行権限を追加。シンボリック表記（644より直感的）。"
+                                explanation: "スティッキービット（Sticky bit）は /tmp のようなパブリックな書き込みディレクトリで使われます。1777 を設定すると、全員がファイルを作成できても、自分のファイルしか削除できません。ls -l では drwxrwxrwt のように t で表示されます（T は実行権限なし）。"
+                            ),
+                            QuizQuestion(
+                                question: "chmod g-w,o-r script.sh を実行した。このコマンドの意味は？",
+                                choices: [
+                                    "グループの書き込み権限を削除し、他のユーザーの読み取り権限を削除する",
+                                    "グループに書き込みを追加し、他に読み取りを追加する",
+                                    "グループのみ全権限を削除する",
+                                    "エラー（カンマで複数指定はできない）"
+                                ],
+                                correctIndex: 0,
+                                explanation: "chmod のシンボリック表記では対象（u/g/o/a）、操作（+/-/=）、権限（r/w/x）を組み合わせます。カンマで複数の変更を一度に指定できます。g-w はグループから書き込みを引く、o-r は他から読み取りを引く、という意味です。"
                             ),
                         ]
                     ))
