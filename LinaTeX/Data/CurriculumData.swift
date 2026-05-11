@@ -1028,6 +1028,28 @@ let expertCourse1 = Course(
             summary: "useradd, groupadd, id, su, sudo の実践",
             lessons: [
                 Lesson(
+                    title: "ユーザーとグループの概念",
+                    emoji: "👥",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "Linux のマルチユーザー構造を理解",
+                        sections: [
+                            ConceptSection(
+                                heading: "ユーザーとグループの役割",
+                                body: "Linux はマルチユーザー・マルチタスク OS です。複数のユーザーが同時にシステムを利用できます。\n\n各ユーザーには：\n• UID（ユーザーID）: ユーザーを一意に識別する数値\n• GID（グループID）: ユーザーが属するグループの識別番号\n• ホームディレクトリ: ユーザー専用のファイル保存領域\n\nグループにより、複数ユーザーでのファイル共有や権限管理が容易になります。",
+                                codeSample: "id\n# uid=1000(user) gid=1000(user) groups=1000(user),4(adm)",
+                                tip: "UID 0 は root（スーパーユーザー）で、管理者権限を持ちます"
+                            ),
+                            ConceptSection(
+                                heading: "ユーザー・グループ管理コマンド",
+                                body: "• useradd: ユーザー作成\n• usermod: ユーザー情報修正\n• userdel: ユーザー削除\n• groupadd: グループ作成\n• groupdel: グループ削除\n• id: 現在のユーザーID・グループID確認\n• whoami: 現在のユーザー名確認\n• su: ユーザー切り替え\n• sudo: 管理者権限でコマンド実行",
+                                codeSample: "sudo useradd -m newuser\n# -m: ホームディレクトリを作成\nsudo usermod -aG sudo newuser\n# -a: 既存グループに追加\n# -G: グループを指定",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
                     title: "ユーザー情報の確認",
                     emoji: "🔍",
                     estimatedMinutes: 10,
@@ -1211,6 +1233,28 @@ let expertCourse2 = Course(
             summary: "systemctl でサービスを制御",
             lessons: [
                 Lesson(
+                    title: "systemd とサービスの基本",
+                    emoji: "⚙️",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "Linux サービスの生命サイクル管理",
+                        sections: [
+                            ConceptSection(
+                                heading: "systemd とは",
+                                body: "systemd はモダンな Linux 初期化システムで、システム起動時にサービスを管理し、実行時にもサービス制御を行います。\n\n従来の SysVinit に代わり、並列起動による高速ブート、サービス間の依存関係管理、自動再起動などの機能を提供します。ほぼ全ての現代的な Linux ディストリビューションで標準採用されています。",
+                                codeSample: "systemctl status nginx\n# サービスの状態確認\nsystemctl start nginx\n# サービス開始",
+                                tip: "systemctl は /etc/systemd/system/ のユニットファイルを読み込んでサービスを管理します"
+                            ),
+                            ConceptSection(
+                                heading: "主要な systemctl コマンド",
+                                body: "• systemctl start サービス名: サービスを開始\n• systemctl stop サービス名: サービスを停止\n• systemctl restart サービス名: サービスを再起動\n• systemctl reload サービス名: 設定を再読み込み\n• systemctl status サービス名: サービスの状態確認\n• systemctl enable サービス名: 起動時に自動実行\n• systemctl disable サービス名: 自動実行を無効化\n• systemctl list-units --type=service: 全サービスリスト",
+                                codeSample: "sudo systemctl enable nginx\n# 起動時に nginx を自動実行\nsudo systemctl reload nginx\n# 設定変更後に再読み込み",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
                     title: "systemctl コマンドの実践",
                     emoji: "🔧",
                     estimatedMinutes: 12,
@@ -1302,6 +1346,28 @@ let expertCourse3 = Course(
             summary: "ip, ifconfig, ping, hostname などを使いこなす",
             lessons: [
                 Lesson(
+                    title: "ネットワークの基本概念",
+                    emoji: "🌐",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "Linux ネットワーク設定を理解する",
+                        sections: [
+                            ConceptSection(
+                                heading: "ネットワークインターフェース",
+                                body: "Linux では、各ネットワークインターフェース（NIC）に IP アドレス、サブネットマスク、ゲートウェイなどの設定が必要です。\n\n• eth0, eth1: 有線ネットワークインターフェース（Ethernet）\n• lo: ループバックインターフェース（localhost, 127.0.0.1）\n• IPv4: 従来のインターネットプロトコル（例: 192.168.1.100）\n• IPv6: 次世代プロトコル（例: fe80::1）\n\nネットワーク診断では、IP アドレス、ルーティング情報、開放ポートなどを確認します。",
+                                codeSample: "ip addr show\n# 全ネットワークインターフェースと IP アドレス確認\nip route show\n# ルーティング情報確認",
+                                tip: "ip コマンドが最新の推奨方式。ifconfig は古いコマンドで、いくつかのディストリビューションでは非推奨"
+                            ),
+                            ConceptSection(
+                                heading: "ネットワーク診断コマンド",
+                                body: "• ping: ホストの疎通確認（ICMP エコー）\n• traceroute: ネットワーク経路の可視化\n• netstat/ss: ネットワークソケットの接続状態確認\n• nslookup/dig: DNS 名前解決確認\n• curl/wget: HTTP 通信テスト\n• iptables/ufw: ファイアウォール設定\n\n自サーバーに SSH で接続できない場合：\n1. ping でネットワーク接続確認\n2. netstat で SSH ポート確認\n3. ファイアウォール設定確認",
+                                codeSample: "ping -c 4 8.8.8.8\ntraceroute example.com\nnetstat -tuln | grep LISTEN",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
                     title: "ネットワークインターフェース確認",
                     emoji: "🖧",
                     estimatedMinutes: 10,
@@ -1371,6 +1437,28 @@ let expertCourse3 = Course(
             title: "ストレージとログ管理",
             summary: "df, du, mount, journalctl を使いこなす",
             lessons: [
+                Lesson(
+                    title: "ディスクとログ管理の基礎",
+                    emoji: "📝",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "ストレージとログでシステムを監視管理する",
+                        sections: [
+                            ConceptSection(
+                                heading: "ディスク使用量の管理",
+                                body: "Linux システムでは、ディスク容量が満杯になるとシステム停止につながる深刻な障害になります。定期的な監視と不要なファイルの削除が重要です。\n\n• df: ファイルシステムの容量表示（全体的な状況）\n• du: ディレクトリのサイズ表示（詳細な容量確認）\n• mount: ファイルシステムのマウント状態確認\n\nディスクを圧迫している要因：\n• ログファイルの肥大化\n• キャッシュの蓄積\n• 古いバックアップファイル\n• テンポラリファイル",
+                                codeSample: "df -h\n# 全ファイルシステムの容量確認（人間が読みやすいフォーマット）\ndu -sh /var/log\n# /var/log ディレクトリのサイズ確認",
+                                tip: "-h オプションは \"human-readable\" の意で、容量を GB、MB で表示します"
+                            ),
+                            ConceptSection(
+                                heading: "ログ管理とシステム監視",
+                                body: "• journalctl: systemd ジャーナルの確認（最新のディストリビューション）\n• tail -f: ログファイルのリアルタイム監視\n• logrotate: ログファイルの自動ローテーション（古いログを圧縮・削除）\n• /var/log: システムログの標準保存場所\n\nログ分析の例：\n• エラーログ: アプリケーションの問題検出\n• アクセスログ: セキュリティ監視\n• システムログ: 起動シーケンス、デバイス情報\n\nLogrotate により、ログファイルが自動的に古い順に削除され、容量爆発を防ぎます。",
+                                codeSample: "journalctl -u nginx\n# nginx サービスのジャーナル確認\ntail -f /var/log/syslog\n# システムログをリアルタイム監視",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
                 Lesson(
                     title: "ディスク容量の管理",
                     emoji: "💾",
