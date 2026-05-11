@@ -1090,26 +1090,41 @@ let advancedCourse = Course(
                 Lesson(
                     title: "シェルスクリプト知識クイズ",
                     emoji: "💭",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "#!/bin/bash は何を意味する？",
-                                choices: ["Shebang - このファイルを bash で実行することを指定", "コメント", "bash のバージョン指定", "環境変数設定"],
+                                question: "次のスクリプトに set -e が先頭に書かれている。cp が失敗した場合、スクリプトはどう動くか？\n\nset -e\ncp source.txt /nonexistent/\necho 'コピー成功'",
+                                choices: [
+                                    "cp が失敗した時点でスクリプトが即座に終了し、echo は実行されない",
+                                    "cp が失敗してもスクリプトは続行し、echo が実行される",
+                                    "set -e はエラーメッセージを抑制する",
+                                    "cp はエラーを無視して成功扱いにする"
+                                ],
                                 correctIndex: 0,
-                                explanation: "Shebang（シェバング）。スクリプトの最初の行に書き、どのインタプリタで実行するかを指定。"
+                                explanation: "set -e（errexit）を設定すると、コマンドがゼロ以外の終了コードを返した時点でスクリプト全体が終了します。本番環境のスクリプトでは set -e を入れることがベストプラクティスで、エラーを見落とすリスクを減らします。さらに set -o pipefail と組み合わせると、パイプラインのエラーも補足できます。"
                             ),
                             QuizQuestion(
-                                question: "bash スクリプトを実行するコマンドは？",
-                                choices: ["bash script.sh", "./script.sh", "sh script.sh", "全て可能"],
-                                correctIndex: 3,
-                                explanation: "bash script.sh、./script.sh、sh script.sh どれでも実行可能。シェバング指定時は ./script.sh がベスト。"
+                                question: "スクリプト内で $? が 0 以外の値を示していた。何を意味するか？",
+                                choices: [
+                                    "直前のコマンドが失敗した（終了コードが0でない = エラー）",
+                                    "スクリプトが正常完了した",
+                                    "$? は常に 0 を返す",
+                                    "変数が未定義"
+                                ],
+                                correctIndex: 0,
+                                explanation: "$? は直前のコマンドの終了コードを保持する特殊変数です。0 は成功、1以上は失敗（エラーの種類によって値が異なる）。if [ $? -eq 0 ]; then ... の形で条件分岐に使います。ただし $? は次のコマンドを実行すると上書きされるため、必要なら変数に保存します。"
                             ),
                             QuizQuestion(
-                                question: "スクリプトに変数を渡すには？",
-                                choices: ["./script.sh arg1 arg2", "VAR=value ./script.sh", "export VAR=value", "全て可能"],
-                                correctIndex: 3,
-                                explanation: "位置引数、環境変数、export で変数設定可能。スクリプト内で $1, $2 で参照。"
+                                question: "次の2つの変数展開の違いは？\n\nA: echo \"$HOME/backup\"\nB: echo '$HOME/backup'",
+                                choices: [
+                                    "A は変数展開され /home/user/backup と表示、B はリテラルで $HOME/backup と表示",
+                                    "A と B は同じ結果",
+                                    "B の方が変数展開される",
+                                    "どちらもエラー"
+                                ],
+                                correctIndex: 0,
+                                explanation: "bash では二重引用符（\"\"）の中では変数展開・コマンド置換が行われます。単引用符（''）の中では全てのメタ文字が文字通りに扱われ、変数展開は行われません。パスワードや正規表現を含む文字列に単引用符を使うとトラブルを避けられます。"
                             ),
                         ]
                     ))
@@ -1249,26 +1264,41 @@ let advancedCourse = Course(
                 Lesson(
                     title: "ネットワーク・セキュリティクイズ",
                     emoji: "🔒",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "SSH の主な用途は？",
-                                choices: ["安全に遠いサーバーにログイン・操作", "メールプロトコル", "Webページ取得", "パッケージ管理"],
+                                question: "SSH 接続時に「Host key verification failed」エラーが表示された。最も可能性が高い原因は？",
+                                choices: [
+                                    "~/.ssh/known_hosts の記録と実際のサーバーの公開鍵が異なる（OS 再インストールや MITM 攻撃の可能性）",
+                                    "パスワードが間違っている",
+                                    "SSH サーバーが停止している",
+                                    "ネットワークが切断されている"
+                                ],
                                 correctIndex: 0,
-                                explanation: "SSH (Secure Shell) でリモートサーバーに安全に接続。暗号化通信で盗聴・改ざん防止。"
+                                explanation: "SSH は最初の接続時にサーバーの公開鍵を ~/.ssh/known_hosts に保存します。次回以降、保存した鍵と異なる場合に警告が出ます。サーバーの OS 再インストール後によく発生します。ssh-keygen -R hostname でエントリを削除してから再接続できます。一方、予期しない変更は中間者攻撃（MITM）のサインである場合もあります。"
                             ),
                             QuizQuestion(
-                                question: "curl コマンドの主な用途は？",
-                                choices: ["URLからデータを取得、API との通信", "ファイル検索", "テキスト置換", "ディレクトリ移動"],
+                                question: "curl で HTTP POST リクエストを送り、JSON データを含めるコマンドはどれか？",
+                                choices: [
+                                    "curl -X POST -H 'Content-Type: application/json' -d '{\"key\":\"value\"}' https://api.example.com",
+                                    "curl POST https://api.example.com -json '{\"key\":\"value\"}'",
+                                    "curl --post '{\"key\":\"value\"}' https://api.example.com",
+                                    "curl -r https://api.example.com '{\"key\":\"value\"}'"
+                                ],
                                 correctIndex: 0,
-                                explanation: "curl で HTTP/HTTPS 通信。Web API の呼び出し、Webページのダウンロードに使用。"
+                                explanation: "-X POST でメソッドを指定、-H でヘッダーを付加、-d でリクエストボディを指定します。Content-Type: application/json を指定しないとサーバーが JSON と認識しない場合があります。実務での API テストや自動化で頻出のパターンです。"
                             ),
                             QuizQuestion(
-                                question: "SSH キー認証の利点は？",
-                                choices: ["パスワード入力不要で安全、スクリプト自動化が可能", "速度が速い", "パスワードより長い", "全て"],
+                                question: "ssh -L 8080:localhost:3306 user@db-server.example.com の意味は？",
+                                choices: [
+                                    "ローカルの 8080 番ポートを db-server の 3306 番（MySQL）にフォワーディング",
+                                    "リモートサーバーのポート 8080 を開放する",
+                                    "SSH 接続を 8080 番ポートで確立する",
+                                    "ポート 8080 でリモートサーバーを起動する"
+                                ],
                                 correctIndex: 0,
-                                explanation: "SSH 鍵認証でパスワード不要。自動化スクリプトから安全に接続可能。本番環境ではほぼ必須。"
+                                explanation: "ssh -L はローカルポートフォワーディングです。-L 8080:localhost:3306 は「ローカルの 8080 番へのアクセスを、SSHトンネル経由でリモートサーバーの 3306 番に転送」します。ファイアウォールで直接アクセスできないデータベースに安全に接続するために使われます。"
                             ),
                         ]
                     ))
@@ -1378,28 +1408,43 @@ let expertCourse1 = Course(
                     ))
                 ),
                 Lesson(
-                    title: "権限管理クイズ",
+                    title: "ユーザー管理の深掘りテスト",
                     emoji: "🎯",
-                    estimatedMinutes: 8,
+                    estimatedMinutes: 12,
                     content: .quiz(QuizLesson(
                         questions: [
                             QuizQuestion(
-                                question: "useradd -m の -m オプションは何をする？",
-                                choices: ["ホームディレクトリを作成", "ユーザーをマスク", "メイングループを指定", "メールボックスを作成"],
+                                question: "usermod -G sudo alice を実行した（-a なし）。何が起きるか？",
+                                choices: [
+                                    "alice の追加グループが sudo のみに上書きされる（既存の他のグループから外れる）",
+                                    "alice が sudo グループに追加される（既存グループは維持）",
+                                    "エラーになる",
+                                    "sudo グループが削除される"
+                                ],
                                 correctIndex: 0,
-                                explanation: "-m（mkdir）でホームディレクトリを作成。デフォルトは /home/username"
+                                explanation: "-G のみではグループリストが上書きされます。alice が以前 developers や docker グループにも属していた場合、-G sudo だけで実行すると sudo 以外のグループから全て外れます。既存グループを保持しつつ追加するには必ず -a と組み合わせて -aG を使います。これは実務でよくある落とし穴です。"
                             ),
                             QuizQuestion(
-                                question: "usermod -aG の G オプションは？",
-                                choices: ["追加グループを指定（グループにユーザーを追加）", "グループを作成", "グループを削除", "ゲストアクセスを許可"],
+                                question: "/etc/passwd の各フィールドの順序と意味は？\n\nalice:x:1001:1001:Alice Smith:/home/alice:/bin/bash",
+                                choices: [
+                                    "ユーザー名:パスワード(x=シャドウ化):UID:GID:GECOS(コメント):ホームディレクトリ:デフォルトシェル",
+                                    "ユーザー名:実パスワード:GID:UID:ホームディレクトリ:シェル:コメント",
+                                    "UID:GID:ユーザー名:パスワード:シェル:ホームディレクトリ:コメント",
+                                    "ユーザー名:UID:GID:パスワード:ホームディレクトリ:シェル:有効期限"
+                                ],
                                 correctIndex: 0,
-                                explanation: "-G で追加グループ。-a を付けると既存グループに追加（-G のみだと上書き）"
+                                explanation: "/etc/passwd の形式: ユーザー名:パスワード:UID:GID:GECOS:ホームディレクトリ:シェル。パスワードフィールドの x はパスワードが /etc/shadow に分離管理されていることを示します（セキュリティ強化）。/etc/shadow は root のみが読めます。"
                             ),
                             QuizQuestion(
-                                question: "sudo 権限を持つには？",
-                                choices: ["ユーザーを sudo グループに追加", "UID を 0 に変更", "chmod で実行権限を追加", "su で昇格"],
+                                question: "su - alice と su alice の動作の違いは？",
+                                choices: [
+                                    "su - alice はログインシェルを起動し alice の環境変数を完全に引き継ぐ。su alice は現在の環境変数を保持したまま alice に切り替える",
+                                    "どちらも同じ動作",
+                                    "su - alice は root のみ実行可能",
+                                    "su alice はパスワードが不要"
+                                ],
                                 correctIndex: 0,
-                                explanation: "sudo グループのメンバーが sudo コマンドを実行可能。/etc/sudoers で詳細設定も可能"
+                                explanation: "su - はログインシェル（login shell）として切り替えるため、ホームディレクトリへの移動・環境変数の初期化・シェル設定ファイルの読み込みが行われます。su のみは非ログインシェルで、現在の環境変数が引き継がれます。本番環境での作業やデバッグには su - を使う方が環境の差異によるトラブルを防げます。"
                             ),
                         ]
                     ))
