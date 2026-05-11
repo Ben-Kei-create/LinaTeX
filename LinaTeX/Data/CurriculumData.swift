@@ -421,6 +421,86 @@ let standardCourse = Course(
             summary: "grep, sed で強力なテキスト処理",
             lessons: [
                 Lesson(
+                    title: "grep - テキストを検索する",
+                    emoji: "🔍",
+                    estimatedMinutes: 8,
+                    content: .concept(ConceptLesson(
+                        headline: "ファイル内から特定の行を見つける",
+                        sections: [
+                            ConceptSection(
+                                heading: "grep コマンドの役割",
+                                body: "grep（Global Regular Expression Print）は、ファイルやパイプからテキストを検索し、マッチした行を表示するコマンドです。\n\nログファイルからエラーだけを抽出したり、ファイルから特定の単語を含む行を見つけたりするとき、grep は必須ツールです。",
+                                codeSample: "grep ERROR application.log\n# 出力: ERROR を含む行だけが表示される\ngrep \"connection\" *.txt\n# 複数ファイルから検索",
+                                tip: "grep は大文字小文字を区別します。区別したくない場合は -i オプション"
+                            ),
+                            ConceptSection(
+                                heading: "よく使う grep のオプション",
+                                body: "• grep パターン ファイル: パターンを含む行を表示\n• grep -i: 大文字小文字を区別しない\n• grep -r: ディレクトリ内を再帰的に検索\n• grep -n: マッチした行の行番号も表示\n• grep -v: パターンに「マッチしない」行を表示（逆マッチ）\n• grep -c: マッチした行の件数だけを表示",
+                                codeSample: "grep -r \"TODO\" .\n# 現在のディレクトリ以下から \"TODO\" を含むファイル行を全て探す",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "grep - テキスト検索クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 6,
+                    content: .quest(QuestLesson(
+                        scenario: "サーバーのエラーログから問題を診断する必要があります。多くの行がある中から ERROR ログだけ抽出します。",
+                        prompt: "ログファイル app.log から ERROR を含む行だけを表示するコマンドは？",
+                        hint: "grep ERROR app.log で ERROR を含む行を抽出できます。",
+                        answer: "grep",
+                        options: [
+                            CommandOption(label: "grep", command: "grep", icon: "magnifyingglass"),
+                            CommandOption(label: "sed", command: "sed", icon: "pencil.and.outline"),
+                            CommandOption(label: "awk", command: "awk", icon: "square.and.pencil"),
+                        ],
+                        simulatedOutput: "[10:25] ERROR: Database connection failed\n[10:26] ERROR: Timeout on query",
+                        successMessage: "✅ エラーログのみが抽出されました"
+                    ))
+                ),
+                Lesson(
+                    title: "sed - テキストを置換する",
+                    emoji: "✏️",
+                    estimatedMinutes: 8,
+                    content: .concept(ConceptLesson(
+                        headline: "テキストを一括置換する",
+                        sections: [
+                            ConceptSection(
+                                heading: "sed コマンドの役割",
+                                body: "sed（Stream Editor）は、ファイルのテキストを検索して置換（または削除）するコマンドです。\n\nグローバル置換や条件付き置換、複数行の削除など、高度なテキスト処理ができます。ログファイルの機密情報を隠したり、設定ファイルの値を一括変更したりするときに使用します。",
+                                codeSample: "sed 's/old/new/g' file.txt\n# file.txt 内の「old」を「new」に全て置換\nsed -i 's/old/new/g' file.txt\n# ファイルを直接編集(-i オプション)",
+                                tip: "g フラグなしの場合、1行につき最初にマッチした1つだけが置換されます"
+                            ),
+                            ConceptSection(
+                                heading: "sed の基本構文と g フラグ",
+                                body: "• s/old/new/: 最初の1つだけを置換\n• s/old/new/g: 1行内の「全て」を置換（global）\n• sed '5s/old/new/': 5行目だけを置換\n• sed '1,10s/old/new/g': 1〜10行目を置換\n• sed 's/^/prefix-/': 行の先頭に追加\n• sed 's/$/-suffix/': 行の末尾に追加",
+                                codeSample: nil,
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "sed - テキスト置換クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 6,
+                    content: .quest(QuestLesson(
+                        scenario: "設定ファイル config.txt 内の database_host 値を新しいサーバーに変更する必要があります。",
+                        prompt: "config.txt 内の「localhost」を全て「192.168.1.10」に置換するコマンドは？",
+                        hint: "sed 's/localhost/192.168.1.10/g' config.txt で全て置換できます。g フラグを忘れずに。",
+                        answer: "sed",
+                        options: [
+                            CommandOption(label: "sed", command: "sed", icon: "pencil.and.outline"),
+                            CommandOption(label: "grep", command: "grep", icon: "magnifyingglass"),
+                            CommandOption(label: "awk", command: "awk", icon: "square.and.pencil"),
+                        ],
+                        simulatedOutput: "database_host=192.168.1.10\ncache_host=192.168.1.10",
+                        successMessage: "✅ 全ての localhost が新しいホストに置換されました"
+                    ))
+                ),
+                Lesson(
                     title: "grep 実践クイズ",
                     emoji: "🧪",
                     estimatedMinutes: 8,
@@ -526,6 +606,46 @@ let standardCourse = Course(
             title: "ファイル権限を管理する",
             summary: "chmod で権限設定をマスター",
             lessons: [
+                Lesson(
+                    title: "chmod - ファイル権限の基本",
+                    emoji: "🔑",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "ファイルアクセス権限を設定する",
+                        sections: [
+                            ConceptSection(
+                                heading: "chmod コマンドの役割",
+                                body: "chmod（Change Mode）は、ファイルやディレクトリのアクセス権限を変更するコマンドです。\n\nLinux では全てのファイルに「所有者」「グループ」「その他」の3つの対象に対して「読み（r）」「書き（w）」「実行（x）」の3つの権限があります。chmod でこれらを制御します。",
+                                codeSample: "chmod 755 script.sh\n# 出力: -rwxr-xr-x\n# 所有者: 読み書き実行、グループ: 読み実行、他: 読み実行",
+                                tip: "デフォルト（644）はテキストファイル向け。実行ファイルは755を使用します"
+                            ),
+                            ConceptSection(
+                                heading: "権限の数値表記（8進数）",
+                                body: "権限は8進数（0〜7）で表されます。各桁は3つの権限（読み4 + 書き2 + 実行1）の合計です：\n\n• 7 = 4+2+1 = 読み書き実行（rwx）\n• 6 = 4+2   = 読み書き（rw-）\n• 5 = 4   +1 = 読み実行（r-x）\n• 4 = 4       = 読みのみ（r--）\n• 0           = 権限なし（---）\n\n例: 755 = 所有者7（rwx）, グループ5（r-x）, 他5（r-x）",
+                                codeSample: "chmod 644 file.txt   # 読み書き、読み、読み\nchmod 755 script.sh  # 読み書き実行、読み実行、読み実行",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
+                    title: "chmod - 権限設定クエスト",
+                    emoji: "🎯",
+                    estimatedMinutes: 8,
+                    content: .quest(QuestLesson(
+                        scenario: "あなたが deploy.sh という自動デプロイスクリプトを作成しました。所有者は実行可能にし、グループと他のユーザーには読み実行権限を与える必要があります。",
+                        prompt: "deploy.sh に 755 権限を設定して、全員が実行可能にするコマンドは？",
+                        hint: "chmod 755 deploy.sh で権限を設定します。755 = 所有者rwx, グループr-x, 他r-x",
+                        answer: "chmod",
+                        options: [
+                            CommandOption(label: "chmod", command: "chmod", icon: "lock.open"),
+                            CommandOption(label: "chown", command: "chown", icon: "person.fill"),
+                            CommandOption(label: "ls", command: "ls", icon: "list.bullet"),
+                        ],
+                        simulatedOutput: "user@linux:~$ chmod 755 deploy.sh\nuser@linux:~$ ls -l deploy.sh\n-rwxr-xr-x  1 user group  1234 Jan 15 10:00 deploy.sh",
+                        successMessage: "✅ スクリプトが実行可能な状態になりました"
+                    ))
+                ),
                 Lesson(
                     title: "chmod 実践シナリオ",
                     emoji: "🔐",
