@@ -104,6 +104,7 @@ extension CourseLevel {
         case .basics:   return ModernTheme.primary       // emerald
         case .standard: return ModernTheme.secondary     // blue
         case .advanced: return ModernTheme.accent        // violet
+        case .expert:   return Color(hex: 0xEC4899)      // pink-500
         }
     }
 
@@ -112,6 +113,7 @@ extension CourseLevel {
         case .basics:   return ModernTheme.primarySoft
         case .standard: return ModernTheme.secondarySoft
         case .advanced: return ModernTheme.accentSoft
+        case .expert:   return Color(hex: 0xFCE7F3)      // pink-100
         }
     }
 
@@ -132,6 +134,11 @@ extension CourseLevel {
                 colors: [Color(hex: 0x8B5CF6), Color(hex: 0x7C3AED)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
+        case .expert:
+            return LinearGradient(
+                colors: [Color(hex: 0xEC4899), Color(hex: 0xDB2777)],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
         }
     }
 
@@ -140,6 +147,7 @@ extension CourseLevel {
         case .basics:   return "🌱"
         case .standard: return "🚀"
         case .advanced: return "⚡"
+        case .expert:   return "🔮"
         }
     }
 }
