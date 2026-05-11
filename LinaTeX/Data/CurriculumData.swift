@@ -1569,6 +1569,28 @@ let expertCourse4 = Course(
             summary: "ps, top, kill でプロセスを管理",
             lessons: [
                 Lesson(
+                    title: "プロセス管理の基礎",
+                    emoji: "⚙️",
+                    estimatedMinutes: 10,
+                    content: .concept(ConceptLesson(
+                        headline: "Linux のプロセスと実行管理",
+                        sections: [
+                            ConceptSection(
+                                heading: "プロセスとは",
+                                body: "プロセスは、実行中のプログラムのインスタンスです。各プロセスには：\n\n• PID（プロセスID）: プロセスを一意に識別する数値\n• PPID（親プロセスID）: プロセスを起動した親プロセスの ID\n• UID/GID: プロセスを実行しているユーザーとグループ\n• 状態: Running（実行中）、Sleeping（待機中）、Zombie（終了待ち）など\n\nシステム上では多数のプロセスが同時実行され、CPU がタイムスライスで各プロセスに機会を提供（マルチタスキング）します。",
+                                codeSample: "ps aux\n# 全プロセスをリスト表示\ntop\n# CPU、メモリ使用率でリアルタイム監視",
+                                tip: "初期化プロセス（PID 1）がシステムの最初のプロセスで、他の全プロセスの祖先です"
+                            ),
+                            ConceptSection(
+                                heading: "プロセス管理コマンド",
+                                body: "• ps: プロセスのスナップショット表示\n• top: リアルタイムプロセス監視\n• kill: プロセスにシグナルを送信\n• bg/fg: バックグラウンド/フォアグラウンドで実行\n• jobs: シェルのジョブリスト表示\n\nシグナルの種類：\n• SIGTERM（-15）: 正常終了要求（プロセスがキャッチ可能）\n• SIGKILL（-9）: 強制終了（プロセスがキャッチ不可）\n• SIGSTOP（-19）: 一時停止\n• SIGCONT（-18）: 再開\n\n手順：まず SIGTERM で正常終了を試み、応答なければ SIGKILL で強制終了します。",
+                                codeSample: "kill -15 1234\n# PID 1234 に終了シグナル\nkillall java\n# プロセス名を指定して全インスタンス終了",
+                                tip: nil
+                            )
+                        ]
+                    ))
+                ),
+                Lesson(
                     title: "実行中のプロセス確認",
                     emoji: "🏃",
                     estimatedMinutes: 10,
