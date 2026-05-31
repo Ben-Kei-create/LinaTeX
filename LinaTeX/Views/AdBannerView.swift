@@ -3,25 +3,20 @@ import UIKit
 
 // MARK: - Ad Banner View
 //
-// Shows a Google AdMob banner at the bottom of main screens.
+// ── AdMob SDK を Xcode で追加する ─────────────────────────────────────────────
+// File → Add Package Dependencies
+// URL: https://github.com/googleads/swift-package-manager-google-mobile-ads
+// Target: LinaTeX
 //
-// ── AdMob Setup (do this in Xcode) ────────────────────────────────────────────
-// 1. admob.google.com → register app → get App ID
-// 2. Xcode → File → Add Package Dependencies
-//    URL: https://github.com/googleads/swift-package-manager-google-mobile-ads
-//    Target: LinaTeX
-// 3. Info.plist → GADApplicationIdentifier = <your-App-ID>
-// 4. AdMob console → create Banner Ad Unit → copy Ad Unit ID
-// 5. Replace adUnitID below with your real Ad Unit ID
-// 6. Swap AdBannerPlaceholder() for RealAdBannerView() in the body below
+// 追加後、下の AdBannerPlaceholder() を RealAdBannerView() に差し替える
 // ──────────────────────────────────────────────────────────────────────────────
 
-private let adUnitID = "ca-app-pub-3940256099942544/2934735716" // test ID
+private let adUnitID = "ca-app-pub-4859622277330192/4330175551"
 
 struct AdBannerView: View {
     var body: some View {
         AdBannerPlaceholder()
-        // Replace with RealAdBannerView() after completing AdMob setup above
+        // SDK追加後: AdBannerPlaceholder() → RealAdBannerView() に変更
     }
 }
 
@@ -51,11 +46,13 @@ private struct AdBannerPlaceholder: View {
     }
 }
 
-// MARK: - Real AdMob Banner (uncomment after adding SDK)
+// MARK: - Real AdMob Banner
+
+// SDK追加後にコメントを外す:
 //
 // import GoogleMobileAds
 //
-// struct RealAdBannerView: UIViewRepresentable {
+// private struct RealAdBannerView: UIViewRepresentable {
 //     func makeUIView(context: Context) -> GADBannerView {
 //         let banner = GADBannerView(adSize: GADAdSizeBanner)
 //         banner.adUnitID = adUnitID
