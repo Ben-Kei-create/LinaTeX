@@ -16,20 +16,20 @@ struct ModernTheme {
     static let textMuted = Color(hex: 0xCBD5E1)        // slate-300
 
     // MARK: - Accent Colors
-    static let primary = Color(hex: 0x059669)          // emerald-600
-    static let primaryLight = Color(hex: 0x10B981)     // emerald-500
-    static let primarySoft = Color(hex: 0xD1FAE5)      // emerald-100
+    static let primary = Color(hex: 0x3DAE7A)          // icon mint green (dark)
+    static let primaryLight = Color(hex: 0x55BA87)     // icon mint green
+    static let primarySoft = Color(hex: 0xD4EEE4)      // mint-100
 
-    static let secondary = Color(hex: 0x2563EB)        // blue-600
-    static let secondaryLight = Color(hex: 0x3B82F6)   // blue-500
-    static let secondarySoft = Color(hex: 0xDBEAFE)    // blue-100
+    static let secondary = Color(hex: 0x3BAAC9)        // icon sky blue (dark)
+    static let secondaryLight = Color(hex: 0x5BB8D4)   // icon sky blue
+    static let secondarySoft = Color(hex: 0xD3EBF5)    // sky-100
 
-    static let accent = Color(hex: 0x7C3AED)           // violet-600
-    static let accentSoft = Color(hex: 0xEDE9FE)       // violet-100
+    static let accent = Color(hex: 0x4498B8)           // deeper teal accent
+    static let accentSoft = Color(hex: 0xD3EBF5)       // sky-100
 
     // MARK: - Status Colors
-    static let success = Color(hex: 0x10B981)          // emerald-500
-    static let successSoft = Color(hex: 0xD1FAE5)      // emerald-100
+    static let success = Color(hex: 0x3DAE7A)          // icon mint green
+    static let successSoft = Color(hex: 0xD4EEE4)      // mint-100
     static let warning = Color(hex: 0xF59E0B)          // amber-500
     static let warningSoft = Color(hex: 0xFEF3C7)      // amber-100
     static let danger = Color(hex: 0xEF4444)           // red-500
@@ -47,8 +47,8 @@ struct ModernTheme {
     // MARK: - Background Gradients
     static let backgroundGradient = LinearGradient(
         colors: [
-            Color(hex: 0xEFF6FF),  // blue-50
-            Color(hex: 0xECFDF5)   // emerald-50
+            Color(hex: 0xEAF5FB),  // icon blue-50
+            Color(hex: 0xE8F5EF)   // icon mint-50
         ],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
@@ -56,8 +56,8 @@ struct ModernTheme {
 
     static let primaryGradient = LinearGradient(
         colors: [
-            Color(hex: 0x10B981),  // emerald-500
-            Color(hex: 0x059669)   // emerald-600
+            Color(hex: 0x5BB8D4),  // icon sky blue
+            Color(hex: 0x55BA87)   // icon mint green
         ],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
@@ -65,8 +65,8 @@ struct ModernTheme {
 
     static let secondaryGradient = LinearGradient(
         colors: [
-            Color(hex: 0x3B82F6),  // blue-500
-            Color(hex: 0x2563EB)   // blue-600
+            Color(hex: 0x5BB8D4),  // icon sky blue
+            Color(hex: 0x3BAAC9)   // deeper sky blue
         ],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
@@ -74,8 +74,8 @@ struct ModernTheme {
 
     static let heroGradient = LinearGradient(
         colors: [
-            Color(hex: 0x3B82F6),  // blue-500
-            Color(hex: 0x10B981)   // emerald-500
+            Color(hex: 0x5BB8D4),  // icon sky blue
+            Color(hex: 0x55BA87)   // icon mint green
         ],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
@@ -93,7 +93,7 @@ struct ModernTheme {
     // MARK: - Code/Terminal Background (used inside light theme for code samples)
     static let codeBg = Color(hex: 0x1E293B)           // slate-800
     static let codeBgSoft = Color(hex: 0xF1F5F9)       // slate-100
-    static let codeText = Color(hex: 0x10B981)         // emerald-500
+    static let codeText = Color(hex: 0x3DAE7A)          // icon mint green
 }
 
 // MARK: - Level Colors (Modern)
@@ -101,10 +101,10 @@ struct ModernTheme {
 extension CourseLevel {
     var modernColor: Color {
         switch self {
-        case .basics:   return ModernTheme.primary       // emerald
-        case .standard: return ModernTheme.secondary     // blue
-        case .advanced: return ModernTheme.accent        // violet
-        case .expert:   return Color(hex: 0xEC4899)      // pink-500
+        case .basics:   return ModernTheme.primary        // icon mint green
+        case .standard: return ModernTheme.secondary     // icon sky blue
+        case .advanced: return ModernTheme.accent        // deeper teal
+        case .expert:   return ModernTheme.primary       // mint green
         }
     }
 
@@ -113,7 +113,7 @@ extension CourseLevel {
         case .basics:   return ModernTheme.primarySoft
         case .standard: return ModernTheme.secondarySoft
         case .advanced: return ModernTheme.accentSoft
-        case .expert:   return Color(hex: 0xFCE7F3)      // pink-100
+        case .expert:   return ModernTheme.primarySoft
         }
     }
 
@@ -121,22 +121,22 @@ extension CourseLevel {
         switch self {
         case .basics:
             return LinearGradient(
-                colors: [Color(hex: 0x10B981), Color(hex: 0x059669)],
+                colors: [Color(hex: 0x55BA87), Color(hex: 0x3DAE7A)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
         case .standard:
             return LinearGradient(
-                colors: [Color(hex: 0x3B82F6), Color(hex: 0x2563EB)],
+                colors: [Color(hex: 0x5BB8D4), Color(hex: 0x3BAAC9)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
         case .advanced:
             return LinearGradient(
-                colors: [Color(hex: 0x8B5CF6), Color(hex: 0x7C3AED)],
+                colors: [Color(hex: 0x5BB8D4), Color(hex: 0x55BA87)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
         case .expert:
             return LinearGradient(
-                colors: [Color(hex: 0xEC4899), Color(hex: 0xDB2777)],
+                colors: [Color(hex: 0x3DAE7A), Color(hex: 0x3BAAC9)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
         }
