@@ -11,6 +11,8 @@
 		A5056D0E2F97BB940019CF44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D0D2F97BB940019CF44 /* ContentView.swift */; };
 		A5056D252F97C1A60019CF44 /* TerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D242F97C1A60019CF44 /* TerminalView.swift */; };
 		A564524F2FCBDB4800F2C329 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = A564524E2FCBDB4800F2C329 /* GoogleMobileAds */; };
+		A56452512FCBE0D100F2C329 /* ProgressStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56452502FCBE0D100F2C329 /* ProgressStore.swift */; };
+		A56452532FCBE1BD00F2C329 /* AdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56452522FCBE1BD00F2C329 /* AdBannerView.swift */; };
 		A56E6D492F9B86BD00DB1F2E /* LearningPathAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */; };
 		A56E6D542F9B86CF00DB1F2E /* ParticleEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */; };
 		A56E6D552F9B86CF00DB1F2E /* LearningContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4B2F9B86CF00DB1F2E /* LearningContentView.swift */; };
@@ -44,6 +46,8 @@
 		A5056D0D2F97BB940019CF44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A5056D242F97C1A60019CF44 /* TerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalView.swift; sourceTree = "<group>"; };
 		A51EA4EA2F97BA5500A3D7E2 /* LinaTeX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinaTeX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A56452502FCBE0D100F2C329 /* ProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressStore.swift; sourceTree = "<group>"; };
+		A56452522FCBE1BD00F2C329 /* AdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBannerView.swift; sourceTree = "<group>"; };
 		A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearningPathAnalyzer.swift; sourceTree = "<group>"; };
 		A56E6D4B2F9B86CF00DB1F2E /* LearningContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearningContentView.swift; sourceTree = "<group>"; };
 		A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonImplementations.swift; sourceTree = "<group>"; };
@@ -90,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				A5056D042F97BB8F0019CF44 /* TerminalViewModel.swift */,
+				A56452502FCBE0D100F2C329 /* ProgressStore.swift */,
 				A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */,
 			);
 			path = ViewModels;
@@ -98,6 +103,7 @@
 		A5056D082F97BB8F0019CF44 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A56452522FCBE1BD00F2C329 /* AdBannerView.swift */,
 				A5056D242F97C1A60019CF44 /* TerminalView.swift */,
 				A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */,
 				A56E6D4B2F9B86CF00DB1F2E /* LearningContentView.swift */,
@@ -256,11 +262,13 @@
 				BB0000010000000000000004 /* LessonFlowViews.swift in Sources */,
 				BB0000010000000000000005 /* ActionButtons.swift in Sources */,
 				BB0000010000000000000006 /* LessonLearningTab.swift in Sources */,
+				A56452512FCBE0D100F2C329 /* ProgressStore.swift in Sources */,
 				BB0000010000000000000007 /* ConceptLessonView.swift in Sources */,
 				BB0000010000000000000008 /* QuestLessonView.swift in Sources */,
 				BB0000010000000000000009 /* TerminalComponents.swift in Sources */,
 				BB000001000000000000000E /* ShellComponents.swift in Sources */,
 				BB000001000000000000000A /* AchievementsView.swift in Sources */,
+				A56452532FCBE1BD00F2C329 /* AdBannerView.swift in Sources */,
 				BB000001000000000000000B /* StatisticsView.swift in Sources */,
 				BB000001000000000000000C /* PersonalizedRecommendationView.swift in Sources */,
 				BB000001000000000000000D /* Achievement.swift in Sources */,
