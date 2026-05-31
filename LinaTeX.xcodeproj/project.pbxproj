@@ -11,6 +11,7 @@
 		A5056D0E2F97BB940019CF44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D0D2F97BB940019CF44 /* ContentView.swift */; };
 		A5056D252F97C1A60019CF44 /* TerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D242F97C1A60019CF44 /* TerminalView.swift */; };
 		A564524F2FCBDB4800F2C329 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = A564524E2FCBDB4800F2C329 /* GoogleMobileAds */; };
+		BB00ADB000000000000000001 /* AdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00ADB000000000000000002 /* AdBannerView.swift */; };
 		A56E6D492F9B86BD00DB1F2E /* LearningPathAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */; };
 		BB00PS000000000000000001 /* ProgressStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00PS000000000000000002 /* ProgressStore.swift */; };
 		A56E6D542F9B86CF00DB1F2E /* ParticleEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */; };
@@ -59,6 +60,7 @@
 		A56E6D712F9B86F900DB1F2E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A56E6D752F9B870100DB1F2E /* LinaTeXApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinaTeXApp.swift; sourceTree = "<group>"; };
 		A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandDictionaryView.swift; sourceTree = "<group>"; };
+		BB00ADB000000000000000002 /* AdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBannerView.swift; sourceTree = "<group>"; };
 		BB0000020000000000000001 /* ModernTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTheme.swift; sourceTree = "<group>"; };
 		BB0000020000000000000002 /* HomeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViews.swift; sourceTree = "<group>"; };
 		BB0000020000000000000003 /* CourseDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDetailViews.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			children = (
 				A5056D242F97C1A60019CF44 /* TerminalView.swift */,
 				A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */,
+				BB00ADB000000000000000002 /* AdBannerView.swift */,
 				A56E6D4B2F9B86CF00DB1F2E /* LearningContentView.swift */,
 				A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */,
 				A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */,
@@ -268,6 +271,7 @@
 				BB000001000000000000000C /* PersonalizedRecommendationView.swift in Sources */,
 				BB000001000000000000000D /* Achievement.swift in Sources */,
 				A5D1C0A02FA0000000000002 /* CommandDictionaryView.swift in Sources */,
+				BB00ADB000000000000000001 /* AdBannerView.swift in Sources */,
 				A56E6D5C2F9B86DC00DB1F2E /* Quest.swift in Sources */,
 				A56E6D492F9B86BD00DB1F2E /* LearningPathAnalyzer.swift in Sources */,
 				BB00PS000000000000000001 /* ProgressStore.swift in Sources */,
