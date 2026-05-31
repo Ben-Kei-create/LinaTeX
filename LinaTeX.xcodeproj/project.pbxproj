@@ -415,7 +415,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7R927F3U4V;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LinaTeX/Info.plist;
 				INFOPLIST_ADDITIONAL_FILE = "$(SRCROOT)/LinaTeX/AdMob.plist";
 				INFOPLIST_KEY_GADApplicationIdentifier = "ca-app-pub-4859622277330192~2566348969";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
@@ -454,7 +455,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7R927F3U4V;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LinaTeX/Info.plist;
 				INFOPLIST_ADDITIONAL_FILE = "$(SRCROOT)/LinaTeX/AdMob.plist";
 				INFOPLIST_KEY_GADApplicationIdentifier = "ca-app-pub-4859622277330192~2566348969";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
