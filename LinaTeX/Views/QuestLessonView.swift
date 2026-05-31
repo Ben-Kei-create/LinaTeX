@@ -36,13 +36,11 @@ struct QuestLessonView: View {
             TerminalPanel(
                 input: vm.userInput,
                 output: vm.terminalOutput,
-                state: vm.currentLessonState,
-                successMessage: quest.successMessage
+                state: vm.currentLessonState
             )
 
             CommandChoiceSection(
                 title: "選択肢",
-                subtitle: "答えだと思うコマンドを選んでから実行します",
                 options: quest.options,
                 selectedCommand: vm.userInput,
                 accentColor: course.level.modernColor,
@@ -51,22 +49,6 @@ struct QuestLessonView: View {
                 let impact = UIImpactFeedbackGenerator(style: .medium)
                 impact.impactOccurred()
                 vm.selectCommand(option)
-            }
-
-            if vm.currentLessonState == .wrong {
-                QuizExplanationCard(
-                    isCorrect: false,
-                    explanation: "学習で確認したコマンドの役割と、今回の問題で求められている操作を照らし合わせて選び直してください。"
-                )
-                .transition(.opacity.combined(with: .move(edge: .top)))
-            }
-
-            if vm.currentLessonState == .correct {
-                QuizExplanationCard(
-                    isCorrect: true,
-                    explanation: quest.successMessage
-                )
-                .transition(.opacity.combined(with: .move(edge: .top)))
             }
 
             HStack(spacing: 10) {
@@ -100,8 +82,10 @@ struct QuestLessonView: View {
                     PrimaryActionButton(
                         title: "完了",
                         icon: "checkmark.circle.fill",
-                        style: .success
+                        style: .success,
+                        disabled: showCompletion
                     ) {
+                        guard !showCompletion else { return }
                         let impact = UINotificationFeedbackGenerator()
                         impact.notificationOccurred(.success)
                         showCompletion = true

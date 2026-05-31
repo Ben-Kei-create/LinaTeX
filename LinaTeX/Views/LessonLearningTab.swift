@@ -34,54 +34,28 @@ struct LessonLearningTabView: View {
                 ConceptLessonView(concept: concept, course: course)
 
             case .scenario(let scenario):
-                VStack(alignment: .leading, spacing: 14) {
-                    LearningSectionCard(
-                        title: "学習ポイント",
-                        icon: "book.closed.fill",
+                LearningSectionCard(
+                    title: "使うコマンド",
+                    icon: "terminal.fill",
+                    color: ModernTheme.success
+                ) {
+                    CommandReferenceList(
+                        commands: uniqueLearningCommands(scenario.steps.map(\.answer)),
                         color: course.level.modernColor
-                    ) {
-                        Text("このレッスンでは、状況を読み取り、目的に合うコマンドを段階的に選ぶ練習をします。問題では具体的なファイル名や対象が出るため、ここではコマンドの役割を先に確認します。")
-                            .font(ModernFont.bodyMedium)
-                            .foregroundColor(ModernTheme.textPrimary)
-                            .lineSpacing(6)
-                    }
-
-                    LearningSectionCard(
-                        title: "使うコマンド",
-                        icon: "terminal.fill",
-                        color: ModernTheme.success
-                    ) {
-                        CommandReferenceList(
-                            commands: uniqueLearningCommands(scenario.steps.map(\.answer)),
-                            color: course.level.modernColor
-                        )
-                    }
+                    )
                 }
                 .padding(.horizontal, 20)
 
             case .quest(let quest):
-                VStack(alignment: .leading, spacing: 14) {
-                    LearningSectionCard(
-                        title: "学習ポイント",
-                        icon: "book.closed.fill",
+                LearningSectionCard(
+                    title: "今回のコマンド",
+                    icon: "terminal.fill",
+                    color: ModernTheme.success
+                ) {
+                    CommandReferenceList(
+                        commands: uniqueLearningCommands([quest.answer]),
                         color: course.level.modernColor
-                    ) {
-                        Text("問題では、目的に合うコマンドを選んでターミナルに送ります。学習では先にコマンドの意味を押さえ、問題側では具体的な問いだけに集中します。")
-                            .font(ModernFont.bodyMedium)
-                            .foregroundColor(ModernTheme.textPrimary)
-                            .lineSpacing(6)
-                    }
-
-                    LearningSectionCard(
-                        title: "今回のコマンド",
-                        icon: "terminal.fill",
-                        color: ModernTheme.success
-                    ) {
-                        CommandReferenceList(
-                            commands: uniqueLearningCommands([quest.answer]),
-                            color: course.level.modernColor
-                        )
-                    }
+                    )
                 }
                 .padding(.horizontal, 20)
 

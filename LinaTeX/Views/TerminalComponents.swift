@@ -6,7 +6,6 @@ struct TerminalPanel: View {
     let input: String
     let output: String
     let state: LessonState
-    let successMessage: String
     var minHeight: CGFloat = 120
 
     var body: some View {

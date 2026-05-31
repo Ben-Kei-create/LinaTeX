@@ -83,13 +83,11 @@ struct ScenarioLessonViewImpl: View {
                 input: terminalInput,
                 output: vm.terminalOutput,
                 state: vm.currentLessonState,
-                successMessage: isLastStep ? scenario.finaleMessage : "STEP \(currentStepIndex + 1) COMPLETE",
                 minHeight: 112
             )
 
             CommandChoiceSection(
                 title: "選択肢",
-                subtitle: "この手順に必要なコマンドを選びます",
                 options: currentStep.options,
                 selectedCommand: vm.userInput,
                 accentColor: course.level.modernColor,
@@ -110,14 +108,6 @@ struct ScenarioLessonViewImpl: View {
                 ) { argument in
                     selectedArgument = argument
                 }
-            }
-
-            if vm.currentLessonState == .wrong {
-                QuizExplanationCard(
-                    isCorrect: false,
-                    explanation: "学習で確認したコマンドの役割を思い出し、この手順に合う操作を選び直してください。"
-                )
-                .transition(.opacity.combined(with: .move(edge: .top)))
             }
 
             HStack(spacing: 10) {
