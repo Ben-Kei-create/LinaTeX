@@ -10,14 +10,19 @@
 		A5056D0A2F97BB8F0019CF44 /* TerminalViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D042F97BB8F0019CF44 /* TerminalViewModel.swift */; };
 		A5056D0E2F97BB940019CF44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D0D2F97BB940019CF44 /* ContentView.swift */; };
 		A5056D252F97C1A60019CF44 /* TerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D242F97C1A60019CF44 /* TerminalView.swift */; };
+		A564524F2FCBDB4800F2C329 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = A564524E2FCBDB4800F2C329 /* GoogleMobileAds */; };
 		A56E6D492F9B86BD00DB1F2E /* LearningPathAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */; };
 		BB00PS000000000000000001 /* ProgressStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00PS000000000000000002 /* ProgressStore.swift */; };
 		A56E6D542F9B86CF00DB1F2E /* ParticleEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */; };
 		A56E6D552F9B86CF00DB1F2E /* LearningContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4B2F9B86CF00DB1F2E /* LearningContentView.swift */; };
 		A56E6D572F9B86CF00DB1F2E /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4F2F9B86CF00DB1F2E /* SplashScreenView.swift */; };
 		A56E6D592F9B86CF00DB1F2E /* LessonImplementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */; };
-		A5D1C0A02FA0000000000002 /* CommandDictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */; };
 		A56E6D5C2F9B86DC00DB1F2E /* Quest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */; };
+		A56E6D672F9B86E800DB1F2E /* CurriculumData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */; };
+		A56E6D692F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */; };
+		A56E6D6C2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */; };
+		A56E6D772F9B870100DB1F2E /* LinaTeXApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D752F9B870100DB1F2E /* LinaTeXApp.swift */; };
+		A5D1C0A02FA0000000000002 /* CommandDictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */; };
 		BB0000010000000000000001 /* ModernTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000001 /* ModernTheme.swift */; };
 		BB0000010000000000000002 /* HomeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000002 /* HomeViews.swift */; };
 		BB0000010000000000000003 /* CourseDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000003 /* CourseDetailViews.swift */; };
@@ -27,15 +32,11 @@
 		BB0000010000000000000007 /* ConceptLessonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000007 /* ConceptLessonView.swift */; };
 		BB0000010000000000000008 /* QuestLessonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000008 /* QuestLessonView.swift */; };
 		BB0000010000000000000009 /* TerminalComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000020000000000000009 /* TerminalComponents.swift */; };
-		BB000001000000000000000E /* ShellComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002000000000000000E /* ShellComponents.swift */; };
 		BB000001000000000000000A /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002000000000000000A /* AchievementsView.swift */; };
 		BB000001000000000000000B /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002000000000000000B /* StatisticsView.swift */; };
 		BB000001000000000000000C /* PersonalizedRecommendationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002000000000000000C /* PersonalizedRecommendationView.swift */; };
 		BB000001000000000000000D /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002000000000000000D /* Achievement.swift */; };
-		A56E6D672F9B86E800DB1F2E /* CurriculumData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */; };
-		A56E6D692F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */; };
-		A56E6D6C2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */; };
-		A56E6D772F9B870100DB1F2E /* LinaTeXApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D752F9B870100DB1F2E /* LinaTeXApp.swift */; };
+		BB000001000000000000000E /* ShellComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002000000000000000E /* ShellComponents.swift */; };
 		BB00ASSETS00000000000002 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB00ASSETS00000000000001 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -50,8 +51,14 @@
 		A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonImplementations.swift; sourceTree = "<group>"; };
 		A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleEffects.swift; sourceTree = "<group>"; };
 		A56E6D4F2F9B86CF00DB1F2E /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
-		A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandDictionaryView.swift; sourceTree = "<group>"; };
 		A56E6D5A2F9B86DC00DB1F2E /* Quest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Quest.swift; sourceTree = "<group>"; };
+		A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPracticalScenarios.swift; sourceTree = "<group>"; };
+		A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurriculumData.swift; sourceTree = "<group>"; };
+		A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticalScenariosAdvanced.swift; sourceTree = "<group>"; };
+		A56E6D702F9B86F900DB1F2E /* color_updates.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = color_updates.md; sourceTree = "<group>"; };
+		A56E6D712F9B86F900DB1F2E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		A56E6D752F9B870100DB1F2E /* LinaTeXApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinaTeXApp.swift; sourceTree = "<group>"; };
+		A5D1C0A02FA0000000000001 /* CommandDictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandDictionaryView.swift; sourceTree = "<group>"; };
 		BB0000020000000000000001 /* ModernTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModernTheme.swift; sourceTree = "<group>"; };
 		BB0000020000000000000002 /* HomeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViews.swift; sourceTree = "<group>"; };
 		BB0000020000000000000003 /* CourseDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDetailViews.swift; sourceTree = "<group>"; };
@@ -61,17 +68,11 @@
 		BB0000020000000000000007 /* ConceptLessonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConceptLessonView.swift; sourceTree = "<group>"; };
 		BB0000020000000000000008 /* QuestLessonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestLessonView.swift; sourceTree = "<group>"; };
 		BB0000020000000000000009 /* TerminalComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalComponents.swift; sourceTree = "<group>"; };
-		BB000002000000000000000E /* ShellComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellComponents.swift; sourceTree = "<group>"; };
 		BB000002000000000000000A /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
 		BB000002000000000000000B /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		BB000002000000000000000C /* PersonalizedRecommendationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizedRecommendationView.swift; sourceTree = "<group>"; };
 		BB000002000000000000000D /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
-		A56E6D5E2F9B86E800DB1F2E /* AdvancedPracticalScenarios.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedPracticalScenarios.swift; sourceTree = "<group>"; };
-		A56E6D602F9B86E800DB1F2E /* CurriculumData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurriculumData.swift; sourceTree = "<group>"; };
-		A56E6D642F9B86E800DB1F2E /* PracticalScenariosAdvanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticalScenariosAdvanced.swift; sourceTree = "<group>"; };
-		A56E6D702F9B86F900DB1F2E /* color_updates.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = color_updates.md; sourceTree = "<group>"; };
-		A56E6D712F9B86F900DB1F2E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		A56E6D752F9B870100DB1F2E /* LinaTeXApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinaTeXApp.swift; sourceTree = "<group>"; };
+		BB000002000000000000000E /* ShellComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellComponents.swift; sourceTree = "<group>"; };
 		BB00ASSETS00000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -80,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A564524F2FCBDB4800F2C329 /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,7 +123,7 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		A51EA4E12F97BA5500A3D7E2 = {
+		A51EA4E12F97BA5500A3D7E2 /* LinaTeX */ = {
 			isa = PBXGroup;
 			children = (
 				A51EA4EB2F97BA5500A3D7E2 /* Products */,
@@ -183,6 +185,7 @@
 			);
 			name = LinaTeX;
 			packageProductDependencies = (
+				A564524E2FCBDB4800F2C329 /* GoogleMobileAds */,
 			);
 			productName = LinaTeX;
 			productReference = A51EA4EA2F97BA5500A3D7E2 /* LinaTeX.app */;
@@ -196,7 +199,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2640;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					A51EA4E92F97BA5500A3D7E2 = {
 						CreatedOnToolsVersion = 26.4.1;
@@ -210,8 +213,11 @@
 				en,
 				Base,
 			);
-			mainGroup = A51EA4E12F97BA5500A3D7E2;
+			mainGroup = A51EA4E12F97BA5500A3D7E2 /* LinaTeX */;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A564524D2FCBDB4800F2C329 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A51EA4EB2F97BA5500A3D7E2 /* Products */;
 			projectDirPath = "";
@@ -332,6 +338,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -389,6 +396,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -492,6 +500,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A564524D2FCBDB4800F2C329 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A564524E2FCBDB4800F2C329 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A564524D2FCBDB4800F2C329 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A51EA4E22F97BA5500A3D7E2 /* Project object */;
 }
