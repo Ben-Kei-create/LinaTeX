@@ -11,6 +11,7 @@
 		A5056D0E2F97BB940019CF44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D0D2F97BB940019CF44 /* ContentView.swift */; };
 		A5056D252F97C1A60019CF44 /* TerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5056D242F97C1A60019CF44 /* TerminalView.swift */; };
 		A56E6D492F9B86BD00DB1F2E /* LearningPathAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */; };
+		BB00PS000000000000000001 /* ProgressStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00PS000000000000000002 /* ProgressStore.swift */; };
 		A56E6D542F9B86CF00DB1F2E /* ParticleEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */; };
 		A56E6D552F9B86CF00DB1F2E /* LearningContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4B2F9B86CF00DB1F2E /* LearningContentView.swift */; };
 		A56E6D572F9B86CF00DB1F2E /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56E6D4F2F9B86CF00DB1F2E /* SplashScreenView.swift */; };
@@ -44,6 +45,7 @@
 		A5056D242F97C1A60019CF44 /* TerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalView.swift; sourceTree = "<group>"; };
 		A51EA4EA2F97BA5500A3D7E2 /* LinaTeX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LinaTeX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearningPathAnalyzer.swift; sourceTree = "<group>"; };
+		BB00PS000000000000000002 /* ProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressStore.swift; sourceTree = "<group>"; };
 		A56E6D4B2F9B86CF00DB1F2E /* LearningContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearningContentView.swift; sourceTree = "<group>"; };
 		A56E6D4C2F9B86CF00DB1F2E /* LessonImplementations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonImplementations.swift; sourceTree = "<group>"; };
 		A56E6D4D2F9B86CF00DB1F2E /* ParticleEffects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleEffects.swift; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 			children = (
 				A5056D042F97BB8F0019CF44 /* TerminalViewModel.swift */,
 				A56E6D482F9B86BD00DB1F2E /* LearningPathAnalyzer.swift */,
+				BB00PS000000000000000002 /* ProgressStore.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				A5D1C0A02FA0000000000002 /* CommandDictionaryView.swift in Sources */,
 				A56E6D5C2F9B86DC00DB1F2E /* Quest.swift in Sources */,
 				A56E6D492F9B86BD00DB1F2E /* LearningPathAnalyzer.swift in Sources */,
+				BB00PS000000000000000001 /* ProgressStore.swift in Sources */,
 				A5056D0A2F97BB8F0019CF44 /* TerminalViewModel.swift in Sources */,
 				A5056D252F97C1A60019CF44 /* TerminalView.swift in Sources */,
 			);
