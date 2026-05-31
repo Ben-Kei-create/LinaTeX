@@ -34,38 +34,97 @@ struct LessonLearningTabView: View {
                 ConceptLessonView(concept: concept, course: course)
 
             case .scenario(let scenario):
-                LearningSectionCard(
-                    title: "使うコマンド",
-                    icon: "terminal.fill",
-                    color: ModernTheme.success
-                ) {
-                    CommandReferenceList(
-                        commands: uniqueLearningCommands(scenario.steps.map(\.answer)),
-                        color: course.level.modernColor
+                VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(spacing: 10) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 9)
+                                    .fill(ModernTheme.success.opacity(0.12))
+                                    .frame(width: 34, height: 34)
+                                Image(systemName: "terminal.fill")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(ModernTheme.success)
+                            }
+                            Text("使うコマンド")
+                                .font(ModernFont.headlineSmall)
+                                .foregroundColor(ModernTheme.textPrimary)
+                            Spacer()
+                        }
+
+                        CommandReferenceList(
+                            commands: uniqueLearningCommands(scenario.steps.map(\.answer)),
+                            color: course.level.modernColor
+                        )
+                    }
+                    .padding(16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(ModernTheme.bgCard)
                     )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(ModernTheme.border, lineWidth: 0.8)
+                    )
+                    .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
                 }
                 .padding(.horizontal, 20)
 
             case .quest(let quest):
-                LearningSectionCard(
-                    title: "今回のコマンド",
-                    icon: "terminal.fill",
-                    color: ModernTheme.success
-                ) {
-                    CommandReferenceList(
-                        commands: uniqueLearningCommands([quest.answer]),
-                        color: course.level.modernColor
+                VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(spacing: 10) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 9)
+                                    .fill(ModernTheme.success.opacity(0.12))
+                                    .frame(width: 34, height: 34)
+                                Image(systemName: "terminal.fill")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(ModernTheme.success)
+                            }
+                            Text("今回のコマンド")
+                                .font(ModernFont.headlineSmall)
+                                .foregroundColor(ModernTheme.textPrimary)
+                            Spacer()
+                        }
+
+                        CommandReferenceList(
+                            commands: uniqueLearningCommands([quest.answer]),
+                            color: course.level.modernColor
+                        )
+                    }
+                    .padding(16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(ModernTheme.bgCard)
                     )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(ModernTheme.border, lineWidth: 0.8)
+                    )
+                    .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
                 }
                 .padding(.horizontal, 20)
 
             case .quiz(let quiz):
-                VStack(alignment: .leading, spacing: 14) {
-                    LearningSectionCard(
-                        title: "クイズについて",
-                        icon: "questionmark.circle.fill",
-                        color: course.level.modernColor
-                    ) {
+                VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(spacing: 10) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 9)
+                                    .fill(course.level.modernColor.opacity(0.12))
+                                    .frame(width: 34, height: 34)
+                                Image(systemName: "questionmark.circle.fill")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(course.level.modernColor)
+                            }
+                            Text("クイズについて")
+                                .font(ModernFont.headlineSmall)
+                                .foregroundColor(ModernTheme.textPrimary)
+                            Spacer()
+                        }
+
                         VStack(alignment: .leading, spacing: 10) {
                             Text("全\(quiz.questions.count)問のクイズが出題されます。各問題を丁寧に読んで、正しい選択肢を選んでください。")
                                 .font(ModernFont.bodyMedium)
@@ -87,53 +146,21 @@ struct LessonLearningTabView: View {
                             )
                         }
                     }
+                    .padding(16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(ModernTheme.bgCard)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(ModernTheme.border, lineWidth: 0.8)
+                    )
+                    .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
                 }
                 .padding(.horizontal, 20)
             }
         }
-    }
-}
-
-// MARK: - Learning Section Card
-
-struct LearningSectionCard<Content: View>: View {
-    let title: String
-    let icon: String
-    let color: Color
-    @ViewBuilder let content: () -> Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 10) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 9)
-                        .fill(color.opacity(0.12))
-                        .frame(width: 34, height: 34)
-                    Image(systemName: icon)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(color)
-                }
-
-                Text(title)
-                    .font(ModernFont.headlineSmall)
-                    .foregroundColor(ModernTheme.textPrimary)
-
-                Spacer()
-            }
-
-            content()
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(ModernTheme.bgCard)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(ModernTheme.border, lineWidth: 0.8)
-        )
-        .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
     }
 }
 

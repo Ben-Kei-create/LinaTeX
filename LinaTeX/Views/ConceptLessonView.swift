@@ -17,16 +17,16 @@ struct ConceptLessonView: View {
                 .foregroundColor(ModernTheme.textPrimary)
                 .padding(.horizontal, 20)
 
-            VStack(spacing: 14) {
-                ForEach(concept.sections) { section in
-                    VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 16) {
+                ForEach(Array(concept.sections.enumerated()), id: \.element.id) { index, section in
+                    VStack(alignment: .leading, spacing: 10) {
                         Text(section.heading)
                             .font(ModernFont.headlineSmall)
                             .foregroundColor(ModernTheme.textPrimary)
 
                         Text(section.body)
                             .font(ModernFont.bodyMedium)
-                            .foregroundColor(ModernTheme.textSecondary)
+                            .foregroundColor(ModernTheme.textPrimary)
                             .lineSpacing(6)
 
                         if let code = section.codeSample {
@@ -51,19 +51,24 @@ struct ConceptLessonView: View {
                             )
                         }
                     }
-                    .padding(18)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(ModernTheme.bgCard)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(ModernTheme.border, lineWidth: 1)
-                    )
-                    .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
+
+                    if index < concept.sections.count - 1 {
+                        Divider()
+                            .padding(.vertical, 4)
+                    }
                 }
             }
+            .padding(18)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(ModernTheme.bgCard)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(ModernTheme.border, lineWidth: 1)
+            )
+            .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
             .padding(.horizontal, 20)
         }
     }
