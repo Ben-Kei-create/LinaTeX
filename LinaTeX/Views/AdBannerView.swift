@@ -16,7 +16,7 @@ struct AdBannerView: View {
 
 private struct RealAdBannerView: UIViewRepresentable {
     func makeUIView(context: Context) -> BannerView {
-        let banner = BannerView(adSize: GADAdSizeBanner)
+        let banner = BannerView(adSize: AdSizeBanner)
         banner.adUnitID = adUnitID
         banner.rootViewController = UIApplication.shared
             .connectedScenes
@@ -24,7 +24,7 @@ private struct RealAdBannerView: UIViewRepresentable {
             .flatMap { $0.windows }
             .first { $0.isKeyWindow }?
             .rootViewController
-        banner.load(GADRequest())
+        banner.load(Request())
         return banner
     }
 
