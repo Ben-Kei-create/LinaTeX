@@ -135,11 +135,11 @@ struct ScenarioLessonViewImpl: View {
                     .transition(.scale.combined(with: .opacity))
                 } else {
                     PrimaryActionButton(
-                        title: "実行",
-                        icon: "play.fill",
+                        title: vm.isExecuting ? "実行中..." : "実行",
+                        icon: vm.isExecuting ? "hourglass" : "play.fill",
                         style: .primary,
                         color: course.level.modernColor,
-                        disabled: !(argumentChoices.isEmpty || selectedArgument != nil) || vm.userInput.isEmpty || vm.isTyping || vm.currentLessonState != .waiting || isCompletingStep
+                        disabled: !(argumentChoices.isEmpty || selectedArgument != nil) || vm.userInput.isEmpty || vm.isTyping || vm.currentLessonState != .waiting || isCompletingStep || vm.isExecuting
                     ) {
                         let impact = UIImpactFeedbackGenerator(style: .heavy)
                         impact.impactOccurred()

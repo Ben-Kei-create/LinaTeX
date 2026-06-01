@@ -39,6 +39,7 @@ class AppViewModel: ObservableObject {
     @Published var userInput: String = ""
     @Published var terminalOutput: String = ""
     @Published var isTyping: Bool = false
+    @Published var isExecuting: Bool = false
     private var typingSessionID = UUID()
     private var isNavigationLocked = false
 
@@ -140,18 +141,23 @@ class AppViewModel: ObservableObject {
     }
 
     func executeQuest(_ quest: QuestLesson, enteredCommand: String) {
-        guard !enteredCommand.isEmpty, !isTyping, currentLessonState == .waiting else { return }
+        guard !enteredCommand.isEmpty, !isTyping, !isExecuting, currentLessonState == .waiting else { return }
 
-        let trimmed = normalizedCommandLine(enteredCommand)
-        if trimmed == normalizedCommandLine(quest.answer) {
-            currentLessonState = .correct
-            terminalOutput = quest.simulatedOutput
-            addXP(50)
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        } else {
-            currentLessonState = .wrong
-            terminalOutput = "この問題の答えとは違います: \(trimmed)"
-            UINotificationFeedbackGenerator().notificationOccurred(.error)
+        isExecuting = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            let trimmed = normalizedCommandLine(enteredCommand)
+            if trimmed == normalizedCommandLine(quest.answer) {
+                self.currentLessonState = .correct
+                self.terminalOutput = quest.simulatedOutput
+                self.addXP(50)
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            } else {
+                self.currentLessonState = .wrong
+                let hint = self.generateHint(for: trimmed, expectedAnswer: quest.answer)
+                self.terminalOutput = "答えが違います。\(hint)"
+                UINotificationFeedbackGenerator().notificationOccurred(.error)
+            }
+            self.isExecuting = false
         }
     }
 
@@ -160,19 +166,44 @@ class AppViewModel: ObservableObject {
     }
 
     func executeScenarioStep(_ step: ScenarioStep, enteredCommand: String) {
-        guard !enteredCommand.isEmpty, !isTyping, currentLessonState == .waiting else { return }
+        guard !enteredCommand.isEmpty, !isTyping, !isExecuting, currentLessonState == .waiting else { return }
 
-        let trimmed = normalizedCommandLine(enteredCommand)
-        if trimmed == normalizedCommandLine(step.answer) {
-            currentLessonState = .correct
-            terminalOutput = step.simulatedOutput
-            addXP(30)
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        } else {
-            currentLessonState = .wrong
-            terminalOutput = "この手順の答えとは違います: \(trimmed)"
-            UINotificationFeedbackGenerator().notificationOccurred(.error)
+        isExecuting = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            let trimmed = normalizedCommandLine(enteredCommand)
+            if trimmed == normalizedCommandLine(step.answer) {
+                self.currentLessonState = .correct
+                self.terminalOutput = step.simulatedOutput
+                self.addXP(30)
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            } else {
+                self.currentLessonState = .wrong
+                let hint = self.generateHint(for: trimmed, expectedAnswer: step.answer)
+                self.terminalOutput = "答えが違います。\(hint)"
+                UINotificationFeedbackGenerator().notificationOccurred(.error)
+            }
+            self.isExecuting = false
         }
+    }
+
+    private func generateHint(for userAnswer: String, expectedAnswer: String) -> String {
+        let userParts = userAnswer.split(separator: " ", maxSplits: 1).map(String.init)
+        let expectedParts = expectedAnswer.split(separator: " ", maxSplits: 1).map(String.init)
+
+        if userParts.isEmpty {
+            return "コマンドを入力してください。"
+        }
+
+        if userParts[0] != expectedParts[0] {
+            let expectedCommand = expectedParts[0]
+            return "コマンド '\(expectedCommand)' を使ってみてください。"
+        }
+
+        if userParts.count < expectedParts.count {
+            return "引数や対象ファイルが不足しているかもしれません。"
+        }
+
+        return "コマンドのオプションや引数を確認してください。"
     }
 
     func completeLesson(_ lesson: Lesson) {

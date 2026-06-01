@@ -66,11 +66,11 @@ struct QuestLessonView: View {
 
                 if vm.currentLessonState != .correct && vm.currentLessonState != .completed {
                     PrimaryActionButton(
-                        title: "実行",
-                        icon: "play.fill",
+                        title: vm.isExecuting ? "実行中..." : "実行",
+                        icon: vm.isExecuting ? "hourglass" : "play.fill",
                         style: .primary,
                         color: course.level.modernColor,
-                        disabled: vm.userInput.isEmpty
+                        disabled: vm.userInput.isEmpty || vm.isExecuting
                     ) {
                         let impact = UIImpactFeedbackGenerator(style: .heavy)
                         impact.impactOccurred()

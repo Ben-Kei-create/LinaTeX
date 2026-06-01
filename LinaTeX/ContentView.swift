@@ -130,6 +130,7 @@ struct LessonView: View {
                             Group {
                                 if selectedTab == .learning {
                                     LessonLearningTabView(lesson: lesson, course: course)
+                                        .onAppear { vm.resetLesson() }
                                 } else {
                                     switch lesson.content {
                                     case .concept(let concept):
@@ -142,6 +143,9 @@ struct LessonView: View {
                                         QuizLessonView(quiz: quiz, course: course, vm: vm, lesson: lesson)
                                     }
                                 }
+                            }
+                            .onChange(of: selectedTab) { _ in
+                                vm.resetLesson()
                             }
                         }
                     }
