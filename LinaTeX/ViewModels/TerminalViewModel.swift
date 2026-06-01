@@ -31,8 +31,6 @@ class AppViewModel: ObservableObject {
     @Published var totalLessonAttempts: Int = 0
     @Published var correctAnswers: Int = 0
     @Published var unlockedAchievements: Set<String> = []
-    @Published var learningProfile: LearningProfile?
-    @Published var personalizedRecommendation: PersonalizedRecommendation?
 
     // Lesson state
     @Published var currentLessonState: LessonState = .waiting
