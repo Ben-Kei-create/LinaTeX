@@ -113,8 +113,10 @@ struct LessonView: View {
                                 color: ModernTheme.success,
                                 disabled: vm.isLessonCompleted(lesson)
                             ) {
+                                let impact = UINotificationFeedbackGenerator()
+                                impact.notificationOccurred(.success)
                                 vm.completeLesson(lesson)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                     vm.goBack()
                                 }
                             }

@@ -171,12 +171,14 @@ struct ScenarioLessonViewImpl: View {
 
         if isLastStep {
             showCompletion = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
-                if let onComplete {
-                    onComplete()
-                } else {
-                    vm.completeLesson(lesson)
-                    vm.goBack()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                vm.completeLesson(lesson)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if let onComplete {
+                        onComplete()
+                    } else {
+                        vm.goBack()
+                    }
                 }
             }
         } else {
@@ -377,12 +379,14 @@ struct QuizLessonViewImpl: View {
         if isLastQuestion {
             showCompletion = true
             vm.addXP(correctQuestionIndexes.count * 50)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
-                if let onComplete {
-                    onComplete()
-                } else {
-                    vm.completeLesson(lesson)
-                    vm.goBack()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                vm.completeLesson(lesson)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    if let onComplete {
+                        onComplete()
+                    } else {
+                        vm.goBack()
+                    }
                 }
             }
         } else {

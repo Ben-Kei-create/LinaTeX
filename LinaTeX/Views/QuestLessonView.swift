@@ -89,9 +89,11 @@ struct QuestLessonView: View {
                         let impact = UINotificationFeedbackGenerator()
                         impact.notificationOccurred(.success)
                         showCompletion = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.2) {
                             vm.completeLesson(lesson)
-                            vm.goBack()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                vm.goBack()
+                            }
                         }
                     }
                     .transition(.scale.combined(with: .opacity))
