@@ -114,6 +114,9 @@ struct LessonView: View {
                                 disabled: vm.isLessonCompleted(lesson)
                             ) {
                                 vm.completeLesson(lesson)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                    vm.goBack()
+                                }
                             }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 8)

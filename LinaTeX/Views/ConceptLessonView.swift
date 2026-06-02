@@ -64,11 +64,7 @@ struct ConceptLessonView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(ModernTheme.bgCard)
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(ModernTheme.border, lineWidth: 1)
-            )
-            .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
+            .shadow(color: ModernTheme.shadowColor, radius: 12, x: 0, y: 4)
             .padding(.horizontal, 20)
         }
     }

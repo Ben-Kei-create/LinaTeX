@@ -62,10 +62,6 @@ struct LessonLearningTabView: View {
                         RoundedRectangle(cornerRadius: 16)
                             .fill(ModernTheme.bgCard)
                     )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(ModernTheme.border, lineWidth: 0.8)
-                    )
                     .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
                 }
                 .padding(.horizontal, 20)
@@ -98,10 +94,6 @@ struct LessonLearningTabView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 16)
                             .fill(ModernTheme.bgCard)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(ModernTheme.border, lineWidth: 0.8)
                     )
                     .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
                 }
@@ -151,10 +143,6 @@ struct LessonLearningTabView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 16)
                             .fill(ModernTheme.bgCard)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(ModernTheme.border, lineWidth: 0.8)
                     )
                     .shadow(color: ModernTheme.shadowColor, radius: 8, x: 0, y: 2)
                 }
