@@ -299,7 +299,11 @@ struct CourseCard: View {
             }
         }
         .padding(14)
-        .background(RoundedRectangle(cornerRadius: 14).fill(ModernTheme.bgCard))
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(ModernTheme.bgCard)
+                .overlay(RoundedRectangle(cornerRadius: 14).fill(ModernTheme.accentGradient))
+        )
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(ModernTheme.border, lineWidth: 0.5))
         .shadow(color: ModernTheme.shadowColor, radius: 6, x: 0, y: 2)
         .padding(.horizontal, 16)

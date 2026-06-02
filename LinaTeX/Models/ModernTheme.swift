@@ -84,10 +84,19 @@ struct ModernTheme {
     static let cardGradient = LinearGradient(
         colors: [
             Color.white,
-            Color(hex: 0xF8FAFC)   // slate-50
+            Color(hex: 0xF1F5F9).opacity(0.5)   // slate-100 subtle
         ],
-        startPoint: .top,
-        endPoint: .bottom
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    static let accentGradient = LinearGradient(
+        colors: [
+            Color(hex: 0x3DAE7A).opacity(0.08),
+            Color(hex: 0x3BAAC9).opacity(0.08)
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
     )
 
     // MARK: - Code/Terminal Background (used inside light theme for code samples)
