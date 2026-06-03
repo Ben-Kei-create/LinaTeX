@@ -326,6 +326,20 @@ class AppViewModel: ObservableObject {
         return nil
     }
 
+    func randomUncompletedLesson() -> (lesson: Lesson, course: Course)? {
+        var allUncompletedLessons: [(lesson: Lesson, course: Course)] = []
+        for course in courses {
+            for chapter in course.chapters {
+                for lesson in chapter.lessons {
+                    if !isLessonCompleted(lesson) {
+                        allUncompletedLessons.append((lesson, course))
+                    }
+                }
+            }
+        }
+        return allUncompletedLessons.randomElement()
+    }
+
     // MARK: - Achievements
 
     func checkAndUnlockAchievements() {

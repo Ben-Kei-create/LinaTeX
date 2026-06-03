@@ -161,6 +161,58 @@ struct HomeView: View {
                                 .padding(.horizontal, 16)
                         }
 
+                        // ── Random Lesson Quick Start ──────────────────────────
+                        HStack(spacing: 10) {
+                            Button {
+                                if let random = vm.randomUncompletedLesson() {
+                                    vm.navigateToLesson(random.lesson, in: random.course)
+                                }
+                            } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "dice.fill")
+                                        .font(.system(size: 16, weight: .semibold))
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("ランダムに開始")
+                                            .font(ModernFont.labelMedium)
+                                        Text("ナビを飛ばして即レッスン")
+                                            .font(ModernFont.captionSmall)
+                                            .foregroundColor(ModernTheme.textSecondary)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "arrow.right")
+                                        .font(.system(size: 12, weight: .semibold))
+                                }
+                                .foregroundColor(ModernTheme.primary)
+                                .padding(12)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(ModernTheme.primarySoft.opacity(0.4))
+                                )
+                            }
+                            .buttonStyle(.plain)
+
+                            Button {
+                                vm.navigateToCommandDictionary()
+                            } label: {
+                                VStack(spacing: 6) {
+                                    Image(systemName: "book.circle.fill")
+                                        .font(.system(size: 20))
+                                    Text("辞典")
+                                        .font(ModernFont.labelSmall)
+                                }
+                                .foregroundColor(ModernTheme.secondary)
+                                .frame(maxWidth: .infinity)
+                                .padding(12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(ModernTheme.secondarySoft.opacity(0.4))
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.horizontal, 16)
+
                         // ── Courses ──────────────────────────────────────────
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {
