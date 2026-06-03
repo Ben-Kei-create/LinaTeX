@@ -205,30 +205,22 @@ struct HomeView: View {
                                 .padding(.horizontal, 16)
                         }
 
-                        // ── Random Lesson Quick Start ──────────────────────────
+                        // ── Quick Actions ──────────────────────────────────────
                         HStack(spacing: 10) {
                             Button {
                                 if let random = vm.randomUncompletedLesson() {
                                     vm.navigateToLesson(random.lesson, in: random.course)
                                 }
                             } label: {
-                                HStack(spacing: 10) {
+                                VStack(spacing: 4) {
                                     Image(systemName: "dice.fill")
-                                        .font(.system(size: 16, weight: .semibold))
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("ランダムに開始")
-                                            .font(ModernFont.labelMedium)
-                                        Text("ナビを飛ばして即レッスン")
-                                            .font(ModernFont.captionSmall)
-                                            .foregroundColor(ModernTheme.textSecondary)
-                                    }
-                                    Spacer()
-                                    Image(systemName: "arrow.right")
-                                        .font(.system(size: 12, weight: .semibold))
+                                        .font(.system(size: 18, weight: .semibold))
+                                    Text("ランダム")
+                                        .font(ModernFont.labelSmall)
                                 }
                                 .foregroundColor(ModernTheme.primary)
+                                .frame(maxWidth: .infinity)
                                 .padding(12)
-                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
                                         .fill(ModernTheme.primarySoft.opacity(0.4))
@@ -241,9 +233,9 @@ struct HomeView: View {
                             Button {
                                 vm.navigateToCommandDictionary()
                             } label: {
-                                VStack(spacing: 6) {
+                                VStack(spacing: 4) {
                                     Image(systemName: "book.circle.fill")
-                                        .font(.system(size: 20))
+                                        .font(.system(size: 18, weight: .semibold))
                                     Text("辞典")
                                         .font(ModernFont.labelSmall)
                                 }
