@@ -16,7 +16,9 @@ struct CommandDictionaryView: View {
     }
 
     var body: some View {
-        ShellScreen {
+        ZStack {
+            ModernTheme.backgroundGradient.ignoresSafeArea()
+
             VStack(spacing: 0) {
                 ShellHeader(
                     title: "Linuxコマンド辞典",
@@ -53,6 +55,7 @@ struct CommandDictionaryView: View {
                     .padding(16)
                     .padding(.bottom, 28)
                 }
+            }
             }
         }
         .navigationBarBackButtonHidden(true)
