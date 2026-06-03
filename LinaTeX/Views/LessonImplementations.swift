@@ -378,7 +378,12 @@ struct QuizLessonViewImpl: View {
 
         if isLastQuestion {
             showCompletion = true
-            vm.addXP(correctQuestionIndexes.count * 50)
+            let baseXP = correctQuestionIndexes.count * 50
+            var bonusXP = 0
+            if correctQuestionIndexes.count == displayedQuestionCount {
+                bonusXP = 50
+            }
+            vm.addXP(baseXP + bonusXP)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 vm.completeLesson(lesson)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

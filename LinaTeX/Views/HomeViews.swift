@@ -79,13 +79,18 @@ struct HomeView: View {
                                         .font(ModernFont.displaySmall)
                                         .foregroundColor(.white)
                                     if vm.streak > 0 {
-                                        HStack(spacing: 3) {
+                                        HStack(spacing: 4) {
                                             Image(systemName: "flame.fill")
-                                                .font(.system(size: 12))
+                                                .font(.system(size: 14, weight: .semibold))
                                             Text("\(vm.streak)日連続")
-                                                .font(ModernFont.labelSmall)
+                                                .font(ModernFont.labelMedium)
+                                                .fontWeight(.semibold)
                                         }
-                                        .foregroundColor(.white.opacity(0.85))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(Color(hex: 0xFF6B35).opacity(0.9))
+                                        .cornerRadius(6)
                                     }
                                 }
                             }
@@ -98,6 +103,56 @@ struct HomeView: View {
                         .padding(14)
                         .background(RoundedRectangle(cornerRadius: 16).fill(ModernTheme.heroGradient))
                         .shadow(color: ModernTheme.secondary.opacity(0.2), radius: 12, x: 0, y: 4)
+                        .padding(.horizontal, 16)
+
+                        // ── Achievement Stats ──────────────────────────────
+                        HStack(spacing: 12) {
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "star.fill")
+                                        .font(.system(size: 14))
+                                    Text("獲得ポイント")
+                                        .font(ModernFont.labelSmall)
+                                }
+                                .foregroundColor(ModernTheme.warning)
+
+                                Text("\(vm.totalXP) XP")
+                                    .font(ModernFont.headlineSmall)
+                                    .foregroundColor(ModernTheme.textPrimary)
+                            }
+
+                            Spacer()
+
+                            VStack(alignment: .trailing, spacing: 6) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "target")
+                                        .font(.system(size: 14))
+                                    Text("正解率")
+                                        .font(ModernFont.labelSmall)
+                                }
+                                .foregroundColor(ModernTheme.success)
+
+                                if vm.totalLessonAttempts > 0 {
+                                    Text("\(Int(Double(vm.correctAnswers) / Double(vm.totalLessonAttempts) * 100))%")
+                                        .font(ModernFont.headlineSmall)
+                                        .foregroundColor(ModernTheme.textPrimary)
+                                } else {
+                                    Text("---")
+                                        .font(ModernFont.headlineSmall)
+                                        .foregroundColor(ModernTheme.textTertiary)
+                                }
+                            }
+                        }
+                        .padding(14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14)
+                                .fill(ModernTheme.bgCard)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(ModernTheme.borderLight, lineWidth: 1)
+                        )
+                        .shadow(color: ModernTheme.shadowColor, radius: 6, x: 0, y: 2)
                         .padding(.horizontal, 16)
 
                         // ── Continue Learning Card ───────────────────────────
