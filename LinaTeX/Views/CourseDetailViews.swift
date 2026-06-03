@@ -181,7 +181,7 @@ struct ChapterSection: View {
                 }
             }
 
-            VStack(spacing: 8) {
+            LazyVStack(spacing: 8) {
                 ForEach(chapter.lessons) { lesson in
                     LessonRow(lesson: lesson, course: course, vm: vm)
                 }

@@ -226,7 +226,7 @@ struct HomeView: View {
                             }
                             .padding(.horizontal, 16)
 
-                            VStack(spacing: 10) {
+                            LazyVStack(spacing: 10) {
                                 ForEach(vm.courses) { course in
                                     CourseCard(course: course, vm: vm)
                                         .onTapGesture { vm.navigateToCourse(course) }
