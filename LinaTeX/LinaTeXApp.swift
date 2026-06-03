@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct LinaTeXApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var showSplash = true
     @AppStorage("hasLaunchedBefore") private var hasLaunchedBefore = false
 
@@ -22,5 +23,16 @@ struct LinaTeXApp: App {
                     .onAppear { showSplash = false }
             }
         }
+    }
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    static var orientationLock = UIInterfaceOrientationMask.portrait
+
+    func application(
+        _ application: UIApplication,
+        supportedInterfaceOrientationsFor window: UIWindow?
+    ) -> UIInterfaceOrientationMask {
+        return AppDelegate.orientationLock
     }
 }
