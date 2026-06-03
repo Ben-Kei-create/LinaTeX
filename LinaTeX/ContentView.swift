@@ -33,6 +33,7 @@ struct LessonView: View {
     let course: Course
     @ObservedObject var vm: AppViewModel
     @State private var selectedTab: LessonTab = .learning
+    @State private var isReviewMode = false
 
     // Concept-only lessons have no interactive "Problem" step — show one scrollable page.
     private var isConceptOnly: Bool {
@@ -57,10 +58,20 @@ struct LessonView: View {
                         .foregroundColor(course.level.modernColor)
                     }
                     Spacer()
-                    Text(course.title)
-                        .font(ModernFont.labelMedium)
-                        .foregroundColor(ModernTheme.textPrimary)
-                        .lineLimit(1)
+                    if vm.isReviewMode {
+                        Text("復習モード")
+                            .font(ModernFont.labelSmall)
+                            .foregroundColor(ModernTheme.secondary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(ModernTheme.secondarySoft)
+                            .cornerRadius(4)
+                    } else {
+                        Text(course.title)
+                            .font(ModernFont.labelMedium)
+                            .foregroundColor(ModernTheme.textPrimary)
+                            .lineLimit(1)
+                    }
                     Spacer()
                     Color.clear.frame(width: 44, height: 1)
                 }
@@ -190,6 +201,7 @@ struct LessonView: View {
         }
         .navigationBarBackButtonHidden(true)
         .onAppear { vm.resetLesson() }
+        .onDisappear { vm.isReviewMode = false }
     }
 }
 

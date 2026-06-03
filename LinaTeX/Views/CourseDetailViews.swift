@@ -206,7 +206,12 @@ struct LessonRow: View {
     var isCompleted: Bool { vm.isLessonCompleted(lesson) }
 
     var body: some View {
-        Button(action: { vm.navigateToLesson(lesson, in: course) }) {
+        Button(action: {
+            if isCompleted {
+                vm.isReviewMode = true
+            }
+            vm.navigateToLesson(lesson, in: course)
+        }) {
             HStack(spacing: 12) {
                 // Lesson icon with completion indicator
                 ZStack(alignment: .bottomTrailing) {

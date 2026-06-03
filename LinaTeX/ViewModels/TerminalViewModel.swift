@@ -38,6 +38,7 @@ class AppViewModel: ObservableObject {
     @Published var terminalOutput: String = ""
     @Published var isTyping: Bool = false
     @Published var isExecuting: Bool = false
+    @Published var isReviewMode: Bool = false
     private var typingSessionID = UUID()
     private var isNavigationLocked = false
 
