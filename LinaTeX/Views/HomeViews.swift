@@ -37,6 +37,8 @@ struct HomeView: View {
                                         .background(Circle().fill(ModernTheme.bgCard))
                                         .shadow(color: ModernTheme.shadowColor, radius: 4, x: 0, y: 1)
                                 }
+                                .accessibilityLabel("Linuxコマンド辞典")
+                                .accessibilityHint("Linux コマンドの詳細情報を検索・参照できます")
 
                                 // Achievements
                                 NavigationLink(destination: AchievementsView(vm: vm)) {
@@ -47,6 +49,8 @@ struct HomeView: View {
                                         .background(Circle().fill(ModernTheme.bgCard))
                                         .shadow(color: ModernTheme.shadowColor, radius: 4, x: 0, y: 1)
                                 }
+                                .accessibilityLabel("アチーブメント")
+                                .accessibilityHint("獲得したバッジと学習成果を確認できます")
 
                                 // Statistics
                                 NavigationLink(destination: StatisticsView(vm: vm)) {
@@ -57,6 +61,8 @@ struct HomeView: View {
                                         .background(Circle().fill(ModernTheme.bgCard))
                                         .shadow(color: ModernTheme.shadowColor, radius: 4, x: 0, y: 1)
                                 }
+                                .accessibilityLabel("統計情報")
+                                .accessibilityHint("学習統計とパフォーマンス分析を表示します")
                             }
                         }
                         .padding(.horizontal, 16)
@@ -104,6 +110,9 @@ struct HomeView: View {
                         .background(RoundedRectangle(cornerRadius: 16).fill(ModernTheme.heroGradient))
                         .shadow(color: ModernTheme.secondary.opacity(0.2), radius: 12, x: 0, y: 4)
                         .padding(.horizontal, 16)
+                        .accessibilityLabel("学習進捗")
+                        .accessibilityValue("\(totalCompleted)個のレッスン完了、全体の\(Int(vm.totalProgress() * 100))%")
+                        .accessibilityHint(vm.streak > 0 ? "\(vm.streak)日連続学習中です" : "新しく学習を始めましょう")
 
                         // ── Achievement Stats ──────────────────────────────
                         HStack(spacing: 12) {
@@ -191,6 +200,8 @@ struct HomeView: View {
                                 )
                             }
                             .buttonStyle(.plain)
+                            .accessibilityLabel("ランダムレッスンを開始")
+                            .accessibilityHint("コース選択を飛ばして、ランダムなレッスンをすぐに開始します")
 
                             Button {
                                 vm.navigateToCommandDictionary()
@@ -210,6 +221,8 @@ struct HomeView: View {
                                 )
                             }
                             .buttonStyle(.plain)
+                            .accessibilityLabel("Linuxコマンド辞典")
+                            .accessibilityHint("Linux コマンドを検索して詳細情報を確認できます")
                         }
                         .padding(.horizontal, 16)
 
@@ -414,5 +427,8 @@ struct CourseCard: View {
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(ModernTheme.border, lineWidth: 0.5))
         .shadow(color: ModernTheme.shadowColor, radius: 6, x: 0, y: 2)
         .padding(.horizontal, 16)
+        .accessibilityLabel("\(course.title) - \(course.level.japanese)コース")
+        .accessibilityValue("\(completedLessons)個のレッスン完了、進捗\(Int(progress * 100))%")
+        .accessibilityHint("タップでコースの詳細を表示します")
     }
 }
