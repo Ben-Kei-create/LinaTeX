@@ -25,6 +25,9 @@ class AppViewModel: ObservableObject {
     private let store = ProgressStore.shared
 
     @Published var navigationPath: [AppScreen] = []
+
+    // Dictionary search query (for error context)
+    @Published var dictionarySearchQuery: String = ""
     @Published var completedLessons: Set<UUID> = []
     @Published var totalXP: Int = 0
     @Published var streak: Int = 0
@@ -91,8 +94,9 @@ class AppViewModel: ObservableObject {
         navigationPath.append(.courseDetail(course))
     }
 
-    func navigateToCommandDictionary() {
+    func navigateToCommandDictionary(searchQuery: String = "") {
         guard lockNavigation() else { return }
+        dictionarySearchQuery = searchQuery
         navigationPath.append(.commandDictionary)
     }
 

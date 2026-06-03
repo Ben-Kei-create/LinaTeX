@@ -59,6 +59,12 @@ struct CommandDictionaryView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            if !vm.dictionarySearchQuery.isEmpty {
+                searchText = vm.dictionarySearchQuery
+                vm.dictionarySearchQuery = ""
+            }
+        }
     }
 }
 
