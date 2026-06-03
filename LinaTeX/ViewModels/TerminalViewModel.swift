@@ -195,7 +195,8 @@ class AppViewModel: ObservableObject {
         if userParts[0] != expectedParts[0] {
             let expectedCommand = expectedParts[0]
             let userCommand = userParts[0]
-            return "❌ コマンドが違います\n期待: \(expectedCommand)\n入力: \(userCommand)\n\nコマンド '\(expectedCommand)' を試してみてください。"
+            let definition = getCommandDefinition(expectedCommand)
+            return "❌ コマンドが違います\n期待: \(expectedCommand)\n入力: \(userCommand)\n\n📚 \(expectedCommand)とは：\n\(definition)"
         }
 
         if userParts.count < expectedParts.count {
@@ -208,6 +209,34 @@ class AppViewModel: ObservableObject {
         }
 
         return "❌ コマンドの形式が異なります\n期待: \(expectedAnswer)\n入力: \(userAnswer)"
+    }
+
+    private func getCommandDefinition(_ command: String) -> String {
+        let definitions: [String: String] = [
+            "ls": "ファイルやディレクトリを一覧表示する基本コマンド",
+            "cd": "ディレクトリ（フォルダ）を移動するコマンド",
+            "pwd": "現在のディレクトリパスを表示するコマンド",
+            "cat": "ファイルの内容を表示するコマンド",
+            "grep": "テキストから特定の文字列を検索するコマンド",
+            "chmod": "ファイルのアクセス権限を変更するコマンド",
+            "rm": "ファイルやディレクトリを削除するコマンド",
+            "cp": "ファイルやディレクトリをコピーするコマンド",
+            "mv": "ファイルやディレクトリを移動・名前変更するコマンド",
+            "mkdir": "新しいディレクトリを作成するコマンド",
+            "touch": "空のファイルを作成するコマンド",
+            "find": "ファイルやディレクトリを検索するコマンド",
+            "wc": "ファイルの行数、単語数、文字数を数えるコマンド",
+            "sort": "テキストを並べ替えるコマンド",
+            "uniq": "重複した行を除去するコマンド",
+            "sed": "テキストを置換・削除などで編集するコマンド",
+            "awk": "テキストを分析・処理するコマンド",
+            "tar": "ファイルをアーカイブに圧縮するコマンド",
+            "gzip": "ファイルを圧縮するコマンド",
+            "curl": "Webからデータを取得するコマンド",
+            "ssh": "リモートサーバーに安全に接続するコマンド",
+            "scp": "SSH経由でファイルを転送するコマンド",
+        ]
+        return definitions[command] ?? "このコマンドについては辞典を確認してください"
     }
 
     func completeLesson(_ lesson: Lesson) {
