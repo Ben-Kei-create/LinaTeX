@@ -106,22 +106,23 @@ struct LessonView: View {
                             // Concept lessons: single scroll page, no Learning/Problem split
                             LessonLearningTabView(lesson: lesson, course: course)
 
-                            PrimaryActionButton(
-                                title: vm.isLessonCompleted(lesson) ? "学習完了済み" : "学習完了にする",
-                                icon: vm.isLessonCompleted(lesson) ? "checkmark.circle.fill" : "book.closed.fill",
-                                style: vm.isLessonCompleted(lesson) ? .secondary : .success,
-                                color: ModernTheme.success,
-                                disabled: vm.isLessonCompleted(lesson)
-                            ) {
-                                let impact = UINotificationFeedbackGenerator()
-                                impact.notificationOccurred(.success)
-                                vm.completeLesson(lesson)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    vm.goBack()
+                            if !vm.isLessonCompleted(lesson) {
+                                PrimaryActionButton(
+                                    title: "学習完了にする",
+                                    icon: "book.closed.fill",
+                                    style: .success,
+                                    color: ModernTheme.success
+                                ) {
+                                    let impact = UINotificationFeedbackGenerator()
+                                    impact.notificationOccurred(.success)
+                                    vm.completeLesson(lesson)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        vm.goBack()
+                                    }
                                 }
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, 8)
                             }
-                            .padding(.horizontal, 16)
-                            .padding(.bottom, 8)
 
                         } else {
                             // Quest / Scenario / Quiz: Learning ↔ Problem tabs
