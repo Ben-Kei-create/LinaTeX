@@ -66,30 +66,38 @@ private struct DictionarySearchPanel: View {
     @Binding var searchText: String
 
     var body: some View {
-        ShellPanel(borderOpacity: 0.24) {
-            HStack(spacing: 10) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(TerminalTheme.bluePrimary)
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundColor(ModernTheme.primary)
 
-                TextField("例: grep、権限、ファイルを探す", text: $searchText)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .shellFont(.body)
-                    .foregroundColor(TerminalTheme.textPrimary)
+            TextField("例: grep、権限、ファイルを探す", text: $searchText)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .font(ModernFont.bodyMedium)
+                .foregroundColor(ModernTheme.textPrimary)
 
-                if !searchText.isEmpty {
-                    Button {
-                        searchText = ""
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(TerminalTheme.textTertiary)
-                    }
-                    .buttonStyle(.plain)
+            if !searchText.isEmpty {
+                Button {
+                    searchText = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(ModernTheme.textTertiary)
                 }
+                .buttonStyle(.plain)
             }
         }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(ModernTheme.bgCard)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(ModernTheme.border, lineWidth: 1)
+        )
+        .shadow(color: ModernTheme.shadowColor, radius: 4, x: 0, y: 1)
     }
 }
 
@@ -110,12 +118,19 @@ private struct CategoryFilterBar: View {
                             Image(systemName: category.icon)
                                 .font(.system(size: 12, weight: .semibold))
                             Text(category.rawValue)
-                                .shellFont(.caption2, weight: .bold)
+                                .font(ModernFont.labelSmall)
+                                .fontWeight(.semibold)
                                 .lineLimit(1)
                         }
+                        .foregroundColor(selectedCategory == category ? ModernTheme.primary : ModernTheme.textSecondary)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(selectedCategory == category ? ModernTheme.primarySoft : ModernTheme.bgSubtle)
+                        )
                     }
-                    .buttonStyle(ShellButtonStyle(kind: .outline, isSelected: selectedCategory == category))
-                    .frame(width: category == .all ? 88 : 112)
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.vertical, 2)
@@ -131,25 +146,39 @@ private struct QuickReferencePanel: View {
     ]
 
     var body: some View {
-        ShellPanel(borderOpacity: 0.22) {
-            VStack(alignment: .leading, spacing: 12) {
-                ShellSectionTitle(title: "よく使う流れ")
+        VStack(alignment: .leading, spacing: 12) {
+            Text("よく使う流れ")
+                .font(ModernFont.labelMedium)
+                .foregroundColor(ModernTheme.textSecondary)
 
-                ForEach(references, id: \.0) { item in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(item.0)
-                            .shellFont(.subheadline, weight: .bold)
-                            .foregroundColor(TerminalTheme.textPrimary)
-                        Text(item.1)
-                            .shellFont(.caption)
-                            .foregroundColor(TerminalTheme.textSecondary)
-                            .lineSpacing(3)
-                        CodeBlock(code: item.2)
-                    }
-                    .padding(.vertical, 2)
+            ForEach(references, id: \.0) { item in
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(item.0)
+                        .font(ModernFont.bodyEmphasizedSmall)
+                        .foregroundColor(ModernTheme.textPrimary)
+                    Text(item.1)
+                        .font(ModernFont.bodySmall)
+                        .foregroundColor(ModernTheme.textSecondary)
+                        .lineSpacing(3)
+                    CodeBlock(code: item.2)
                 }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(ModernTheme.bgSubtle.opacity(0.5))
+                )
             }
         }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(ModernTheme.bgCard)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(ModernTheme.border, lineWidth: 1)
+        )
+        .shadow(color: ModernTheme.shadowColor, radius: 6, x: 0, y: 2)
     }
 }
 
@@ -167,30 +196,25 @@ private struct CommandDictionaryCard: View {
                 } label: {
                     HStack(alignment: .top, spacing: 12) {
                         Text(entry.command)
-                            .font(.system(.headline, design: .monospaced).weight(.bold))
-                            .foregroundColor(TerminalTheme.textOnAccent)
+                            .font(ModernFont.codeSmall)
+                            .foregroundColor(ModernTheme.primary)
                             .padding(.horizontal, 10)
-                            .padding(.vertical, 7)
+                            .padding(.vertical, 8)
                             .background(
-                                RoundedRectangle(cornerRadius: TerminalTheme.buttonRadius, style: .continuous)
-                                    .fill(
-                                        LinearGradient(
-                                            colors: [TerminalTheme.bluePrimary, TerminalTheme.emeraldPrimary],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
-                                    )
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(ModernTheme.primarySoft)
                             )
+                            .lineLimit(1)
 
-                        VStack(alignment: .leading, spacing: 5) {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text(entry.title)
-                                .shellFont(.headline, weight: .bold)
-                                .foregroundColor(TerminalTheme.textPrimary)
+                                .font(ModernFont.headlineSmall)
+                                .foregroundColor(ModernTheme.textPrimary)
                                 .lineLimit(2)
 
                             Text(entry.summary)
-                                .shellFont(.caption)
-                                .foregroundColor(TerminalTheme.textSecondary)
+                                .font(ModernFont.bodySmall)
+                                .foregroundColor(ModernTheme.textSecondary)
                                 .lineSpacing(3)
                                 .lineLimit(isExpanded ? nil : 2)
                         }
@@ -199,7 +223,7 @@ private struct CommandDictionaryCard: View {
 
                         Image(systemName: isExpanded ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
                             .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(TerminalTheme.emeraldPrimary)
+                            .foregroundColor(ModernTheme.primary)
                     }
                     .contentShape(Rectangle())
                 }
