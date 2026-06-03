@@ -6,9 +6,15 @@ private let adUnitID = "ca-app-pub-4859622277330192/4330175551"
 
 struct AdBannerView: View {
     var body: some View {
-        RealAdBannerView()
-            .frame(maxWidth: .infinity)
-            .frame(height: 50)
+        VStack(spacing: 0) {
+            Divider()
+                .background(Color(hex: 0xE2E8F0))
+
+            RealAdBannerView()
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
+                .background(Color(hex: 0xF8FAFC).opacity(0.8))
+        }
     }
 }
 
