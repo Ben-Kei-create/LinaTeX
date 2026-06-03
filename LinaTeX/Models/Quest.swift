@@ -71,6 +71,15 @@ struct Lesson: Identifiable, Hashable, Equatable {
     let emoji: String
     let estimatedMinutes: Int
     let content: LessonContent
+    let difficulty: Int // 1-5 scale (default: 2)
+
+    init(title: String, emoji: String, estimatedMinutes: Int, content: LessonContent, difficulty: Int = 2) {
+        self.title = title
+        self.emoji = emoji
+        self.estimatedMinutes = estimatedMinutes
+        self.content = content
+        self.difficulty = difficulty
+    }
 
     static func == (lhs: Lesson, rhs: Lesson) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }

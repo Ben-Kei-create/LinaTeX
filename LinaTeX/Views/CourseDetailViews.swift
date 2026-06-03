@@ -265,6 +265,14 @@ struct LessonRow: View {
                                 .font(ModernFont.labelSmall)
                         }
                         .foregroundColor(ModernTheme.textTertiary)
+
+                        HStack(spacing: 2) {
+                            ForEach(1...5, id: \.self) { star in
+                                Image(systemName: star <= lesson.difficulty ? "star.fill" : "star")
+                                    .font(.system(size: 8))
+                                    .foregroundColor(ModernTheme.warning)
+                            }
+                        }
                     }
                 }
 
