@@ -208,26 +208,46 @@ struct LessonRow: View {
     var body: some View {
         Button(action: { vm.navigateToLesson(lesson, in: course) }) {
             HStack(spacing: 12) {
-                // Lesson icon
-                ZStack {
+                // Lesson icon with completion indicator
+                ZStack(alignment: .bottomTrailing) {
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(isCompleted ? ModernTheme.successSoft : ModernTheme.bgSubtle)
-                        .frame(width: 42, height: 42)
+                        .fill(isCompleted ? ModernTheme.successSoft : course.level.modernSoft)
+                        .frame(width: 48, height: 48)
+
+                    Text(lesson.emoji)
+                        .font(.system(size: 22))
+                        .opacity(isCompleted ? 0.3 : 1)
+
                     if isCompleted {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(ModernTheme.success)
-                    } else {
-                        Text(lesson.emoji)
-                            .font(.system(size: 20))
+                        ZStack {
+                            Circle()
+                                .fill(ModernTheme.success)
+                                .frame(width: 22, height: 22)
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(.white)
+                        }
+                        .offset(x: 4, y: 4)
                     }
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(lesson.title)
-                        .font(ModernFont.bodyEmphasizedSmall)
-                        .foregroundColor(ModernTheme.textPrimary)
-                        .multilineTextAlignment(.leading)
+                    HStack(spacing: 8) {
+                        Text(lesson.title)
+                            .font(ModernFont.bodyEmphasizedSmall)
+                            .foregroundColor(isCompleted ? ModernTheme.textTertiary : ModernTheme.textPrimary)
+                            .multilineTextAlignment(.leading)
+
+                        if isCompleted {
+                            Text("完了")
+                                .font(ModernFont.captionSmall)
+                                .foregroundColor(ModernTheme.success)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(ModernTheme.successSoft)
+                                .cornerRadius(4)
+                        }
+                    }
 
                     HStack(spacing: 10) {
                         HStack(spacing: 4) {
@@ -253,12 +273,14 @@ struct LessonRow: View {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(ModernTheme.textTertiary)
+                    .opacity(isCompleted ? 0.5 : 1)
             }
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(isCompleted ? ModernTheme.successSoft.opacity(0.4) : ModernTheme.bgSubtle.opacity(0.5))
+                    .fill(isCompleted ? ModernTheme.successSoft.opacity(0.3) : ModernTheme.bgSubtle.opacity(0.6))
             )
+            .opacity(isCompleted ? 0.85 : 1)
         }
         .buttonStyle(.plain)
     }
