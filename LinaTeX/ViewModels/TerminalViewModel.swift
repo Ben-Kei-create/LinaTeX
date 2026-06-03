@@ -152,7 +152,7 @@ class AppViewModel: ObservableObject {
             } else {
                 self.currentLessonState = .wrong
                 let hint = self.generateHint(for: trimmed, expectedAnswer: quest.answer)
-                self.terminalOutput = "答えが違います。\(hint)"
+                self.terminalOutput = hint
                 UINotificationFeedbackGenerator().notificationOccurred(.error)
             }
             self.isExecuting = false
@@ -177,7 +177,7 @@ class AppViewModel: ObservableObject {
             } else {
                 self.currentLessonState = .wrong
                 let hint = self.generateHint(for: trimmed, expectedAnswer: step.answer)
-                self.terminalOutput = "答えが違います。\(hint)"
+                self.terminalOutput = hint
                 UINotificationFeedbackGenerator().notificationOccurred(.error)
             }
             self.isExecuting = false
@@ -189,19 +189,25 @@ class AppViewModel: ObservableObject {
         let expectedParts = expectedAnswer.split(separator: " ", maxSplits: 1).map(String.init)
 
         if userParts.isEmpty {
-            return "コマンドを入力してください。"
+            return "コマンドを入力してください。例: \(expectedParts.first ?? "ls")"
         }
 
         if userParts[0] != expectedParts[0] {
             let expectedCommand = expectedParts[0]
-            return "コマンド '\(expectedCommand)' を使ってみてください。"
+            let userCommand = userParts[0]
+            return "❌ コマンドが違います\n期待: \(expectedCommand)\n入力: \(userCommand)\n\nコマンド '\(expectedCommand)' を試してみてください。"
         }
 
         if userParts.count < expectedParts.count {
-            return "引数や対象ファイルが不足しているかもしれません。"
+            let expectedArgs = expectedParts.count > 1 ? expectedParts[1] : "ファイル名やオプション"
+            return "❌ コマンドが不完全です\nこのコマンドには引数が必要です。\n例: \(expectedAnswer)"
         }
 
-        return "コマンドのオプションや引数を確認してください。"
+        if userParts.count > expectedParts.count {
+            return "❌ 引数が多すぎる可能性があります\n期待される形式: \(expectedAnswer)"
+        }
+
+        return "❌ コマンドの形式が異なります\n期待: \(expectedAnswer)\n入力: \(userAnswer)"
     }
 
     func completeLesson(_ lesson: Lesson) {
