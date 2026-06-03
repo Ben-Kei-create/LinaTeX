@@ -32,6 +32,11 @@ class AppViewModel: ObservableObject {
     @Published var correctAnswers: Int = 0
     @Published var unlockedAchievements: Set<String> = []
 
+    // Today's learning stats
+    @Published var todayLessonsCompleted: Int = 0
+    @Published var todayEstimatedMinutes: Int = 0
+    @Published var lastResetDate: Date = Date()
+
     // Lesson state
     @Published var currentLessonState: LessonState = .waiting
     @Published var userInput: String = ""
@@ -258,7 +263,24 @@ class AppViewModel: ObservableObject {
         currentLessonState = .completed
         checkAndUnlockAchievements()
 
+        // Update today's learning stats
+        resetTodayStatsIfNeeded()
+        todayLessonsCompleted += 1
+        todayEstimatedMinutes += lesson.estimatedMinutes
+
         UINotificationFeedbackGenerator().notificationOccurred(.success)
+    }
+
+    private func resetTodayStatsIfNeeded() {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let lastReset = calendar.startOfDay(for: lastResetDate)
+
+        if today > lastReset {
+            todayLessonsCompleted = 0
+            todayEstimatedMinutes = 0
+            lastResetDate = Date()
+        }
     }
 
     // Streak = consecutive calendar days with at least one lesson completed.

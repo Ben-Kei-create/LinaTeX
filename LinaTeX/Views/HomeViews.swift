@@ -114,6 +114,41 @@ struct HomeView: View {
                         .accessibilityValue("\(totalCompleted)個のレッスン完了、全体の\(Int(vm.totalProgress() * 100))%")
                         .accessibilityHint(vm.streak > 0 ? "\(vm.streak)日連続学習中です" : "新しく学習を始めましょう")
 
+                        // ── Today's Learning Summary ────────────────────────────
+                        if vm.todayLessonsCompleted > 0 || vm.todayEstimatedMinutes > 0 {
+                            HStack(spacing: 12) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("本日の学習")
+                                        .font(ModernFont.labelSmall)
+                                        .foregroundColor(ModernTheme.textSecondary)
+                                    HStack(spacing: 12) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .font(.system(size: 12))
+                                            Text("\(vm.todayLessonsCompleted)問")
+                                                .font(ModernFont.bodyEmphasizedSmall)
+                                        }
+                                        .foregroundColor(ModernTheme.success)
+
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "clock.fill")
+                                                .font(.system(size: 12))
+                                            Text("\(vm.todayEstimatedMinutes)分")
+                                                .font(ModernFont.bodyEmphasizedSmall)
+                                        }
+                                        .foregroundColor(ModernTheme.primary)
+                                    }
+                                }
+                                Spacer()
+                            }
+                            .padding(12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(ModernTheme.successSoft.opacity(0.3))
+                            )
+                            .padding(.horizontal, 16)
+                        }
+
                         // ── Achievement Stats ──────────────────────────────
                         HStack(spacing: 12) {
                             VStack(alignment: .leading, spacing: 6) {
